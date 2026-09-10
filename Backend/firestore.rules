@@ -1,0 +1,271 @@
+rules_version = '2';
+
+// =============================================================================
+// Loot — Firestore Security Rules
+//
+// Two account types: personal (consume) and professional (create loot).
+// Public reads on the discovery surfaces (loots, businesses) so the feed renders
+// for all signed-in users; mutations are scoped tightly.
+// =============================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // -------------------------------------------------------------------------
+    // Helpers
+    // -------------------------------------------------------------------------
+
+    function isSignedIn() {
+      return request.auth != null && request.auth.uid != null;
+    }
+
+    function uid() {
+      return request.auth.uid;
+    }
+
+    function isSelf(userId) {
+      return isSignedIn() && uid() == userId;
+    }
+
+    function getUser(userId) {
+      return get(/databases/$(database)/documents/users/$(userId)).data;
+    }
+
+    function userExists(userId) {
+      return exists(/databases/$(database)/documents/users/$(userId));
+    }
+
+    function accountType(userId) {
+      return userExists(userId) ? getUser(userId).accountType : null;
+    }
+
+    function isProfessional() {
+      return isSignedIn() && accountType(uid()) == 'professional';
+    }
+
+    function isPersonal() {
+      return isSignedIn() && accountType(uid()) == 'personal';
+    }
+
+    function getBusiness(businessId) {
+      return get(/databases/$(database)/documents/businesses/$(businessId)).data;
+    }
+
+    function isBusinessOwner(businessId) {
+      return isSignedIn() && exists(/databases/$(database)/documents/businesses/$(businessId)) &&
+             getBusiness(businessId).ownerUserId == uid();
+    }
+
+    function getLoot(lootId) {
+      return get(/databases/$(database)/documents/loots/$(lootId)).data;
+    }
+
+    function isLootOwner(lootId) {
+      return isSignedIn() && exists(/databases/$(database)/documents/loots/$(lootId)) &&
+             isBusinessOwner(getLoot(lootId).businessId);
+    }
+
+    function isPubliclyVisibleLoot(lootData) {
+      return lootData.status in ['active', 'trending', 'expiring'];
+    }
+
+    // -------------------------------------------------------------------------
+    // users/{userId}
+    //
+    // Public profile fields visible to all signed-in users.
+    // Self-write only; accountType / businessId can only be set via Cloud Functions.
+    // -------------------------------------------------------------------------
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isSelf(userId);
+      allow update: if isSelf(userId)
+                    && !('accountType' in request.resource.data.diff(resource.data).affectedKeys())
+                    && !('businessId' in request.resource.data.diff(resource.data).affectedKeys())
+                    && !('savesCount' in request.resource.data.diff(resource.data).affectedKeys())
+                    && !('claimsCount' in request.resource.data.diff(resource.data).affectedKeys())
+                    && !('followingCount' in request.resource.data.diff(resource.data).affectedKeys());
+      allow delete: if false; // soft delete via Cloud Function
+
+      // Following list (businesses + creators followed by this user)
+      match /following/{targetId} {
+        allow read: if isSignedIn();
+        allow write: if isSelf(userId);
+      }
+
+      // Saved loot
+      match /savedLoot/{lootId} {
+        allow read: if isSelf(userId);
+        allow write: if isSelf(userId);
+      }
+
+      // Claimed loot
+      match /claimedLoot/{lootId} {
+        allow read: if isSelf(userId);
+        allow create, update, delete: if false; // server-only
+      }
+
+      // Account preferences (FCM tokens, alert settings, theme)
+      match /accountPreferences/{prefsId} {
+        allow read, write: if isSelf(userId);
+      }
+
+      // Per-user materialized feed
+      match /feed/{lootId} {
+        allow read: if isSelf(userId);
+        allow write: if false; // server-only fanout
+      }
+
+      // Per-user notifications log
+      match /notifications/{notifId} {
+        allow read: if isSelf(userId);
+        allow update: if isSelf(userId)
+                      && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['readAt']);
+        allow create, delete: if false; // server-only
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // businesses/{businessId}
+    //
+    // Public read. Owner writes; verified flag is server-only.
+    // -------------------------------------------------------------------------
+    match /businesses/{businessId} {
+      allow read: if isSignedIn();
+      allow create: if isSelf(businessId)
+                    && isProfessional()
+                    && request.resource.data.ownerUserId == uid();
+      allow update: if isBusinessOwner(businessId)
+                    && !('verified' in request.resource.data.diff(resource.data).affectedKeys())
+                    && !('verifiedAt' in request.resource.data.diff(resource.data).affectedKeys())
+                    && !('followersCount' in request.resource.data.diff(resource.data).affectedKeys())
+                    && !('lootCount' in request.resource.data.diff(resource.data).affectedKeys())
+                    && !('totalClaimsCount' in request.resource.data.diff(resource.data).affectedKeys());
+      allow delete: if false;
+
+      // Followers list (read by owner; writes server-only)
+      match /followers/{followerId} {
+        allow read: if isBusinessOwner(businessId);
+        allow write: if false;
+      }
+
+      // Verification documents
+      match /verification/{docId} {
+        allow read: if isBusinessOwner(businessId);
+        allow create: if isBusinessOwner(businessId);
+        allow update, delete: if false;
+      }
+
+      // Pro analytics aggregates (server-written)
+      match /analytics/{aggId} {
+        allow read: if isBusinessOwner(businessId);
+        allow write: if false;
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // loots/{lootId}
+    //
+    // Public read for all active/trending/expiring loots.
+    // Owner-only write while in non-expired states. Counters are server-only.
+    // -------------------------------------------------------------------------
+    match /loots/{lootId} {
+      allow read: if isSignedIn() && (
+        isPubliclyVisibleLoot(resource.data)
+        || isLootOwner(lootId)
+      );
+
+      allow create: if isProfessional()
+                    && isBusinessOwner(request.resource.data.businessId)
+                    && request.resource.data.status in ['draft', 'active']
+                    // counters must be initialized to 0 by client; trending fields server-only
+                    && request.resource.data.viewCount == 0
+                    && request.resource.data.saveCount == 0
+                    && request.resource.data.claimCount == 0
+                    && request.resource.data.shareCount == 0
+                    && request.resource.data.trendingScore == 0;
+
+      allow update: if isLootOwner(lootId)
+                    && resource.data.status != 'expired'
+                    && resource.data.status != 'archived'
+                    // counter fields and lifecycle transitions are server-only
+                    && !('viewCount' in request.resource.data.diff(resource.data).affectedKeys())
+                    && !('saveCount' in request.resource.data.diff(resource.data).affectedKeys())
+                    && !('claimCount' in request.resource.data.diff(resource.data).affectedKeys())
+                    && !('shareCount' in request.resource.data.diff(resource.data).affectedKeys())
+                    && !('trendingScore' in request.resource.data.diff(resource.data).affectedKeys())
+                    && !('velocityScore' in request.resource.data.diff(resource.data).affectedKeys())
+                    && (
+                      // owner can only set status to 'archived' manually
+                      !('status' in request.resource.data.diff(resource.data).affectedKeys())
+                      || request.resource.data.status == 'archived'
+                    );
+
+      allow delete: if false; // archive instead
+
+      // Engagement subcollections — most are server-written.
+
+      match /views/{viewId} {
+        allow read: if isLootOwner(lootId);
+        allow write: if false; // server-only via trackLootView callable
+      }
+
+      match /saves/{userId} {
+        allow read: if isSelf(userId) || isLootOwner(lootId);
+        allow create: if isSelf(userId) && isPersonal();
+        allow delete: if isSelf(userId);
+        allow update: if false;
+      }
+
+      match /claims/{userId} {
+        allow read: if isSelf(userId) || isLootOwner(lootId);
+        allow create, update, delete: if false; // server-only via claimLoot callable
+      }
+
+      match /shares/{shareId} {
+        allow read: if isLootOwner(lootId);
+        allow create: if false; // server-only via shareLoot callable
+        allow update, delete: if false;
+      }
+
+      match /reports/{userId} {
+        allow read: if isSelf(userId);
+        allow create: if isSelf(userId);
+        allow update, delete: if false;
+      }
+
+      match /reviews/{userId} {
+        allow read: if isSignedIn();
+        allow create: if isSelf(userId) && isPersonal();
+        allow update: if isSelf(userId);
+        allow delete: if isSelf(userId);
+      }
+
+      match /redemptions/{userId} {
+        allow read: if isSelf(userId) || isLootOwner(lootId);
+        allow write: if false; // server-only
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // localities/{geoCellId} — denormalized hot-cell stats for trending nearby
+    // -------------------------------------------------------------------------
+    match /localities/{geoCellId} {
+      allow read: if isSignedIn();
+      allow write: if false; // server-only
+    }
+
+    // -------------------------------------------------------------------------
+    // OTP store (server-only)
+    // -------------------------------------------------------------------------
+    match /otp/{phone} {
+      allow read, write: if false;
+    }
+
+    // -------------------------------------------------------------------------
+    // Default deny
+    // -------------------------------------------------------------------------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
