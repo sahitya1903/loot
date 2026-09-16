@@ -1,0 +1,42 @@
+name: Deploy Firebase Services to Staging
+
+on:
+  push:
+    branches:
+      - staging
+
+concurrency:
+  group: deploy-staging-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: 'npm'
+          cache-dependency-path: 'functions/package-lock.json'
+
+      - name: Install dependencies
+        working-directory: ./functions
+        run: npm ci
+
+      - name: Lint
+        working-directory: ./functions
+        run: npm run lint
+
+      - name: Run unit tests
+        working-directory: ./functions
+        run: npm run test
+
+      - name: Deploy to Firebase Staging (momento-dev-e3b30)
+        run: npx firebase-tools deploy --project momento-dev-e3b30 --force
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
