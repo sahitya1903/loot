@@ -33,16 +33,6 @@ export const sendWhatsappOtp = onCall({
   }
   const phoneNumber = rawPhone.trim();
   try {
-    if (phoneNumber === "+11234567890") {
-      // for testing purposes, we can skip sending the OTP
-      const otp = "826209"; // example OTP
-      // save the otp and number in Firestore
-      await db.collection("otp").doc(phoneNumber).set({
-        "otp": otp,
-        "createdAt": FieldValue.serverTimestamp(),
-      });
-      return {success: true};
-    }
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const accessToken = WHATSAPP_ACCESS_KEY.value();
     const phoneId = WHATSAPP_PHONE_NUMBER_ID.value();
@@ -161,15 +151,6 @@ export const sendEmailOtp = onCall({
   try {
     const trimmedEmail = email.trim().toLowerCase();
 
-    // Test bypass — only in non-production environments
-    if (trimmedEmail === "test@momentomemories.com" && process.env.GCLOUD_PROJECT !== "momento-b7d02") {
-      await db.collection("otp").doc(trimmedEmail).set({
-        "otp": "826209",
-        "createdAt": FieldValue.serverTimestamp(),
-      });
-      return {success: true};
-    }
-
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     // Store OTP
@@ -193,12 +174,12 @@ export const sendEmailOtp = onCall({
       Destination: {ToAddresses: [trimmedEmail]},
       Content: {
         Simple: {
-          Subject: {Data: "Your Momento verification code", Charset: "UTF-8"},
+          Subject: {Data: "Your Loot verification code", Charset: "UTF-8"},
           Body: {
             Html: {
               Data: `
                 <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 480px; margin: 0 auto; padding: 32px;">
-                  <h2 style="color: #1a1a1a; margin-bottom: 8px;">Momento</h2>
+                  <h2 style="color: #1a1a1a; margin-bottom: 8px;">Loot</h2>
                   <p style="color: #555; font-size: 16px;">Your verification code is:</p>
                   <div style="background: #f5f5f5; border-radius: 8px; padding: 20px; text-align: center; margin: 24px 0;">
                     <span style="font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #1a1a1a;">${otp}</span>
