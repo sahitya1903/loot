@@ -36,7 +36,7 @@ jobs:
         working-directory: ./functions
         run: npm run test
 
-      - name: Deploy to Firebase Staging (momento-dev-e3b30)
-        run: npx firebase-tools deploy --project momento-dev-e3b30 --force
+      - name: Deploy to Firebase Staging
+        run: npx firebase-tools deploy --project ${{ vars.FIREBASE_STAGING_PROJECT_ID }} --force
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

@@ -4,7 +4,7 @@ Guidance for Claude Code when working in this subfolder.
 
 ## Product
 
-This is the Backend for **Loot**, a hyperlocal real-time discovery platform. Read the root `/Users/harshverma/Documents/Loot/CLAUDE.md` first for product positioning, forbidden vocabulary, and architectural pillars. Everything below assumes that context.
+This is the Backend for **Loot**, a hyperlocal real-time discovery platform. Read the root `../CLAUDE.md` first for product positioning, forbidden vocabulary, and architectural pillars. Everything below assumes that context.
 
 ## Task continuity
 

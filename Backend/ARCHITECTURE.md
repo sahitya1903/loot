@@ -1,6 +1,6 @@
 # Loot — Backend Architecture
 
-This describes the Cloud Functions backend for **Loot**, a hyperlocal real-time discovery platform. Read `/Users/harshverma/Documents/Loot/CLAUDE.md` for product positioning before working here.
+This describes the Cloud Functions backend for **Loot**, a hyperlocal real-time discovery platform. Read `../CLAUDE.md` for product positioning before working here.
 
 ## Stack
 
@@ -44,7 +44,7 @@ functions/
 ├── analytics.js          # getLootImpressions, getClaimFunnel, getAudienceBreakdown,
 │                         #   getBranchPerformance — pro-only
 │
-│   # Infrastructure (kept from Momento, repurposed)
+│   # Infrastructure
 ├── login.js              # sendWhatsappOtp, verifyWhatsappOtp
 ├── profile.js            # updateProfile, updateUsername, deleteAccount
 ├── notifications.js      # sendToUserDevices, FCM token mgmt (low-level primitive)
@@ -290,7 +290,7 @@ npm run deploy    # full deploy (lint runs as predeploy hook)
 npm run logs
 ```
 
-A Loot Firebase project does not yet exist; old project IDs (`momento-*`) belong to a different product and must not be used.
+A Loot Firebase project does not yet exist; project IDs inherited from the previous codebase belong to a different product and must not be used.
 
 ## Testing
 

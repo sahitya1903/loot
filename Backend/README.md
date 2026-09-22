@@ -1,6 +1,6 @@
-# Momento — Firebase Backend
+# Loot — Firebase Backend
 
-Cloud Functions, Firestore rules, and server-side logic for the Momento event management platform.
+Cloud Functions, Firestore rules, and server-side logic for Loot, a hyperlocal real-time discovery platform.
 
 ## Quick Start
 
@@ -8,7 +8,7 @@ Cloud Functions, Firestore rules, and server-side logic for the Momento event ma
 cd functions
 npm install
 firebase login
-firebase use momento-dev-e3b30
+firebase use <loot-dev-project-id>
 
 npm run lint      # ESLint
 npm run test      # Vitest
@@ -20,18 +20,11 @@ npm run deploy    # Deploy all functions
 
 - [Onboarding Guide](./ONBOARDING.md) — setup, patterns, and getting started
 - [Architecture Overview](./ARCHITECTURE.md) — detailed technical architecture
-- [Project Guidance](./CLAUDE.md) — cross-repo context and conventions
+- [Project Guidance](./CLAUDE.md) — context and conventions
 
 ## Firebase Environments
 
 | Environment | Project ID | Usage |
 |-------------|-----------|---------|
-| Development | `momento-dev-e3b30` | Development and testing |
-| Production | `momento-b7d02` | Live users |
-
-## Related Repos
-
-| Repo | Description |
-|------|-------------|
-| [Momento (Flutter)](../Momento/) | Mobile app (Android & iOS) |
-| [momento-web](../momento-web/) | Next.js web frontend |
+| Development | _TBD — Loot dev project_ | Development and testing |
+| Production | _TBD — Loot prod project_ | Live users |

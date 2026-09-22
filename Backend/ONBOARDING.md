@@ -114,7 +114,7 @@ Edit weights in `discovery.js`. Add a Vitest test that constructs a few syntheti
 
 ## External services
 
-Same set as the prior Momento codebase, repurposed:
+Current external services:
 
 | Service | Purpose |
 |---|---|

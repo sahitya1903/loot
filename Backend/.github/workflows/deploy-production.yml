@@ -37,7 +37,6 @@ jobs:
         run: npm run test
 
       - name: Deploy to Firebase Production
-        # momento-b7d02 is your production project
-        run: npx firebase-tools deploy --project momento-b7d02 --force
+        run: npx firebase-tools deploy --project ${{ vars.FIREBASE_PROD_PROJECT_ID }} --force
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

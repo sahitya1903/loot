@@ -1,7 +1,7 @@
-# Momento Firebase Functions — AI Coding Guidelines
+# Loot Firebase Functions — AI Coding Guidelines
 
 ## Architecture Overview
-Node.js 22 Cloud Functions backend for Momento app. Uses Firebase v2 callable functions with **ES modules** (`"type": "module"` in package.json). All functions deploy to **asia-south1** region.
+Node.js 22 Cloud Functions backend for Loot. Uses Firebase v2 callable functions with **ES modules** (`"type": "module"` in package.json). All functions deploy to **asia-south1** region.
 
 ### External Services
 - **AWS S3** — Media storage (profile pictures, event galleries, cover photos)
@@ -80,7 +80,7 @@ npm run lint       # ESLint check
 ## Key Patterns
 - **Presigned URLs** — S3 uploads return presigned URLs to client (see `getGalleryMediaUploadUrl`)
 - **Participant checks** — Always verify user is participant before allowing event operations
-- **Production check** — `const production = projectId === "momento-b7d02"` for environment-specific logic
+- **Production check** — `const production = projectId === process.env.FIREBASE_PROD_PROJECT_ID` for environment-specific logic
 
 ## Error Handling
 Use Firebase logger and throw descriptive errors:
