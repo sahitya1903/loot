@@ -112,11 +112,11 @@ describe('useAuth', () => {
 
     expect(result.current.isNewUser).toBe(true)
     expect(result.current.needsOnboarding).toBe(true)
-    expect(sessionStorage.getItem('momento_is_new_user')).toBe('true')
+    expect(sessionStorage.getItem('loot_is_new_user')).toBe('true')
   })
 
   it('reads isNewUser from sessionStorage for mid-onboarding navigations', async () => {
-    sessionStorage.setItem('momento_is_new_user', 'true')
+    sessionStorage.setItem('loot_is_new_user', 'true')
     mockCreateUserIfNotExists.mockResolvedValue({
       profile: { userId: 'user-1' } as never,
       isNewUser: false, // already in DB but session flag is set
@@ -152,14 +152,14 @@ describe('useAuth', () => {
   })
 
   it('clears sessionStorage new user flag on sign out', async () => {
-    sessionStorage.setItem('momento_is_new_user', 'true')
+    sessionStorage.setItem('loot_is_new_user', 'true')
     const { result } = renderHook(() => useAuth())
 
     await act(async () => {
       await authCallback!(null)
     })
 
-    expect(sessionStorage.getItem('momento_is_new_user')).toBeNull()
+    expect(sessionStorage.getItem('loot_is_new_user')).toBeNull()
     expect(result.current.isNewUser).toBe(false)
   })
 
@@ -195,7 +195,7 @@ describe('useAuth', () => {
   })
 
   it('clearNewUserFlag removes session flag and resets isNewUser', () => {
-    sessionStorage.setItem('momento_is_new_user', 'true')
+    sessionStorage.setItem('loot_is_new_user', 'true')
     useAuthStore.setState({ isNewUser: true })
 
     const { result } = renderHook(() => useAuth())
@@ -204,7 +204,7 @@ describe('useAuth', () => {
       result.current.clearNewUserFlag()
     })
 
-    expect(sessionStorage.getItem('momento_is_new_user')).toBeNull()
+    expect(sessionStorage.getItem('loot_is_new_user')).toBeNull()
     expect(result.current.isNewUser).toBe(false)
   })
 })
