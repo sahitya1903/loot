@@ -6,6 +6,8 @@ import { X } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { useIsMobile } from '@/hooks'
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+
 interface SmartBannerProps {
   eventId?: string
   inviteKey?: string
@@ -34,7 +36,7 @@ export function SmartBanner({
         // redirectUrl could be like "/events/abc123?inviteKey=xyz" or full URL
         const url = redirectUrl.startsWith('http')
           ? new URL(redirectUrl)
-          : new URL(redirectUrl, 'https://www.momentomemories.com')
+          : new URL(redirectUrl, APP_URL)
 
         const pathMatch = url.pathname.match(/\/events\/([^/?]+)/)
         const parsedEventId = pathMatch ? pathMatch[1] : undefined
@@ -62,7 +64,7 @@ export function SmartBanner({
           }
         }
 
-        const deepLink = `https://www.momentomemories.com/${deepLinkPath}`
+        const deepLink = `${APP_URL}/${deepLinkPath}`
         airbridge.createTrackingLink(
           'mobile_smart_banner',
           {
@@ -94,7 +96,7 @@ export function SmartBanner({
     }
 
     // Fallback to manual scheme attempt if link generation failed or incomplete
-    let deepLink = 'https://www.momentomemories.com/'
+    let deepLink = `${APP_URL}/`
     if (eventId) {
       deepLink += `events/${eventId}`
       if (inviteKey) {
@@ -118,10 +120,10 @@ export function SmartBanner({
         </button>
         <div className="relative mr-3 h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg bg-[var(--ink)]">
           {/* Placeholder for app icon */}
-          <Image src="/images/logo.png" alt="Momento" fill sizes="40px" className="object-cover" />
+          <Image src="/images/logo.svg" alt="Loot" fill sizes="40px" className="object-cover" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold">Momento: Event Sharing</p>
+          <p className="truncate text-sm font-semibold">Loot</p>
           <p className="truncate text-xs text-[var(--muted)]">View fully in the app</p>
         </div>
         <Button size="sm" onClick={handleOpenApp} className="h-8 px-3 text-xs whitespace-nowrap">

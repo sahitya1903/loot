@@ -4,13 +4,12 @@ import { useEffect } from 'react';
 
 export function AirbridgeAnalytics() {
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    const app = process.env.NEXT_PUBLIC_AIRBRIDGE_APP;
+    const webToken = process.env.NEXT_PUBLIC_AIRBRIDGE_WEB_TOKEN;
+    if (typeof window !== 'undefined' && app && webToken) {
       import('airbridge-web-sdk-loader').then((module) => {
         const airbridge = module.default;
-        airbridge.init({
-          app: 'momento',
-          webToken: '24a0a99e021544928b83c77af4902b2b',
-        });
+        airbridge.init({ app, webToken });
       });
     }
   }, []);

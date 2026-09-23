@@ -13,7 +13,7 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
-const STORAGE_KEY = 'momento-theme'
+const STORAGE_KEY = 'loot-theme'
 
 const getSystemTheme = (): 'light' | 'dark' => {
   if (typeof window !== 'undefined') {

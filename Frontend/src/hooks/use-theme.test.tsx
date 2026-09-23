@@ -130,7 +130,7 @@ describe('useTheme', () => {
     fireEvent.click(screen.getByTestId('btn-dark'))
 
     await waitFor(() => {
-      expect(localStorage.setItem).toHaveBeenCalledWith('momento-theme', 'dark')
+      expect(localStorage.setItem).toHaveBeenCalledWith('loot-theme', 'dark')
     })
   })
 

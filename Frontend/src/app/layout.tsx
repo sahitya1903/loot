@@ -29,14 +29,14 @@ const caveat = Caveat({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.momentomemories.com'),
-  title: 'Momento — Moments and Network',
-  description: 'Create, manage, and share your events seamlessly with Momento.',
-  keywords: ['events', 'photos', 'sharing', 'memories', 'gallery'],
-  authors: [{ name: 'Momento Team' }],
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'),
+  title: "Loot — What's happening around you, right now",
+  description: 'Discover offers, drops and opportunities from businesses near you, in real time.',
+  keywords: ['local offers', 'deals', 'nearby', 'discovery', 'drops'],
+  authors: [{ name: 'Loot Team' }],
   openGraph: {
-    title: 'Momento — Moments and Network',
-    description: 'Create, manage, and share your events seamlessly with Momento.',
+    title: "Loot — What's happening around you, right now",
+    description: 'Discover offers, drops and opportunities from businesses near you, in real time.',
     type: 'website',
   },
 }
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
 const themeScript = `
   (function() {
     try {
-      var stored = localStorage.getItem('momento-theme');
+      var stored = localStorage.getItem('loot-theme');
       var theme = stored || 'system';
       var resolved = theme;
       if (theme === 'system') {
