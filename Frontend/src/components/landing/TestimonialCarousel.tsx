@@ -20,7 +20,7 @@ const testimonials: Testimonial[] = [
     role: 'Wedding Planner',
     avatar: 'PS',
     quote:
-      'Momento transformed how we collect wedding photos. Guests upload in real-time and the couple gets a beautiful gallery instantly.',
+      'Loot transformed how we collect wedding photos. Guests upload in real-time and the couple gets a beautiful gallery instantly.',
     rating: 5,
   },
   {
@@ -28,7 +28,7 @@ const testimonials: Testimonial[] = [
     role: 'Event Coordinator',
     avatar: 'JC',
     quote:
-      'We used Momento for a 500-person corporate gala. The shared link made it effortless — no app installs, just memories.',
+      'We used Loot for a 500-person corporate gala. The shared link made it effortless — no app installs, just memories.',
     rating: 5,
   },
   {
@@ -36,7 +36,7 @@ const testimonials: Testimonial[] = [
     role: 'Photographer',
     avatar: 'AP',
     quote:
-      'As a photographer, I love how beautifully Momento presents galleries. My clients are always impressed by the experience.',
+      'As a photographer, I love how beautifully Loot presents galleries. My clients are always impressed by the experience.',
     rating: 5,
   },
   {
@@ -52,7 +52,7 @@ const testimonials: Testimonial[] = [
     role: 'Travel Blogger',
     avatar: 'SL',
     quote:
-      'Group trips are 10x better with Momento. Everyone contributes their best shots and we relive the journey together.',
+      'Group trips are 10x better with Loot. Everyone contributes their best shots and we relive the journey together.',
     rating: 5,
   },
   {
@@ -60,7 +60,7 @@ const testimonials: Testimonial[] = [
     role: 'Startup Founder',
     avatar: 'DK',
     quote:
-      "We use Momento for every team offsite. It's become our go-to for capturing company culture moments.",
+      "We use Loot for every team offsite. It's become our go-to for capturing company culture moments.",
     rating: 4,
   },
 ]
@@ -130,7 +130,7 @@ export function TestimonialCarousel() {
             className="mb-4 font-[family-name:var(--font-instrument)] text-3xl font-bold text-[var(--foreground)] sm:text-4xl lg:text-5xl"
           />
           <p className="mx-auto max-w-xl font-[family-name:var(--font-instrument)] text-base text-[var(--muted)] sm:text-lg">
-            See what our community has to say about Momento.
+            See what our community has to say about Loot.
           </p>
         </motion.div>
 

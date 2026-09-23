@@ -30,7 +30,7 @@ const LINKS = [
       { label: 'Twitter / X', href: '#' },
       { label: 'LinkedIn', href: '#' },
       { label: 'Discord', href: '#' },
-      { label: 'hello@momento.app', href: 'mailto:hello@momento.app' },
+      { label: 'hello@example.com', href: 'mailto:hello@example.com' },
     ],
   },
 ]
@@ -44,7 +44,7 @@ export function LandingFooterNew() {
         {/* Brand col */}
         <div>
           <Link href="/" className="l-flogo">
-            Momento<span>.</span>
+            Loot<span>.</span>
           </Link>
           <p className="l-ftag">
             Capture, share, and relive your most precious moments — beautifully, together.
@@ -74,10 +74,10 @@ export function LandingFooterNew() {
       </div>
 
       {/* Big watermark */}
-      <div className="l-fbig">Momento.</div>
+      <div className="l-fbig">Loot.</div>
 
       <div className="l-fb">
-        <span>© 2025 Momento. All rights reserved.</span>
+        <span>© 2026 Loot. All rights reserved.</span>
         <span>Crafted with love ✦</span>
         <span>Your memories, your way</span>
       </div>

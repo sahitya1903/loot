@@ -58,7 +58,7 @@ export function LandingNav({
         {/* Logo */}
         <Link href="/" className="l-nav-logo">
           <span className="l-nav-logo-text">
-            Momento<span className="l-nav-logo-dot">.</span>
+            Loot<span className="l-nav-logo-dot">.</span>
           </span>
         </Link>
 

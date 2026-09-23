@@ -102,7 +102,7 @@ export function Sidebar() {
           <Link href="/" className="flex items-center gap-3">
             <div className="relative h-9 w-9 shrink-0">
               <Image
-                src="/images/logo.png"
+                src="/images/logo.svg"
                 alt="Loot"
                 fill
                 sizes="36px"
@@ -352,7 +352,7 @@ export function MobileHeader() {
       <Link href="/" className="flex items-center gap-2">
         <div className="relative h-8 w-8">
           <Image
-            src="/images/logo.png"
+            src="/images/logo.svg"
             alt="Loot"
             fill
             sizes="32px"

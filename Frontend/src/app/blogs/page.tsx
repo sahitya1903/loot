@@ -3,8 +3,8 @@ import BlogsClient from './BlogsClient'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Blog — Momento',
-  description: 'Momento Blog - Stories, Tips & Inspiration.',
+  title: 'Blog — Loot',
+  description: 'Loot Blog - Stories, Tips & Inspiration.',
 }
 
 export default function BlogsPage() {

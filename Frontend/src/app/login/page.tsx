@@ -400,10 +400,10 @@ function LoginContent() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="h-[24px] w-[24px]">
-                      <Image src="/images/logo.png" alt="Momento" width={24} height={24} priority />
+                      <Image src="/images/logo.svg" alt="Loot" width={24} height={24} priority />
                     </div>
                     <span className="font-instrument text-[16px] font-bold text-[var(--ink)]">
-                      Momento
+                      Loot
                     </span>
                   </div>
                   <ThemeToggle />
@@ -421,10 +421,10 @@ function LoginContent() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="h-[36px] w-[36px]">
-                    <Image src="/images/logo.png" alt="Momento" width={36} height={36} priority />
+                    <Image src="/images/logo.svg" alt="Loot" width={36} height={36} priority />
                   </div>
                   <span className="font-instrument text-[22px] font-bold text-[var(--ink)]">
-                    Momento
+                    Loot
                   </span>
                 </div>
                 <ThemeToggle />
@@ -442,7 +442,7 @@ function LoginContent() {
               {step === 'name' && "What's your name?"}
             </h1>
             <p className="font-instrument mt-1.5 text-[15px] text-[var(--ink-muted)]">
-              {step === 'initial' && 'Sign in to continue to Momento'}
+              {step === 'initial' && 'Sign in to continue to Loot'}
               {step === 'otp' && `We sent a code to ${countryCode}${phoneNumber}`}
               {step === 'email' && 'Enter your email to receive a verification code'}
               {step === 'email_otp' && `We sent a code to ${emailAddress}`}

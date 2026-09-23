@@ -21,8 +21,8 @@ export function LoginLayout({ children, className }: LoginLayoutProps) {
       <div className="relative z-10 flex flex-col items-center pt-[70px]">
         <div className="relative h-[130px] w-[130px]">
           <Image
-            src="/images/logo.png"
-            alt="Momento"
+            src="/images/logo.svg"
+            alt="Loot"
             fill
             sizes="130px"
             className="object-contain"

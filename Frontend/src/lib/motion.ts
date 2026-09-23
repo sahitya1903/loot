@@ -1,5 +1,5 @@
 /**
- * Momento Premium Motion System
+ * Loot Premium Motion System
  * 
  * Ultra-premium, invisible motion following Apple/Linear/WhatsApp-level polish.
  * Motion should feel invisible, natural, and emotionally calm.

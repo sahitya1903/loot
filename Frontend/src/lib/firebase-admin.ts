@@ -10,7 +10,7 @@ const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_KEY
   ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY)
   : null
 
-const FIREBASE_ADMIN_APP_NAME = 'momento-backend'
+const FIREBASE_ADMIN_APP_NAME = 'loot-backend'
 
 function getFirebaseAdminApp() {
   const existingApp = getApps().find((app) => app.name === FIREBASE_ADMIN_APP_NAME)

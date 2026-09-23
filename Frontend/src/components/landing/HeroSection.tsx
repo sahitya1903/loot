@@ -134,7 +134,7 @@ export function HeroSection({ ctaHref: _ctaHref }: HeroSectionProps) {
               className="mb-12 flex items-center justify-center gap-4"
             >
               <Link
-                href="https://apps.apple.com/in/app/momento-memories-for-life/id6746373161"
+                href="#"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block h-10 opacity-80 transition-opacity duration-200 hover:opacity-100 sm:h-12"
@@ -148,7 +148,7 @@ export function HeroSection({ ctaHref: _ctaHref }: HeroSectionProps) {
                 />
               </Link>
               <Link
-                href="https://play.google.com/store/apps/details?id=com.orion.momento"
+                href="#"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block h-10 opacity-80 transition-opacity duration-200 hover:opacity-100 sm:h-12"

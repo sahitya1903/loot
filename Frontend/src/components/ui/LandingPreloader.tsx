@@ -27,7 +27,7 @@ export function LandingPreloader() {
       <div id="lpl" />
       <div id="lpr" />
       <div id="lplogo">
-        Momento<span>.</span>
+        Loot<span>.</span>
       </div>
     </div>
   )

@@ -128,7 +128,7 @@ export function TrustBanner({ ctaHref }: TrustBannerProps) {
               variants={subtextReveal}
               className="mb-6 max-w-md font-[family-name:var(--font-instrument)] text-sm leading-relaxed text-[var(--muted)] sm:mb-8 sm:text-[17px]"
             >
-              We believe your memories are precious. That&apos;s why we&apos;ve built Momento with
+              We believe your memories are precious. That&apos;s why we&apos;ve built Loot with
               privacy and security at its core. Share confidently, knowing you&apos;re always in
               control.
             </motion.p>

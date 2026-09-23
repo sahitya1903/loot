@@ -23,17 +23,17 @@ const footerLinks = {
     links: [
       { label: 'Privacy Policy', href: '/privacy-policy' },
       { label: 'Terms & Conditions', href: '/terms-and-conditions' },
-      { label: 'Help Center', href: 'mailto:support@momento.app' },
+      { label: 'Help Center', href: 'mailto:support@example.com' },
     ],
   },
   contact: {
     title: 'CONTACT US',
-    links: [{ label: 'support@momento.app', href: 'mailto:support@momento.app', icon: Mail }],
+    links: [{ label: 'support@example.com', href: 'mailto:support@example.com', icon: Mail }],
   },
 }
 
 const socialLinks = [
-  { icon: Instagram, href: 'https://www.instagram.com/momento.fam', label: 'Instagram' },
+  { icon: Instagram, href: '#', label: 'Instagram' },
   {
     icon: Linkedin,
     href: 'https://www.linkedin.com/company/humora-technologies',
@@ -82,15 +82,15 @@ export function LandingFooter() {
               <Link href="/" className="mb-4 flex items-center gap-2.5">
                 <div className="relative h-10 w-10 overflow-hidden">
                   <Image
-                    src="/images/logo.png"
-                    alt="Momento Logo"
+                    src="/images/logo.svg"
+                    alt="Loot Logo"
                     fill
                     sizes="40px"
                     className="object-contain"
                   />
                 </div>
                 <span className="font-[family-name:var(--font-instrument)] text-xl font-bold text-[var(--foreground)]">
-                  Momento
+                  Loot
                 </span>
               </Link>
               <p className="mb-6 font-sans text-sm leading-relaxed text-[var(--muted)]">
@@ -100,7 +100,7 @@ export function LandingFooter() {
               {/* App Store badges */}
               <div className="mb-6 flex items-center gap-3">
                 <Link
-                  href="https://apps.apple.com/in/app/momento-memories-for-life/id6746373161"
+                  href="#"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="opacity-70 transition-opacity duration-200 hover:opacity-100"
@@ -114,7 +114,7 @@ export function LandingFooter() {
                   />
                 </Link>
                 <Link
-                  href="https://play.google.com/store/apps/details?id=com.orion.momento"
+                  href="#"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="opacity-70 transition-opacity duration-200 hover:opacity-100"
@@ -202,7 +202,7 @@ export function LandingFooter() {
         {/* Large watermark brand text - positioned behind copyright */}
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
           <SplitText
-            text="Momento"
+            text="Loot"
             mode="char"
             staggerDelay={0.05}
             trigger="inView"
@@ -220,7 +220,7 @@ export function LandingFooter() {
           className="relative z-10 border-t border-[var(--border)] py-12 text-center sm:py-20"
         >
           <p className="font-sans text-sm text-[var(--muted)]">
-            © Copyright 2026. Momento Technologies Pvt. Ltd. All Rights Reserved.
+            © 2026 Loot. All rights reserved.
           </p>
         </motion.div>
       </div>

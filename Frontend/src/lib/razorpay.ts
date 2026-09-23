@@ -83,7 +83,7 @@ export async function openCheckout({
   const rzp = new window.Razorpay({
     key: razorpayKeyId,
     subscription_id: subscriptionId,
-    name: 'Momento',
+    name: 'Loot',
     description: description ?? 'Storage Subscription',
     handler: onSuccess,
     modal: {

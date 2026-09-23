@@ -13,7 +13,7 @@ test.describe('Smoke Tests', () => {
     await page.waitForLoadState('networkidle')
 
     // Check that the page has a title
-    await expect(page).toHaveTitle(/Momento/i)
+    await expect(page).toHaveTitle(/Loot/i)
   })
 
   test('login page is accessible', async ({ page }) => {

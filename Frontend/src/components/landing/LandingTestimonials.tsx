@@ -4,19 +4,19 @@ import { useEffect, useRef, useState } from 'react'
 
 const QUOTES = [
   {
-    t: 'Momento transformed how we handled photos at our wedding. Guests uploaded hundreds of candid shots we would have never gotten otherwise — and the gallery is just breathtaking.',
+    t: 'Loot transformed how we handled photos at our wedding. Guests uploaded hundreds of candid shots we would have never gotten otherwise — and the gallery is just breathtaking.',
     n: 'Priya Sharma',
     r: 'Bride, The Grand Celebration 2024',
     i: 'P',
   },
   {
-    t: 'We used Momento for our annual company retreat and the engagement was incredible. Everyone uploaded in real-time, and having a shared gallery brought the whole team closer.',
+    t: 'We used Loot for our annual company retreat and the engagement was incredible. Everyone uploaded in real-time, and having a shared gallery brought the whole team closer.',
     n: 'Daniel Osei',
     r: 'Head of Culture, NovaTech Solutions',
     i: 'D',
   },
   {
-    t: 'I plan birthday parties professionally and Momento is now non-negotiable for every event. The QR code sharing is seamless and the quality of the gallery is unmatched.',
+    t: 'I plan birthday parties professionally and Loot is now non-negotiable for every event. The QR code sharing is seamless and the quality of the gallery is unmatched.',
     n: 'Sofia Nakamura',
     r: 'Event Planner, Bloom Events Studio',
     i: 'S',
@@ -28,7 +28,7 @@ const CARDS = [
     src: '/images/wedding.png',
     role: 'Wedding Planner',
     name: 'Aria Novak',
-    quote: '"Momento made our wedding gallery something guests still talk about six months later."',
+    quote: '"Loot made our wedding gallery something guests still talk about six months later."',
   },
   {
     src: '/images/team.png',

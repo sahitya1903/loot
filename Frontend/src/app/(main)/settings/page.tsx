@@ -3,7 +3,7 @@
 // Loot — settings landing.
 //
 // This is a fresh, slim Loot-native settings page. The legacy 1900-line
-// settings file (account whitelisting, Momento storage plans, affiliate
+// settings file (account whitelisting, legacy storage plans, affiliate
 // invites, face liveness) was removed during the Loot migration; rebuild
 // individual surfaces here as needed.
 

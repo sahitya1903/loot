@@ -176,7 +176,7 @@ export default function LandingPage() {
             .map((_, i) => (
               <div className="l-mi" key={i}>
                 <span className="l-md" />
-                {['Momento', 'Your Memories', 'Your Way', 'Forever'][i % 4]}
+                {['Loot', 'Your Memories', 'Your Way', 'Forever'][i % 4]}
               </div>
             ))}
         </div>

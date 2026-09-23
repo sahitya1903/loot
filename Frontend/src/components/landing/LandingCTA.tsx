@@ -51,7 +51,7 @@ export function LandingCTA({ ctaHref }: LandingCTAProps) {
           <span className="it">last forever.</span>
         </h2>
         <p className="l-ctasub">
-          Join thousands of event creators who trust Momento to capture and share their most
+          Join thousands of event creators who trust Loot to capture and share their most
           precious moments. Free to start, no credit card required.
         </p>
         <div className="l-mag">

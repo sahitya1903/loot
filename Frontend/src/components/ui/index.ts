@@ -1,4 +1,4 @@
-// UI Components - Momento Design System
+// UI Components - Loot Design System
 // Extracted from Figma with light + dark mode support
 
 export { Button } from './button'

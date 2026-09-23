@@ -24,13 +24,13 @@ export async function generateMetadata({ params }: BlogDetailPageProps): Promise
 
   if (!blog) {
     return {
-      title: 'Blog Not Found — Momento',
+      title: 'Blog Not Found — Loot',
       description: 'The blog post you are looking for could not be found.',
     }
   }
 
   return {
-    title: `${blog.title} — Momento Blog`,
+    title: `${blog.title} — Loot Blog`,
     description: blog.shortDescription,
     openGraph: {
       title: blog.title,

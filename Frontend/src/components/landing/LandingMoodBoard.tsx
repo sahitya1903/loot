@@ -505,7 +505,7 @@ export function LandingMoodBoard() {
             <div className="l-mc-label">TechCrunch · 2024</div>
             <div className="l-mc-headline">The App Making Event Memories Last Forever</div>
             <div className="l-mc-body">
-              Momento is reimagining how people capture and relive their most important life events
+              Loot is reimagining how people capture and relive their most important life events
               through collaborative photo sharing...
             </div>
             <div className="l-mc-torn" />
@@ -739,7 +739,7 @@ export function LandingMoodBoard() {
                 whiteSpace: 'nowrap',
               }}
             >
-              momento memories — 2025
+              loot — 2026
             </span>
           </div>
           <div
@@ -801,7 +801,7 @@ export function LandingMoodBoard() {
                 fill="var(--rust)"
                 opacity=".6"
               >
-                <textPath href="#lstamp">MOMENTO · YOUR MEMORIES · FOREVER · </textPath>
+                <textPath href="#lstamp">LOOT · NEAR YOU · RIGHT NOW · </textPath>
               </text>
               <defs>
                 <path id="lstamp" d="M55,10 a45,45 0 1,1 -0.1,0" />

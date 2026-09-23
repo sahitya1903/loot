@@ -338,14 +338,14 @@ export function NotFoundGame() {
         <div className="mb-4 flex items-center justify-center gap-3">
           <div className="relative h-10 w-10">
             <Image
-              src="/images/logo.png"
-              alt="Momento"
+              src="/images/logo.svg"
+              alt="Loot"
               fill
               sizes="40px"
               className="object-contain"
             />
           </div>
-          <span className="font-playfair text-2xl font-bold text-[var(--ink)]">Momento</span>
+          <span className="font-playfair text-2xl font-bold text-[var(--ink)]">Loot</span>
         </div>
         <motion.div
           initial={{ opacity: 0, y: -16 }}

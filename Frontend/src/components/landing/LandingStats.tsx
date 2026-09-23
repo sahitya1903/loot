@@ -43,7 +43,7 @@ export function LandingStats() {
           designed <em>for joy</em>
         </h2>
         <p>
-          Momento handles everything from intimate birthdays to large corporate events. Powered by
+          Loot handles everything from intimate birthdays to large corporate events. Powered by
           enterprise-grade infrastructure so your memories are always safe and instant.
         </p>
       </div>

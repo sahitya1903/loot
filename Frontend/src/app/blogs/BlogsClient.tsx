@@ -52,7 +52,7 @@ export default function BlogsClient({ blogs }: BlogsClientProps) {
           <span className="blog-hero-glyph">✦</span>
         </div>
         <div className="blog-hero-content l-sr l-sru">
-          <span className="blog-eyebrow">Momento Blog</span>
+          <span className="blog-eyebrow">Loot Blog</span>
           <h1 className="blog-h1">
             Stories, Tips
             <br />& <span className="it">Inspiration.</span>
@@ -114,7 +114,7 @@ export default function BlogsClient({ blogs }: BlogsClientProps) {
             .map((_, i) => (
               <div className="l-mi" key={i}>
                 <span className="l-md" />
-                {['Momento', 'Your Memories', 'Your Way', 'Forever'][i % 4]}
+                {['Loot', 'Your Memories', 'Your Way', 'Forever'][i % 4]}
               </div>
             ))}
         </div>

@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
     // Return the zip file
     return new NextResponse(zipBuffer, {
       headers: {
-        'Content-Disposition': 'attachment; filename="momento-photos.zip"',
+        'Content-Disposition': 'attachment; filename="loot-media.zip"',
         'Content-Type': 'application/zip',
       },
     })

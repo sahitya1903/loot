@@ -54,7 +54,7 @@ export function LandingFeaturePillars() {
           <h2 className="l-stitle">
             What
             <br />
-            Momento does
+            Loot does
           </h2>
           <a href="#" className="l-slink">
             See all features →

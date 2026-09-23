@@ -98,7 +98,7 @@ export function LandingHero({ ctaHref }: LandingHeroProps) {
 
         <div className="l-ha">
           <Link href={ctaHref} className="l-bp">
-            Explore Momento
+            Explore Loot
           </Link>
           <Link href="/business" className="l-bs">
             For Business

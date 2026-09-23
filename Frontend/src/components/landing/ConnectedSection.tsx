@@ -96,7 +96,7 @@ export function ConnectedSection() {
           transition={{ delay: duration.normal }}
           className="px-2 font-[family-name:var(--font-instrument)] text-xl leading-relaxed font-medium text-[var(--foreground)] sm:text-2xl md:text-3xl lg:text-[40px]"
         >
-          With Momento, you can{' '}
+          With Loot, you can{' '}
           <span className="bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] bg-clip-text font-semibold text-transparent">
             share freely
           </span>{' '}
