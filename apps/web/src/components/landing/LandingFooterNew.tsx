@@ -17,7 +17,6 @@ const LINKS = [
     heading: 'Company',
     items: [
       { label: 'About', href: '#' },
-      { label: 'Blog', href: '/blogs' },
       { label: 'Careers', href: '#' },
       { label: 'Press', href: '#' },
       { label: 'Privacy', href: '#' },

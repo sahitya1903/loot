@@ -64,9 +64,6 @@ export function LandingNav({
 
         {/* Right side */}
         <div className="l-nav-right">
-          <Link href="/blogs" className="l-nav-biz">
-            Blog
-          </Link>
           <Link href={bizHref} className="l-nav-biz">
             {bizLabel}
           </Link>
@@ -90,9 +87,6 @@ export function LandingNav({
       {/* Mobile menu */}
       {menuOpen && (
         <div className="l-nav-mob">
-          <Link href="/blogs" className="l-nav-link" onClick={() => setMenuOpen(false)}>
-            Blog
-          </Link>
           <Link href={bizHref} className="l-nav-link" onClick={() => setMenuOpen(false)}>
             {bizLabel}
           </Link>

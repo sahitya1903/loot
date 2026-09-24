@@ -67,24 +67,6 @@ test.describe('Smoke Tests', () => {
     const className = await html.getAttribute('class')
     expect(className).toMatch(/dark|light/)
   })
-
-  test('blogs listing page loads successfully', async ({ page }) => {
-    await page.goto('/blogs')
-    await page.waitForLoadState('networkidle')
-
-    // Check if blogs hero is visible
-    const heading = page.locator('h1.blog-h1')
-    await expect(heading).toBeVisible()
-  })
-
-  test('blog detail page loads successfully', async ({ page }) => {
-    await page.goto('/blogs/history-of-photography')
-    await page.waitForLoadState('networkidle')
-
-    // Check if back link is visible
-    const backLink = page.locator('#blog-back-link')
-    await expect(backLink).toBeVisible()
-  })
 })
 
 test.describe('Performance', () => {
