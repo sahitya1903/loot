@@ -8,7 +8,7 @@ GitHub Environments are required for the staging and production deployment workf
 
 ### Step 1: Navigate to Environments Settings
 
-1. Go to your repository: https://github.com/realitysynthesizer/momento-web
+1. Go to your repository: https://github.com/realitysynthesizer/loot-web
 2. Click **Settings** → **Environments**
 
 ### Step 2: Create Staging Environment
@@ -58,11 +58,11 @@ For each environment (staging/production), add these in **Settings → Environme
 |--------|--------------|
 | `STAGING_FIREBASE_API_KEY` | Firebase Console (dev project) |
 | `STAGING_FIREBASE_AUTH_DOMAIN` | Firebase Console |
-| `STAGING_FIREBASE_PROJECT_ID` | `momento-dev-e3b30` |
+| `STAGING_FIREBASE_PROJECT_ID` | `_Loot staging project ID_` |
 | `STAGING_FIREBASE_STORAGE_BUCKET` | Firebase Console |
 | `STAGING_FIREBASE_MESSAGING_SENDER_ID` | Firebase Console |
 | `STAGING_FIREBASE_APP_ID` | Firebase Console |
-| `STAGING_APP_URL` | `https://staging.momentomemories.com` |
+| `STAGING_APP_URL` | `https://staging.<your-loot-domain>` |
 | `STAGING_GOOGLE_PLACES_API_KEY` | Google Cloud Console |
 | `AWS_REGION` | `ap-south-1` |
 | `AWS_COGNITO_IDENTITY_POOL_ID` | AWS Console |
@@ -72,11 +72,11 @@ For each environment (staging/production), add these in **Settings → Environme
 |--------|--------------|
 | `PROD_FIREBASE_API_KEY` | Firebase Console (prod project) |
 | `PROD_FIREBASE_AUTH_DOMAIN` | Firebase Console |
-| `PROD_FIREBASE_PROJECT_ID` | `momento-b7d02` |
+| `PROD_FIREBASE_PROJECT_ID` | `_Loot prod project ID_` |
 | `PROD_FIREBASE_STORAGE_BUCKET` | Firebase Console |
 | `PROD_FIREBASE_MESSAGING_SENDER_ID` | Firebase Console |
 | `PROD_FIREBASE_APP_ID` | Firebase Console |
-| `PROD_APP_URL` | `https://www.momentomemories.com` |
+| `PROD_APP_URL` | `https://www.<your-loot-domain>` |
 | `PROD_GOOGLE_PLACES_API_KEY` | Google Cloud Console |
 | `AWS_REGION` | `ap-south-1` |
 | `AWS_COGNITO_IDENTITY_POOL_ID` | AWS Console |

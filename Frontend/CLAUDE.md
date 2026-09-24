@@ -4,7 +4,7 @@ Guidance for Claude Code when working in this subfolder.
 
 ## Product
 
-This is the Frontend for **Loot**, a hyperlocal real-time discovery platform. Read the root `/Users/harshverma/Documents/Loot/CLAUDE.md` first for product positioning, forbidden vocabulary, and architectural pillars. Everything below assumes that context.
+This is the Frontend for **Loot**, a hyperlocal real-time discovery platform. Read the root `../CLAUDE.md` first for product positioning, forbidden vocabulary, and architectural pillars. Everything below assumes that context.
 
 The web app is **mobile-first**. Every layout is designed for vertical phone viewports first; desktop is a graceful upscale, not the primary surface.
 

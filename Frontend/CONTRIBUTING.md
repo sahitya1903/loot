@@ -1,10 +1,10 @@
-# Contributing to Momento
+# Contributing to Loot
 
 ## Setup
 
 ```bash
 # 1. Clone and install frontend
-cd momento-web && npm install
+cd Frontend && npm install
 
 # 2. Copy env template
 cp .env.example .env.local

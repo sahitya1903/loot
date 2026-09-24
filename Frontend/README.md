@@ -1,6 +1,6 @@
-# Momento Web
+# Loot Web
 
-Production-ready web application for Momento — built with **Next.js 16**, **TypeScript**, and **TailwindCSS**.
+Production-ready web application for Loot — built with **Next.js 16**, **TypeScript**, and **TailwindCSS**.
 
 ## Quick Start
 
@@ -64,9 +64,9 @@ Environment validation is powered by Zod — missing variables will throw descri
 
 | Environment | Branch  | Firebase          | URL                         |
 | ----------- | ------- | ----------------- | --------------------------- |
-| Development | local   | momento-dev-e3b30 | localhost:3000              |
-| Staging     | develop | momento-dev-e3b30 | staging.momentomemories.com |
-| Production  | main    | momento-b7d02     | www.momentomemories.com     |
+| Development | local   | TBD               | localhost:3000              |
+| Staging     | develop | TBD               | staging.<loot-domain>       |
+| Production  | main    | TBD               | www.<loot-domain>           |
 
 ### CI/CD Pipelines
 
@@ -80,10 +80,10 @@ Environment validation is powered by Zod — missing variables will throw descri
 
 ```bash
 # Build production image
-docker build -t momento-web .
+docker build -t loot-web .
 
 # Run container
-docker run -p 3000:3000 momento-web
+docker run -p 3000:3000 loot-web
 
 # Or use docker-compose
 docker compose up
@@ -148,5 +148,5 @@ The `/api/health` endpoint returns system status:
 
 ## Related Projects
 
-- [Momento Flutter App](../Momento-Flutter) — Mobile app
+- [Loot Flutter App](../Loot-Flutter) — Mobile app
 - [Firebase Backend](../Firebase) — Cloud Functions & Firestore

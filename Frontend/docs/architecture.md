@@ -1,6 +1,6 @@
 # Architecture Overview
 
-This document describes the high-level architecture of the Momento Web application.
+This document describes the high-level architecture of the Loot Web application.
 
 ## System Architecture
 
@@ -106,6 +106,6 @@ Component → TanStack Query → Firebase SDK → Firestore
 
 | Environment | Branch | Firebase Project | URL |
 |-------------|--------|------------------|-----|
-| Development | local | momento-dev-e3b30 | localhost:3000 |
-| Staging | develop | momento-dev-e3b30 | staging.momentomemories.com |
-| Production | main | momento-b7d02 | www.momentomemories.com |
+| Development | local | _Loot staging project ID_ | localhost:3000 |
+| Staging | develop | _Loot staging project ID_ | staging.<your-loot-domain> |
+| Production | main | _Loot prod project ID_ | www.<your-loot-domain> |

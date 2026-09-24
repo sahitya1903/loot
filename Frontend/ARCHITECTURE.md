@@ -1,6 +1,6 @@
 # Loot — Frontend Architecture
 
-Web frontend for **Loot**, a hyperlocal real-time discovery platform. Read `/Users/harshverma/Documents/Loot/CLAUDE.md` for product positioning before working here.
+Web frontend for **Loot**, a hyperlocal real-time discovery platform. Read `../CLAUDE.md` for product positioning before working here.
 
 ## Stack
 

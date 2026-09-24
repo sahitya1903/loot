@@ -1,6 +1,6 @@
 # Secrets Management
 
-This document describes all secrets required by the Momento Web application, their purpose, and how to manage them.
+This document describes all secrets required by the Loot Web application, their purpose, and how to manage them.
 
 ## Required Secrets
 
