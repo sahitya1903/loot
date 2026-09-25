@@ -1,10 +1,10 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { getTrendingFeed } from '@/lib/api/feed'
-import { queryKeys } from '@/lib/api/keys'
-import { geoCellId as cellIdFor } from '@/lib/geo/geohash'
-import type { LootCategory, FeedResponse } from '@/types'
+import { getTrendingFeed } from '@loot/shared/api'
+import { queryKeys } from '@loot/shared/api'
+import { geoCellId as cellIdFor } from '@loot/shared/geo'
+import type { LootCategory, FeedResponse } from '@loot/shared/types'
 
 export function useTrendingFeed(coords: { lat: number; lng: number } | null, category?: LootCategory) {
   const cellId = coords ? cellIdFor(coords.lat, coords.lng) : null

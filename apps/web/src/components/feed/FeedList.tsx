@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 import { LootCard, LootCardSkeleton } from '@/components/loot/LootCard'
 import { FeedEmpty } from './FeedEmpty'
-import type { LootFeedItem, FeedSource } from '@/types'
+import type { LootFeedItem, FeedSource } from '@loot/shared/types'
 
 interface Props {
   items: LootFeedItem[]

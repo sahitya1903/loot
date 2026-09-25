@@ -1,7 +1,7 @@
 // Pro subscription API client.
 
-import { callFunction } from '@/lib/firebase/functions'
-import type { ProSubscriptionPlan, ProSubscription } from '@/types'
+import { callFunction } from '../client'
+import type { ProSubscriptionPlan, ProSubscription } from '../types'
 
 interface PlansResponse {
   success: boolean

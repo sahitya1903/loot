@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { countdown, type CountdownState } from '@/lib/ranking/format'
-import type { FirebaseTimestamp } from '@/types'
+import { countdown, type CountdownState } from '@loot/shared/ranking'
+import type { FirebaseTimestamp } from '@loot/shared/types'
 
 /**
  * Tick a countdown for an `expiryAt` timestamp. Throttled to 1Hz.

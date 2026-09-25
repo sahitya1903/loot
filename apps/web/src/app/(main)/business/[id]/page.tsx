@@ -2,8 +2,8 @@
 
 import { useParams } from 'next/navigation'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getBusiness, getBusinessLoot, followBusiness, unfollowBusiness } from '@/lib/api/business'
-import { queryKeys } from '@/lib/api/keys'
+import { getBusiness, getBusinessLoot, followBusiness, unfollowBusiness } from '@loot/shared/api'
+import { queryKeys } from '@loot/shared/api'
 import { LootCard } from '@/components/loot/LootCard'
 import { BadgeCheck, MapPin, Users } from 'lucide-react'
 import clsx from 'clsx'

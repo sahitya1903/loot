@@ -4,7 +4,7 @@ import { FeedList } from '@/components/feed/FeedList'
 import { useGeo } from '@/hooks/use-geo'
 import { useNearbyFeed } from '@/hooks/use-nearby-feed'
 import { useState } from 'react'
-import { LOOT_CATEGORIES, type LootCategory } from '@/types'
+import { LOOT_CATEGORIES, type LootCategory } from '@loot/shared/types'
 import clsx from 'clsx'
 
 export default function NearbyPage() {

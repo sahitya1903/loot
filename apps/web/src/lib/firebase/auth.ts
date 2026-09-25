@@ -15,7 +15,7 @@ import {
   signInWithCustomToken,
 } from 'firebase/auth'
 import { firebaseAuth } from './config'
-import { callFunction } from './functions'
+import { callFunction } from '@loot/shared'
 import type {
   SendOtpRequest,
   SendOtpResponse,
@@ -25,7 +25,7 @@ import type {
   SendEmailOtpResponse,
   VerifyEmailOtpRequest,
   VerifyEmailOtpResponse,
-} from '@/types'
+} from '@loot/shared/types'
 
 // Google Sign-In
 export async function signInWithGoogle(): Promise<User | null> {

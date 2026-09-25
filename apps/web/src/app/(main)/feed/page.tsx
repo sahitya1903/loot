@@ -9,7 +9,7 @@ import { useFollowingFeed } from '@/hooks/use-following-feed'
 import { useTrendingFeed } from '@/hooks/use-trending-feed'
 import { useFreshFeed } from '@/hooks/use-fresh-feed'
 import { useAuthStore } from '@/stores/auth'
-import type { FeedSource, LootFeedItem } from '@/types'
+import type { FeedSource, LootFeedItem } from '@loot/shared/types'
 
 export default function FeedPage() {
   const [tab, setTab] = useState<FeedTab>('nearby')

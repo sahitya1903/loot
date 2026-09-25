@@ -1,7 +1,7 @@
 // TanStack Query key factory.
 // Centralizing keys means cache invalidation stays in sync across the app.
 
-import type { LootCategory, LootStatus } from '@/types'
+import type { LootCategory, LootStatus } from '../types'
 
 export const queryKeys = {
   feed: {

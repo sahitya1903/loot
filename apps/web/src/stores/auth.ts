@@ -2,7 +2,7 @@
 
 import { create } from 'zustand'
 import type { User as FirebaseUser } from 'firebase/auth'
-import type { AppUser, Business } from '@/types'
+import type { AppUser, Business } from '@loot/shared/types'
 
 interface AuthState {
   user: FirebaseUser | null

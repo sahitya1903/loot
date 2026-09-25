@@ -1,8 +1,8 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { getMySavedLoot } from '@/lib/api/claim'
-import { queryKeys } from '@/lib/api/keys'
+import { getMySavedLoot } from '@loot/shared/api'
+import { queryKeys } from '@loot/shared/api'
 import { useAuthStore } from '@/stores/auth'
 import { FeedList } from '@/components/feed/FeedList'
 

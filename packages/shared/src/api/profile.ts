@@ -1,12 +1,11 @@
 // Profile API client.
 
-import { callFunction } from '@/lib/firebase/functions'
-import { getFirebaseDb } from '@/lib/firebase/config'
+import { callFunction, getLootClient } from '../client'
 import { doc, getDoc } from 'firebase/firestore'
 import type {
   UpdateProfileRequest, UpdateProfileResponse,
   GenericResponse,
-} from '@/types'
+} from '../types'
 
 export function updateProfile(req: UpdateProfileRequest) {
   return callFunction<UpdateProfileRequest, UpdateProfileResponse>('updateProfile', req)
@@ -44,7 +43,7 @@ export async function getClaimsCount(userId: string): Promise<number> {
 
 async function readCounter(userId: string, field: string): Promise<number> {
   try {
-    const db = getFirebaseDb()
+    const db = getLootClient().getDb()
     const snap = await getDoc(doc(db, 'users', userId))
     if (snap.exists() && typeof snap.data()[field] === 'number') {
       return snap.data()[field] as number

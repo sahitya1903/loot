@@ -5,7 +5,7 @@
 
 export { followBusiness, unfollowBusiness } from './business'
 
-import { getFirebaseDb, getFirebaseAuth } from '@/lib/firebase/config'
+import { getLootClient } from '../client'
 import { doc, getDoc } from 'firebase/firestore'
 
 /**
@@ -13,10 +13,9 @@ import { doc, getDoc } from 'firebase/firestore'
  * Cheap direct read — used by the business-profile follow button.
  */
 export async function isFollowingBusiness(businessId: string): Promise<boolean> {
-  const auth = getFirebaseAuth()
-  const me = auth.currentUser
-  if (!me) return false
-  const db = getFirebaseDb()
-  const snap = await getDoc(doc(db, 'users', me.uid, 'following', businessId))
+  const { getCurrentUserId, getDb } = getLootClient()
+  const uid = getCurrentUserId()
+  if (!uid) return false
+  const snap = await getDoc(doc(getDb(), 'users', uid, 'following', businessId))
   return snap.exists()
 }

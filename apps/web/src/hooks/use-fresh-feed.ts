@@ -1,9 +1,9 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { getFreshFeed } from '@/lib/api/feed'
-import { queryKeys } from '@/lib/api/keys'
-import type { LootCategory, FeedResponse } from '@/types'
+import { getFreshFeed } from '@loot/shared/api'
+import { queryKeys } from '@loot/shared/api'
+import type { LootCategory, FeedResponse } from '@loot/shared/types'
 
 export function useFreshFeed(coords: { lat: number; lng: number } | null, radiusKm = 5, category?: LootCategory) {
   return useQuery<FeedResponse>({

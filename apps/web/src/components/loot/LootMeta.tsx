@@ -2,9 +2,9 @@
 
 import Link from 'next/link'
 import { BadgeCheck } from 'lucide-react'
-import { formatDistance } from '@/lib/geo/format'
+import { formatDistance } from '@loot/shared/geo'
 import clsx from 'clsx'
-import type { LootFeedItem } from '@/types'
+import type { LootFeedItem } from '@loot/shared/types'
 
 interface Props {
   item: Pick<

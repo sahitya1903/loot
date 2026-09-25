@@ -1,6 +1,6 @@
 // Loot — claim / save / share / redemption.
 
-import { callFunction } from '@/lib/firebase/functions'
+import { callFunction } from '../client'
 import type {
   ClaimLootRequest, ClaimLootResponse,
   SaveLootRequest, UnsaveLootRequest,
@@ -10,7 +10,7 @@ import type {
   GetMyClaimedLootRequest, GetMyClaimedLootResponse,
   GetRedemptionResponse,
   GenericResponse,
-} from '@/types'
+} from '../types'
 
 export function claimLoot(req: ClaimLootRequest) {
   return callFunction<ClaimLootRequest, ClaimLootResponse>('claimLoot', req)

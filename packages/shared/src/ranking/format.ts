@@ -3,7 +3,7 @@
 // Used by LootCard / LootCountdown / LootDetailHero to drive the visual
 // urgency surface (chip color, pulse, "Ending soon" copy, expired state).
 
-import type { FirebaseTimestamp } from '@/types'
+import type { FirebaseTimestamp } from '../types'
 
 export type UrgencyTier = 'normal' | 'warm' | 'urgent' | 'expired'
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import clsx from 'clsx'
-import type { LootMediaType } from '@/types'
+import type { LootMediaType } from '@loot/shared/types'
 
 interface Props {
   url: string | null

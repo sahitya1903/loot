@@ -1,9 +1,9 @@
 'use client'
 
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { getFollowingFeed } from '@/lib/api/feed'
-import { queryKeys } from '@/lib/api/keys'
-import type { FeedResponse } from '@/types'
+import { getFollowingFeed } from '@loot/shared/api'
+import { queryKeys } from '@loot/shared/api'
+import type { FeedResponse } from '@loot/shared/types'
 
 export function useFollowingFeed(userId: string | null) {
   return useInfiniteQuery<FeedResponse>({

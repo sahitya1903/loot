@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Search, MapPin } from 'lucide-react'
-import { LOOT_CATEGORIES, type LootCategory } from '@/types'
+import { LOOT_CATEGORIES, type LootCategory } from '@loot/shared/types'
 import { useGeo } from '@/hooks/use-geo'
 import { useNearbyFeed } from '@/hooks/use-nearby-feed'
 import { FeedList } from '@/components/feed/FeedList'

@@ -1,6 +1,6 @@
 // Feed surfaces — Nearby, Following, Trending, Fresh.
 
-import { callFunction } from '@/lib/firebase/functions'
+import { callFunction } from '../client'
 import type {
   NearbyFeedRequest,
   FeedResponse,
@@ -8,7 +8,7 @@ import type {
   TrendingFeedRequest,
   FreshFeedRequest,
   CategoryFeedRequest,
-} from '@/types'
+} from '../types'
 
 // Nearby uses the PostGIS-backed Cloud Function. Returns LootFeedItem[].
 export function getNearbyFeed(req: NearbyFeedRequest) {

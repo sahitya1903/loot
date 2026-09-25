@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ChevronLeft, Loader2 } from 'lucide-react'
 import { useAuthStore } from '@/stores/auth'
-import { updateProfile, updateUsername } from '@/lib/api/profile'
+import { updateProfile, updateUsername } from '@loot/shared/api'
 
 export default function EditProfilePage() {
   const router = useRouter()

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { useAuthStore } from '@/stores/auth'
 import { subscribeToMyAlerts } from '@/lib/firebase/firestore'
 import { Bell } from 'lucide-react'
-import type { LootAlert } from '@/types'
+import type { LootAlert } from '@loot/shared/types'
 
 export default function NotificationsPage() {
   const profile = useAuthStore((s) => s.profile)

@@ -1,6 +1,6 @@
 // Loot — CRUD + interactions API client.
 
-import { callFunction } from '@/lib/firebase/functions'
+import { callFunction } from '../client'
 import type {
   CreateLootRequest, CreateLootResponse,
   UpdateLootRequest, UpdateLootResponse,
@@ -10,7 +10,7 @@ import type {
   GetLootMediaUrlsRequest, GetLootMediaUrlsResponse,
   TrackLootViewRequest,
   GenericResponse,
-} from '@/types'
+} from '../types'
 
 export function createLoot(req: CreateLootRequest) {
   return callFunction<CreateLootRequest, CreateLootResponse>('createLoot', req)

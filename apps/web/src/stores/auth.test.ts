@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { useAuthStore } from './auth'
 import type { User } from 'firebase/auth'
-import type { User as AppUser } from '@/types'
+import type { User as AppUser } from '@loot/shared/types'
 
 const mockUser = { uid: 'user-1', displayName: 'Test User', email: 'test@example.com' } as User
 const mockProfile = { userId: 'user-1', name: 'Test User', username: 'testuser' } as AppUser

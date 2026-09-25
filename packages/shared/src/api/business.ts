@@ -1,6 +1,6 @@
 // Business — onboarding, profile, branches, follow.
 
-import { callFunction } from '@/lib/firebase/functions'
+import { callFunction } from '../client'
 import type {
   ChooseAccountTypeRequest, ChooseAccountTypeResponse,
   OnboardBusinessRequest, OnboardBusinessResponse,
@@ -12,7 +12,7 @@ import type {
   GetBusinessRequest, GetBusinessResponse,
   GetBusinessLootRequest, GetBusinessLootResponse,
   GenericResponse,
-} from '@/types'
+} from '../types'
 
 export function chooseAccountType(req: ChooseAccountTypeRequest) {
   return callFunction<ChooseAccountTypeRequest, ChooseAccountTypeResponse>('chooseAccountType', req)

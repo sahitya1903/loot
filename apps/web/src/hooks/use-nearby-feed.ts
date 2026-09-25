@@ -1,9 +1,9 @@
 'use client'
 
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { getNearbyFeed } from '@/lib/api/feed'
-import { queryKeys } from '@/lib/api/keys'
-import type { LootCategory, FeedResponse, NearbyFeedRequest } from '@/types'
+import { getNearbyFeed } from '@loot/shared/api'
+import { queryKeys } from '@loot/shared/api'
+import type { LootCategory, FeedResponse, NearbyFeedRequest } from '@loot/shared/types'
 
 interface Args {
   coords: { lat: number; lng: number } | null

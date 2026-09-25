@@ -9,8 +9,8 @@ import { LootActions } from './LootActions'
 import { useLootMedia, useTrackLootView } from '@/hooks/use-loot'
 import clsx from 'clsx'
 import { Flame, MapPin } from 'lucide-react'
-import { formatDistance } from '@/lib/geo/format'
-import type { LootFeedItem, FeedSource } from '@/types'
+import { formatDistance } from '@loot/shared/geo'
+import type { LootFeedItem, FeedSource } from '@loot/shared/types'
 
 interface Props {
   item: LootFeedItem

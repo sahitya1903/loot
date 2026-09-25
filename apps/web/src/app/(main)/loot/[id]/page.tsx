@@ -6,7 +6,7 @@ import { useLoot, useLootMedia } from '@/hooks/use-loot'
 import { LootCountdown } from '@/components/loot/LootCountdown'
 import { LootMedia } from '@/components/loot/LootMedia'
 import { LootActions } from '@/components/loot/LootActions'
-import { formatDistance } from '@/lib/geo/format'
+import { formatDistance } from '@loot/shared/geo'
 import { BadgeCheck, MapPin } from 'lucide-react'
 
 export default function LootDetailPage() {

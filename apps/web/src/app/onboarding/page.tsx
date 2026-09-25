@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Compass, Building2, ChevronRight, Loader2 } from 'lucide-react'
 import { useAuth } from '@/hooks'
 import { useAuthStore } from '@/stores/auth'
-import { chooseAccountType } from '@/lib/api/business'
+import { chooseAccountType } from '@loot/shared/api'
 
 function OnboardingContent() {
   const router = useRouter()

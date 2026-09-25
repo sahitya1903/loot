@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
-import { getMyClaimedLoot } from '@/lib/api/claim'
-import { queryKeys } from '@/lib/api/keys'
+import { getMyClaimedLoot } from '@loot/shared/api'
+import { queryKeys } from '@loot/shared/api'
 import { useAuthStore } from '@/stores/auth'
 import { LootCountdown } from '@/components/loot/LootCountdown'
 import { Ticket } from 'lucide-react'

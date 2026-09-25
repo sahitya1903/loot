@@ -16,7 +16,7 @@ import {
   type Unsubscribe,
 } from 'firebase/firestore'
 import { getFirebaseDb } from './config'
-import type { AppUser, Business, Loot, LootAlert } from '@/types'
+import type { AppUser, Business, Loot, LootAlert } from '@loot/shared/types'
 
 function tsToWire(timestamp: Timestamp | null | undefined): { _seconds: number; _nanoseconds: number } {
   if (!timestamp) return { _seconds: 0, _nanoseconds: 0 }

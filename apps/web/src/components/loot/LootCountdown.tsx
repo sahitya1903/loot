@@ -1,7 +1,7 @@
 'use client'
 
 import { useCountdown } from '@/hooks/use-countdown'
-import type { FirebaseTimestamp } from '@/types'
+import type { FirebaseTimestamp } from '@loot/shared/types'
 import clsx from 'clsx'
 
 interface Props {

@@ -1,10 +1,10 @@
 'use client'
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getLoot, getLootMediaUrls, trackLootView } from '@/lib/api/loot'
-import { claimLoot, saveLoot, unsaveLoot, shareLoot, getRedemptionByLoot } from '@/lib/api/claim'
-import { queryKeys } from '@/lib/api/keys'
-import type { FeedSource } from '@/types'
+import { getLoot, getLootMediaUrls, trackLootView } from '@loot/shared/api'
+import { claimLoot, saveLoot, unsaveLoot, shareLoot, getRedemptionByLoot } from '@loot/shared/api'
+import { queryKeys } from '@loot/shared/api'
+import type { FeedSource } from '@loot/shared/types'
 
 export function useLoot(lootId: string | null) {
   return useQuery({

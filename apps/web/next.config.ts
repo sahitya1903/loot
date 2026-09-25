@@ -1,8 +1,8 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  // Enable standalone output for Docker deployment
-  output: 'standalone',
+  // @loot/shared ships TypeScript source — let Next compile it.
+  transpilePackages: ['@loot/shared'],
   allowedDevOrigins: [
     // allow all origins during development for testing purposes
     '10.145.2.167',

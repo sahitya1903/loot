@@ -5,6 +5,7 @@ import { initializeApp, getApps, FirebaseApp } from 'firebase/app'
 import { getAuth, Auth } from 'firebase/auth'
 import { getFirestore, Firestore } from 'firebase/firestore'
 import { getFunctions, Functions, connectFunctionsEmulator } from 'firebase/functions'
+import { configureLootClient } from '@loot/shared'
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -84,6 +85,14 @@ export function getFirebaseStorage(): FirebaseStorage {
   }
   return storage
 }
+
+// Hand the lazy getters to @loot/shared so its API client uses this app's
+// Firebase instances. Nothing is initialized until the first API call.
+configureLootClient({
+  getFunctions: getFirebaseFunctions,
+  getDb: getFirebaseDb,
+  getCurrentUserId: () => getFirebaseAuth().currentUser?.uid ?? null,
+})
 
 // Legacy exports for backwards compatibility (will throw on server)
 export const firebaseApp =
