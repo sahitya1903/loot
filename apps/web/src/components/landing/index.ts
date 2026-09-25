@@ -12,13 +12,3 @@ export { LandingFooterNew } from './LandingFooterNew'
 
 // Navigation (unchanged)
 export { LandingNav } from './LandingNav'
-
-// Legacy exports (kept for backwards compat with other routes if any)
-export { HeroSection } from './HeroSection'
-export { FeatureSection } from './FeatureSection'
-export { ConnectedSection } from './ConnectedSection'
-export { TrustBanner } from './TrustBanner'
-export { LandingFooter } from './LandingFooter'
-export { ParallaxSection, ParallaxElement } from './ParallaxSection'
-export { HowItWorks } from './HowItWorks'
-export { TestimonialCarousel } from './TestimonialCarousel'
