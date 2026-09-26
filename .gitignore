@@ -1,0 +1,6 @@
+# Root of the Loot monorepo. App-specific ignores live in each workspace.
+node_modules/
+.DS_Store
+Thumbs.db
+*.swp
+*.log
