@@ -3,8 +3,9 @@
 ## Setup
 
 ```bash
-# 1. Clone and install frontend
-cd Frontend && npm install
+# 1. Clone and install (from the repo root — npm workspaces)
+npm install
+cd apps/web
 
 # 2. Copy env template
 cp .env.example .env.local

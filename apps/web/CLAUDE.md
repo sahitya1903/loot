@@ -1,10 +1,10 @@
-# Loot — Frontend (Next.js)
+# Loot — Web App (Next.js)
 
 Guidance for Claude Code when working in this subfolder.
 
 ## Product
 
-This is the Frontend for **Loot**, a hyperlocal real-time discovery platform. Read the root `../CLAUDE.md` first for product positioning, forbidden vocabulary, and architectural pillars. Everything below assumes that context.
+This is the web app (`apps/web`) for **Loot**, a hyperlocal real-time discovery platform. Read the root `../../CLAUDE.md` first for product positioning, forbidden vocabulary, and architectural pillars. Everything below assumes that context.
 
 The web app is **mobile-first**. Every layout is designed for vertical phone viewports first; desktop is a graceful upscale, not the primary surface.
 
@@ -66,7 +66,7 @@ src/app/
 │   │   ├── branches/            # Branch/outlet management
 │   │   └── analytics/
 │   └── settings/
-└── api/                         # Next.js API routes (heic-convert, download, health)
+└── api/                         # Next.js API routes (health)
 ```
 
 ## Data flow
@@ -74,8 +74,8 @@ src/app/
 ```
 Component
   → useQuery / useMutation (TanStack Query)
-    → API client function (src/lib/api/*.ts)
-      → callFunction() wrapper (src/lib/firebase/functions.ts)
+    → API client function (packages/shared/src/api/*.ts)
+      → callFunction() (packages/shared/src/client.ts — Firebase injected by src/lib/firebase/config.ts)
         → Cloud Function (asia-south1)
 ```
 
@@ -116,7 +116,7 @@ interface AuthState {
 }
 ```
 
-**TanStack Query** (server): query keys live in `src/lib/api/keys.ts`.
+**TanStack Query** (server): query keys live in `packages/shared/src/api/keys.ts`.
 
 ## Path aliases
 
@@ -124,7 +124,7 @@ interface AuthState {
 ```ts
 import { LootCard } from '@/components/loot/LootCard'
 import { useNearbyFeed } from '@/hooks/use-nearby-feed'
-import { claimLoot } from '@/lib/api/loot'
+import { claimLoot } from '@loot/shared/api'
 ```
 
 ## Design language
@@ -139,7 +139,7 @@ Tokens live in `tailwind.config` + `src/app/globals.css`. See `ARCHITECTURE.md` 
 
 ## Env
 
-Zod-validated in `src/lib/env.ts`. Files: `.env.dev`, `.env.staging`, `.env.prod` (auto-copied to `.env.local` by `npm run dev*`).
+Listed in `.env.example`. Files: `.env.dev`, `.env.staging`, `.env.prod` (auto-copied to `.env.local` by `npm run dev*`).
 
 ## Task continuity
 

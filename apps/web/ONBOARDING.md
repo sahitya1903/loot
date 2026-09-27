@@ -1,4 +1,4 @@
-# Loot — Frontend Onboarding
+# Loot — Web App Onboarding
 
 Welcome to Loot's web frontend. The product is a **hyperlocal real-time discovery platform**: businesses post loot (offers / drops / opportunities) and nearby users discover them in a feed-first, urgency-driven UX.
 
@@ -13,8 +13,8 @@ Welcome to Loot's web frontend. The product is a **hyperlocal real-time discover
 ## Setup
 
 ```bash
-cd Frontend
-npm install
+npm install          # from the repo root — installs every workspace
+cd apps/web
 cp .env.dev .env.local
 npm run dev
 ```
@@ -24,11 +24,11 @@ App boots at http://localhost:3000.
 ## Where to start reading
 
 1. [`ARCHITECTURE.md`](./ARCHITECTURE.md) — directory map, data flow, design system
-2. [`src/types/models.ts`](./src/types/models.ts) — `Loot`, `Business`, `User`, etc.
+2. [`packages/shared/src/types/models.ts`](../../packages/shared/src/types/models.ts) — `Loot`, `Business`, `User`, etc.
 3. [`src/app/(main)/feed/page.tsx`](./src/app/(main)/feed/page.tsx) — primary surface
 4. [`src/components/loot/LootCard.tsx`](./src/components/loot/LootCard.tsx) — feed card
 5. [`src/hooks/use-nearby-feed.ts`](./src/hooks/use-nearby-feed.ts) — feed fetch + infinite scroll
-6. [`src/lib/api/loot.ts`](./src/lib/api/loot.ts) — API client surface
+6. [`packages/shared/src/api/loot.ts`](../../packages/shared/src/api/loot.ts) — API client surface
 
 ## Mental model
 
@@ -58,21 +58,21 @@ Components in `src/components/pro/` are pro-only — they crash if rendered for 
 
 ### Add a new feed query
 
-1. Add the API function in `src/lib/api/feed.ts`
-2. Add the query key in `src/lib/api/keys.ts`
+1. Add the API function in `packages/shared/src/api/feed.ts`
+2. Add the query key in `packages/shared/src/api/keys.ts`
 3. Add a hook in `src/hooks/use-<name>-feed.ts` that uses `useInfiniteQuery`
 4. Wire it into `src/app/(main)/feed/page.tsx`
 
 ### Add a new loot card field
 
-1. Update `Loot` in `src/types/models.ts`
+1. Update `Loot` in `packages/shared/src/types/models.ts`
 2. Update the Cloud Function payload (Backend `loot.js`)
 3. Update `LootCard` / `LootDetailHero` to render
 4. Add a Vitest test if the field affects layout/logic
 
 ### Change urgency thresholds
 
-Edit `src/lib/ranking/format.ts`. Add a Vitest test asserting the new tier boundaries.
+Edit `packages/shared/src/ranking/format.ts`. Add a Vitest test asserting the new tier boundaries.
 
 ### Add a pro-only screen
 

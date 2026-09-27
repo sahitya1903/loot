@@ -76,19 +76,6 @@ Environment validation is powered by Zod — missing variables will throw descri
 | Staging       | Push to develop | Test, deploy to Vercel preview         |
 | Production    | Push to main    | Full test, deploy, verify, tag release |
 
-### Docker
-
-```bash
-# Build production image
-docker build -t loot-web .
-
-# Run container
-docker run -p 3000:3000 loot-web
-
-# Or use docker-compose
-docker compose up
-```
-
 ## Testing
 
 ### Unit Tests (Vitest)
@@ -119,12 +106,15 @@ src/
 ├── components/          # React components
 ├── hooks/              # Custom hooks
 ├── lib/                # Utilities
-│   ├── firebase/       # Firebase clients
-│   ├── env.ts         # Environment validation
+│   ├── firebase/       # Firebase clients (wires @loot/shared in config.ts)
 │   └── logger.ts      # Structured logging
 ├── stores/             # Zustand stores
-└── types/              # TypeScript types
+└── types/              # Web-only ambient types (Google Maps)
 ```
+
+Loot domain code — model types, the Cloud Function API client, query keys, geo and
+ranking helpers — lives in [`@loot/shared`](../../packages/shared) and is shared with
+the mobile app.
 
 ## Documentation
 

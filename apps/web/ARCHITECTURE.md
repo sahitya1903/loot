@@ -1,6 +1,6 @@
-# Loot — Frontend Architecture
+# Loot — Web App Architecture
 
-Web frontend for **Loot**, a hyperlocal real-time discovery platform. Read `../CLAUDE.md` for product positioning before working here.
+Web frontend for **Loot**, a hyperlocal real-time discovery platform. Read `../../CLAUDE.md` for product positioning before working here.
 
 ## Stack
 
@@ -47,7 +47,7 @@ src/
 │   │   │   ├── branches/
 │   │   │   └── analytics/
 │   │   └── settings/
-│   └── api/                           # heic-convert, download, health
+│   └── api/                           # health
 │
 ├── components/
 │   ├── ui/                            # design-system primitives (button, sheet, chip, …)
@@ -92,28 +92,10 @@ src/
 │   └── use-toast.ts
 │
 ├── lib/
-│   ├── env.ts                         # Zod-validated env
 │   ├── firebase/
-│   │   ├── config.ts
+│   │   ├── config.ts                  # web Firebase init + configureLootClient()
 │   │   ├── auth.ts                    # OTP + Google + Apple
-│   │   ├── firestore.ts
-│   │   └── functions.ts               # callFunction() wrapper
-│   ├── api/
-│   │   ├── keys.ts                    # query-key factory
-│   │   ├── loot.ts                    # createLoot, getLoot, claimLoot, saveLoot, …
-│   │   ├── feed.ts                    # nearby/following/trending/fresh fetchers
-│   │   ├── business.ts
-│   │   ├── claim.ts
-│   │   ├── profile.ts
-│   │   ├── boost.ts                   # pro-only
-│   │   ├── analytics.ts               # pro-only
-│   │   └── notifications.ts
-│   ├── geo/
-│   │   ├── geohash.ts
-│   │   ├── distance.ts                # haversine
-│   │   └── format.ts                  # "2.3 km away"
-│   ├── ranking/
-│   │   └── format.ts                  # urgency tier classification for UI
+│   │   └── firestore.ts
 │   ├── razorpay.ts                    # boost checkout
 │   ├── motion.ts                      # animation presets (urgency pulse, tap feedback)
 │   ├── utils.ts
@@ -124,18 +106,31 @@ src/
 │   └── geo.ts                         # current location, denied/granted state
 │
 └── types/
-    ├── models.ts                      # Loot, Business, User, Claim, Redemption, …
-    ├── api.ts                         # request/response shapes
-    └── index.ts
+    └── google-maps.d.ts               # web-only ambient types
 ```
+
+### Shared with mobile — `@loot/shared` (`packages/shared/src/`)
+
+Framework-free domain code used by both `apps/web` and `apps/mobile`. Import it; don't copy it.
+
+```
+packages/shared/src/
+├── client.ts        # configureLootClient() + callFunction() — each app injects its Firebase
+├── types/           # models.ts (Loot, Business, User, …), api.ts (request/response shapes)
+├── api/             # keys (query-key factory), loot, feed, claim, business, profile, follow, subscription
+├── geo/             # geohash, distance (haversine), format ("2.3 km away")
+└── ranking/         # format — urgency tier classification for UI
+```
+
+Subpath imports: `@loot/shared/types`, `@loot/shared/api`, `@loot/shared/geo`, `@loot/shared/ranking`.
 
 ## Data flow
 
 ```
 Component
   → useQuery / useMutation
-    → src/lib/api/*  (typed wrappers)
-      → callFunction()  (src/lib/firebase/functions.ts)
+    → packages/shared/src/api/*  (typed wrappers)
+      → callFunction()  (packages/shared/src/client.ts)
         → Cloud Function (asia-south1)
           → Firestore / Postgres / S3
 ```
@@ -167,7 +162,7 @@ interface GeoState {
 }
 ```
 
-### TanStack Query keys — `src/lib/api/keys.ts`
+### TanStack Query keys — `packages/shared/src/api/keys.ts`
 
 ```ts
 export const queryKeys = {
@@ -250,11 +245,11 @@ After auth, onboarding asks "Personal or Professional?" — pro path collects ca
 
 `GeoProvider` wraps the auth-guarded layout. On mount it requests permission, sets `geoStore.coords`, and re-fetches when stale (>5 min). Feed queries depend on `coords` — they don't fire until coords are available (with a fallback "Set your city" CTA if denied).
 
-`src/lib/geo/distance.ts` computes haversine distance for client-side display ("2.3 km away"). `src/lib/geo/geohash.ts` derives a geoHash-5 cell for trending lookups.
+`packages/shared/src/geo/distance.ts` computes haversine distance for client-side display ("2.3 km away"). `packages/shared/src/geo/geohash.ts` derives a geoHash-5 cell for trending lookups.
 
 ## Urgency surfaces
 
-Every loot has `expiryAt`. Display tiers (`src/lib/ranking/format.ts`):
+Every loot has `expiryAt`. Display tiers (`packages/shared/src/ranking/format.ts`):
 
 | Time left | Treatment |
 |---|---|
@@ -311,22 +306,8 @@ Typographic scale: a tight sans-serif (Inter or similar) with display weight on 
 
 ## Environment
 
-`src/lib/env.ts` (Zod):
-
-```ts
-const envSchema = z.object({
-  NEXT_PUBLIC_FIREBASE_API_KEY: z.string(),
-  NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: z.string(),
-  NEXT_PUBLIC_FIREBASE_PROJECT_ID: z.string(),
-  NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: z.string(),
-  NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: z.string(),
-  NEXT_PUBLIC_FIREBASE_APP_ID: z.string(),
-  NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: z.string(),
-  NEXT_PUBLIC_USE_EMULATORS: z.string().transform(v => v === 'true'),
-  NEXT_PUBLIC_APP_URL: z.string().url(),
-  NODE_ENV: z.enum(['development', 'test', 'production']),
-})
-```
+All variables are listed in `.env.example`. Firebase vars are read in
+`src/lib/firebase/config.ts`.
 
 Env files: `.env.dev`, `.env.staging`, `.env.prod` → auto-copied to `.env.local`.
 
@@ -339,10 +320,10 @@ npm run test:e2e
 ```
 
 Priority surfaces:
-- `src/lib/geo/distance.test.ts` — haversine correctness
-- `src/lib/ranking/format.test.ts` — urgency tier boundaries
+- `packages/shared/src/geo/distance.test.ts` — haversine correctness
+- `packages/shared/src/ranking/format.test.ts` — urgency tier boundaries
 - `hooks/use-countdown.test.ts` — second-precision tick + expiry crossover
-- `lib/api/loot.test.ts` — claim idempotency
+- `packages/shared/src/api/loot.test.ts` — claim idempotency
 - E2E: feed → loot detail → claim → redemption sheet
 
 ## CI/CD
