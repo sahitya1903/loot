@@ -63,11 +63,21 @@ Urgency is a first-class concern: feed ranking, notifications, UI badges, and re
 ## Repo structure
 
 ```
-/Backend     Firebase project — functions/ (Node 22 ESM), firestore.rules, firestore.indexes.json
-/Frontend    Next.js 16 App Router (TS, Tailwind 4, Radix, TanStack Query, Zustand, Firebase web SDK)
+/Backend           Firebase project — functions/ (Node 22 ESM), firestore.rules, firestore.indexes.json
+/apps/web          Next.js 16 App Router — landing, share-link pages, business dashboard
+                   (TS, Tailwind 4, Radix, TanStack Query, Zustand, Firebase web SDK)
+/apps/mobile       Expo (React Native) — the consumer feed app
+/packages/shared   @loot/shared — framework-free types, Cloud Function API client, geo + ranking helpers
 ```
 
-Each subfolder has its own `CLAUDE.md`, `ARCHITECTURE.md`, and `ONBOARDING.md` with stack-specific guidance.
+npm workspaces: run `npm install` once at the repo root (covers `apps/*` and `packages/*`).
+`Backend/functions` is **not** a workspace — it keeps its own `package.json`/lockfile for Firebase deploys.
+
+Domain code both apps need (model types, API calls, query keys, geo/ranking helpers) goes in
+`packages/shared`, never duplicated into an app. It must stay React- and DOM-free; each app injects
+its Firebase instances via `configureLootClient()`.
+
+`Backend/` and `apps/web/` have their own `CLAUDE.md`, `ARCHITECTURE.md`, and `ONBOARDING.md`; `apps/mobile/` has `CLAUDE.md` + `AGENTS.md`.
 
 ## Shared infrastructure (carried over, still useful)
 
@@ -85,4 +95,4 @@ For any multi-step task, write a plan + checklist in `.claude/tasks/<task-slug>/
 
 ## graphify
 
-Knowledge graphs at `Backend/graphify-out/` and `Frontend/graphify-out/` may be stale (built against the pre-Loot codebase). Trust the current source files over the graph. After substantive changes, run `graphify update .` from the modified subfolder.
+Knowledge graphs at `Backend/graphify-out/` and `apps/web/graphify-out/` may be stale (built against the pre-Loot codebase). Trust the current source files over the graph. After substantive changes, run `graphify update .` from the modified subfolder.
