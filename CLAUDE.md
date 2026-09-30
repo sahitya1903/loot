@@ -64,6 +64,9 @@ Urgency is a first-class concern: feed ranking, notifications, UI badges, and re
 
 ```
 /Backend           Firebase project — functions/ (Node 22 ESM), firestore.rules, firestore.indexes.json
+                   (legacy: being replaced by apps/api, see .claude/tasks/backend-rewrite/)
+/apps/api          Self-written backend — Express 5 + TypeScript (NodeNext ESM), MongoDB (Mongoose),
+                   Redis, zod, jose JWT auth. Tests: Vitest + Supertest + mongodb-memory-server
 /apps/web          Next.js 16 App Router — landing, share-link pages, business dashboard
                    (TS, Tailwind 4, Radix, TanStack Query, Zustand, Firebase web SDK)
 /apps/mobile       Expo (React Native) — the consumer feed app
@@ -72,6 +75,7 @@ Urgency is a first-class concern: feed ranking, notifications, UI badges, and re
 
 npm workspaces: run `npm install` once at the repo root (covers `apps/*` and `packages/*`).
 `Backend/functions` is **not** a workspace — it keeps its own `package.json`/lockfile for Firebase deploys.
+Run the API with `npm run api` after copying `apps/api/.env.example` to `apps/api/.env` (needs MongoDB + Redis).
 
 Domain code both apps need (model types, API calls, query keys, geo/ranking helpers) goes in
 `packages/shared`, never duplicated into an app. It must stay React- and DOM-free; each app injects
