@@ -1,0 +1,35 @@
+// Feed surfaces — Nearby, Following, Trending, Fresh.
+
+import { callFunction } from '../client.js'
+
+// Nearby uses the PostGIS-backed Cloud Function. Returns LootFeedItem[].
+export function getNearbyFeed(req) {
+  return callFunction('getNearbyLoot', req).then(hydrateFeedShape)
+}
+
+export function getFollowingFeed(req = {}) {
+  return callFunction('getFollowingFeed', req).then(hydrateFeedShape)
+}
+
+export function getTrendingFeed(req = {}) {
+  return callFunction('getTrendingFeed', req).then(hydrateFeedShape)
+}
+
+export function getFreshFeed(req) {
+  return callFunction('getFreshFeed', req).then(hydrateFeedShape)
+}
+
+export function getCategoryFeed(req) {
+  // Category-scoped queries use the trending feed with a category filter;
+  // alias here so callers don't have to know the routing detail.
+  return callFunction('getTrendingFeed', req).then(hydrateFeedShape)
+}
+
+// `getNearbyLoot` returns `{ items: [{ lootId, distanceKm, score }] }` —
+// a thin reference list. The feed UI expects fully-hydrated `LootFeedItem`s,
+// so this normalizer pads the shape; downstream code can fetch full details
+// via `getLoot`/`getLootMediaUrls` on viewport entry.
+function hydrateFeedShape(resp) {
+  if (!resp.items) return { ...resp, items: [], hasMore: !!resp.cursor }
+  return resp
+}

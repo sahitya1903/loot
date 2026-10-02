@@ -10,7 +10,6 @@
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "type-check": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -19,6 +18,7 @@
     "test:e2e:headed": "playwright test --headed"
   },
   "dependencies": {
+    "@loot/shared": "*",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-label": "^2.1.8",
@@ -39,12 +39,11 @@
     "react-hook-form": "^7.68.0",
     "tailwind-merge": "^3.4.0",
     "zod": "^4.1.13",
-    "zustand": "^5.0.9",
-    "@loot/shared": "*"
+    "zustand": "^5.0.9"
   },
   "lint-staged": {
-    "*.{ts,tsx}": [
-      "eslint --fix",
+    "*.{js,jsx,mjs}": [
+      "eslint --fix --flag v10_config_lookup_from_file",
       "prettier --write"
     ],
     "*.{json,md,yaml,yml}": [
@@ -58,10 +57,6 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
-    "@types/google.maps": "^3.58.1",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^5.1.2",
     "@vitest/coverage-v8": "^4.0.18",
     "eslint": "^9",
@@ -70,7 +65,8 @@
     "prettier": "^3.7.4",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4",
-    "typescript": "^5",
+    "typescript": "^5.9.3",
     "vitest": "^4.0.15"
-  }
+  },
+  "type": "module"
 }
