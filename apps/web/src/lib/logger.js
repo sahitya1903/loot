@@ -1,3 +1,11 @@
+/**
+ * Structured Logger Utility
+ *
+ * Provides consistent, structured logging across the application.
+ * In production, outputs JSON for easy parsing by log aggregators.
+ * In development, outputs human-readable format.
+ */
+
 // Determine if we're in production
 const isProduction = process.env.NODE_ENV === 'production'
 

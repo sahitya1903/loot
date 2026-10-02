@@ -10,6 +10,14 @@ import { cn } from '@/lib/utils'
  * The wrapper carries the `.sr.sr-up` scroll-reveal classes so it
  * animates in automatically when `useScrollReveal` is active on the
  * layout.
+ *
+ * @param {object} props
+ * @param {React.ReactNode} props.title Primary heading — rendered in Playfair Display
+ * @param {React.ReactNode} [props.subtitle] Optional subtitle — rendered in Instrument Sans, muted
+ * @param {React.ReactNode} [props.actions] Optional slot for action buttons / controls on the right
+ * @param {string} [props.className] Additional className on the wrapper
+ * @param {'lg' | 'md'} [props.size] `lg` (default) — large hero-style heading (h1), used for
+ *   top-level pages; `md` — medium section heading (h2), used inside nested views
  */
 export function PageHeader({ title, subtitle, actions, className, size = 'lg' }) {
   const isLg = size === 'lg'

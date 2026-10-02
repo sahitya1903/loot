@@ -1,3 +1,15 @@
+/**
+ * Loot Premium Motion System
+ *
+ * Ultra-premium, invisible motion following Apple/Linear/WhatsApp-level polish.
+ * Motion should feel invisible, natural, and emotionally calm.
+ *
+ * Core Philosophy:
+ * - Motion is feedback, not decoration
+ * - Everything enters gently and exits instantly
+ * - If an animation does not improve clarity, remove it
+ */
+
 // ============================================
 // CORE EASING & TIMING
 // ============================================

@@ -1,6 +1,16 @@
 import { tooManyRequests } from '../lib/errors.js'
 
-/** Fixed-window rate limiter backed by Redis, so limits hold across API instances. */
+/**
+ * Fixed-window rate limiter backed by Redis, so limits hold across API instances.
+ *
+ * @param {import('ioredis').Redis} redis
+ * @param {object} options
+ * @param {string} options.name Namespaces the Redis key, e.g. `otp-send-phone`.
+ * @param {number} options.limit
+ * @param {number} options.windowSeconds
+ * @param {(req: import('express').Request) => string | undefined} options.key What to count against.
+ *   Returning undefined skips the limit for this request.
+ */
 export function rateLimit(redis, options) {
   return async (req, _res, next) => {
     const id = options.key(req)

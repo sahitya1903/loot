@@ -1,3 +1,6 @@
+// TanStack Query key factory.
+// Centralizing keys means cache invalidation stays in sync across the app.
+
 export const queryKeys = {
   feed: {
     nearby: (lat, lng, radius, category) => [
