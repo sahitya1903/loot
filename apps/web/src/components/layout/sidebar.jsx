@@ -19,9 +19,10 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks'
-import { signOut } from '@/lib/firebase/auth'
+import { signOut } from '@/lib/auth'
 import { Avatar, ThemeToggle, WashiTape } from '@/components/ui'
 
+// Sidebar context for collapse state
 const SidebarContext = createContext(undefined)
 
 export function useSidebar() {

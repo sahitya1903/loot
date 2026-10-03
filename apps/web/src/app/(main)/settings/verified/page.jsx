@@ -2,7 +2,7 @@
 
 // Verified badge — for Loot, verification is part of business onboarding,
 // not a paid badge purchase. TODO(loot): wire this to `submitVerification`
-// in `lib/api/business.ts` for pro accounts.
+// in `@loot/shared/api` (business.js) for pro accounts.
 
 import Link from 'next/link'
 import { ChevronLeft, BadgeCheck } from 'lucide-react'

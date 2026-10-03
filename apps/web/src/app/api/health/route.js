@@ -46,7 +46,7 @@ export async function GET() {
  * Check that essential environment variables are configured
  */
 function checkEnvironment() {
-  const requiredVars = ['NEXT_PUBLIC_FIREBASE_PROJECT_ID', 'NEXT_PUBLIC_APP_URL']
+  const requiredVars = ['NEXT_PUBLIC_API_URL', 'NEXT_PUBLIC_APP_URL']
 
   const missing = requiredVars.filter((varName) => !process.env[varName])
 

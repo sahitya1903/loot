@@ -1,13 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import {
-  cn,
-  formatDateTime,
-  formatRelativeTime,
-  formatChatTimestamp,
-  getInitials,
-  isValidPhoneNumber,
-  truncate,
-} from './utils'
+import { cn, getInitials, isValidPhoneNumber, truncate } from './utils'
 
 describe('cn (className merge)', () => {
   it('merges simple class names', () => {
@@ -24,90 +16,6 @@ describe('cn (className merge)', () => {
 
   it('handles arrays', () => {
     expect(cn(['foo', 'bar'], 'baz')).toBe('foo bar baz')
-  })
-})
-
-describe('formatDateTime', () => {
-  it('returns empty string for null', () => {
-    expect(formatDateTime(null)).toBe('')
-  })
-
-  it('returns empty string for undefined', () => {
-    expect(formatDateTime(undefined)).toBe('')
-  })
-
-  it('formats number timestamp correctly', () => {
-    const timestamp = new Date('2024-01-15T14:30:00').getTime()
-    const result = formatDateTime(timestamp)
-    expect(result).toContain('Jan')
-    expect(result).toContain('15')
-  })
-
-  it('formats Firebase timestamp object correctly', () => {
-    const timestamp = { _seconds: 1705326600, _nanoseconds: 0 } // Jan 15, 2024
-    const result = formatDateTime(timestamp)
-    expect(result).toContain('Jan')
-    expect(result).toContain('15')
-  })
-
-  it('returns empty string for invalid timestamp', () => {
-    expect(formatDateTime(NaN)).toBe('')
-  })
-})
-
-describe('formatRelativeTime', () => {
-  it('formats "Just now" for recent timestamps', () => {
-    const now = Math.floor(Date.now() / 1000)
-    expect(formatRelativeTime({ _seconds: now, _nanoseconds: 0 })).toBe('Just now')
-  })
-
-  it('formats minutes correctly', () => {
-    const fiveMinutesAgo = Math.floor(Date.now() / 1000) - 5 * 60
-    expect(formatRelativeTime({ _seconds: fiveMinutesAgo, _nanoseconds: 0 })).toBe('5m ago')
-  })
-
-  it('formats hours correctly', () => {
-    const twoHoursAgo = Math.floor(Date.now() / 1000) - 2 * 60 * 60
-    expect(formatRelativeTime({ _seconds: twoHoursAgo, _nanoseconds: 0 })).toBe('2h ago')
-  })
-
-  it('formats days correctly', () => {
-    const threeDaysAgo = Math.floor(Date.now() / 1000) - 3 * 24 * 60 * 60
-    expect(formatRelativeTime({ _seconds: threeDaysAgo, _nanoseconds: 0 })).toBe('3d ago')
-  })
-})
-
-describe('formatChatTimestamp', () => {
-  it('returns empty string for null', () => {
-    expect(formatChatTimestamp(null)).toBe('')
-  })
-
-  it('returns empty string for undefined', () => {
-    expect(formatChatTimestamp(undefined)).toBe('')
-  })
-
-  it('formats today as time', () => {
-    const now = Math.floor(Date.now() / 1000)
-    const result = formatChatTimestamp({ _seconds: now, _nanoseconds: 0 })
-    // Should be in HH:mm format
-    expect(result).toMatch(/^\d{2}:\d{2}$/)
-  })
-
-  it('formats yesterday as "Yesterday"', () => {
-    // Create a timestamp for yesterday at noon
-    const yesterdayDate = new Date()
-    yesterdayDate.setDate(yesterdayDate.getDate() - 1)
-    yesterdayDate.setHours(12, 0, 0, 0)
-    expect(
-      formatChatTimestamp({ _seconds: Math.floor(yesterdayDate.getTime() / 1000), _nanoseconds: 0 })
-    ).toBe('Yesterday')
-  })
-
-  it('handles both timestamp formats', () => {
-    const now = Math.floor(Date.now() / 1000)
-    const result1 = formatChatTimestamp({ _seconds: now, _nanoseconds: 0 })
-    const result2 = formatChatTimestamp({ seconds: now, nanoseconds: 0 })
-    expect(result1).toBe(result2)
   })
 })
 

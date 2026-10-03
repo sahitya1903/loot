@@ -1,14 +1,17 @@
 'use client'
 
+import '@/lib/api' // configures the @loot/shared API client before any request
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
-import { getFirebaseAuth } from '@/lib/firebase/config'
-import { useAuth, ThemeProvider } from '@/hooks'
+import { ThemeProvider } from '@/hooks'
+import { restoreSession } from '@/lib/auth'
 import { SmoothScrollProvider } from '@/components/providers/SmoothScrollProvider'
 
 export function Providers({ children }) {
-  // Initialize auth listener globally to persist across navigation
-  useAuth()
+  // Restore the signed-in user once; the auth store persists across navigation.
+  useEffect(() => {
+    restoreSession()
+  }, [])
 
   const [queryClient] = useState(
     () =>
@@ -21,36 +24,6 @@ export function Providers({ children }) {
         },
       })
   )
-
-  // Expose Firebase auth helpers to window for debugging
-  useEffect(() => {
-    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
-      window.getToken = async () => {
-        try {
-          const auth = getFirebaseAuth()
-          if (auth.currentUser) {
-            const token = await auth.currentUser.getIdToken()
-            console.log('Firebase ID Token:', token)
-            return token
-          } else {
-            console.log('No user signed in')
-            return null
-          }
-        } catch (err) {
-          console.error('Error getting token:', err)
-          return null
-        }
-      }
-
-      window.getUser = () => {
-        const auth = getFirebaseAuth()
-        console.log('Current user:', auth.currentUser)
-        return auth.currentUser
-      }
-
-      console.log('🔧 Debug helpers available: getToken(), getUser()')
-    }
-  }, [])
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -10,18 +10,9 @@ afterEach(() => {
 // Mock environment variables for testing
 beforeAll(() => {
   // Set test environment variables
-  process.env.NEXT_PUBLIC_FIREBASE_API_KEY = 'test-api-key'
-  process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN = 'test-project.firebaseapp.com'
-  process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID = 'test-project'
-  process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET = 'test-project.appspot.com'
-  process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID = '123456789'
-  process.env.NEXT_PUBLIC_FIREBASE_APP_ID = '1:123456789:web:abc123'
-  process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID = 'G-TESTID'
-  process.env.NEXT_PUBLIC_USE_EMULATORS = 'true'
+  process.env.NEXT_PUBLIC_API_URL = 'http://localhost:4000'
   process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:3000'
   process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY = 'test-google-api-key'
-  process.env.NEXT_PUBLIC_AWS_REGION = 'us-east-1'
-  process.env.NEXT_PUBLIC_AWS_COGNITO_IDENTITY_POOL_ID = 'us-east-1:test-pool-id'
   // NODE_ENV is set by vitest automatically
 })
 

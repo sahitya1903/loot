@@ -8,95 +8,55 @@ import { useIsMobile } from '@/hooks'
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
 
-export function SmartBanner({ eventId: propEventId, inviteKey: propInviteKey, redirectUrl }) {
+/**
+ * Mobile-only "Open in app" banner. Deep-links to the page the user was
+ * heading to (e.g. `/loot/abc123`), or to home.
+ *
+ * @param {object} props
+ * @param {string} [props.redirectUrl] path or same-origin URL to open in the app
+ */
+export function SmartBanner({ redirectUrl }) {
   const isMobile = useIsMobile()
   const [isVisible, setIsVisible] = useState(true)
   const [trackingLink, setTrackingLink] = useState(null)
 
-  // Parse eventId and inviteKey from redirectUrl if not provided directly
-  const { eventId, inviteKey } = useMemo(() => {
-    // If props are provided directly, use them
-    if (propEventId) {
-      return { eventId: propEventId, inviteKey: propInviteKey }
+  const deepLink = useMemo(() => {
+    try {
+      const url = new URL(redirectUrl || '/home', APP_URL)
+      // Only deep-link to our own pages.
+      if (url.origin !== new URL(APP_URL).origin) return `${APP_URL}/home`
+      return `${APP_URL}${url.pathname}${url.search}`
+    } catch {
+      return `${APP_URL}/home`
     }
-
-    // Try to parse from redirectUrl
-    if (redirectUrl) {
-      try {
-        // redirectUrl could be like "/events/abc123?inviteKey=xyz" or full URL
-        const url = redirectUrl.startsWith('http')
-          ? new URL(redirectUrl)
-          : new URL(redirectUrl, APP_URL)
-
-        const pathMatch = url.pathname.match(/\/events\/([^/?]+)/)
-        const parsedEventId = pathMatch ? pathMatch[1] : undefined
-        const parsedInviteKey = url.searchParams.get('inviteKey') || undefined
-
-        return { eventId: parsedEventId, inviteKey: parsedInviteKey }
-      } catch {
-        // If parsing fails, return undefined
-        return { eventId: undefined, inviteKey: undefined }
-      }
-    }
-
-    return { eventId: undefined, inviteKey: undefined }
-  }, [propEventId, propInviteKey, redirectUrl])
+  }, [redirectUrl])
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      import('airbridge-web-sdk-loader').then((module) => {
-        const airbridge = module.default
-        let deepLinkPath = ''
-        if (eventId) {
-          deepLinkPath += `events/${eventId}`
-          if (inviteKey) {
-            deepLinkPath += `?inviteKey=${inviteKey}`
-          }
+    import('airbridge-web-sdk-loader').then((module) => {
+      module.default.createTrackingLink(
+        'mobile_smart_banner',
+        {
+          campaign: 'web_to_app',
+          deeplink_url: deepLink,
+          fallback_android: 'store',
+          fallback_ios: 'store',
+          fallback_desktop: deepLink,
+        },
+        (link) => {
+          if (link?.shortURL) setTrackingLink(link.shortURL)
+        },
+        (error) => {
+          console.log('error', error)
         }
-
-        const deepLink = `${APP_URL}/${deepLinkPath}`
-        airbridge.createTrackingLink(
-          'mobile_smart_banner',
-          {
-            campaign: 'web_to_app',
-            deeplink_url: deepLink,
-            fallback_android: 'store',
-            fallback_ios: 'store',
-            fallback_desktop: deepLink,
-          },
-          (trackingLink) => {
-            if (trackingLink && trackingLink.shortURL) {
-              setTrackingLink(trackingLink.shortURL)
-            }
-          },
-          (error) => {
-            console.log('error', error)
-          }
-        )
-      })
-    }
-  }, [eventId, inviteKey])
+      )
+    })
+  }, [deepLink])
 
   if (!isMobile || !isVisible) return null
 
   const handleOpenApp = () => {
-    if (trackingLink) {
-      window.location.href = trackingLink
-      return
-    }
-
-    // Fallback to manual scheme attempt if link generation failed or incomplete
-    let deepLink = `${APP_URL}/`
-    if (eventId) {
-      deepLink += `events/${eventId}`
-      if (inviteKey) {
-        deepLink += `?inviteKey=${inviteKey}`
-      }
-    } else {
-      deepLink += 'home'
-    }
-
-    window.location.href = deepLink
+    // Fall back to the plain link if tracking-link generation failed.
+    window.location.href = trackingLink || deepLink
   }
 
   return (
@@ -109,7 +69,6 @@ export function SmartBanner({ eventId: propEventId, inviteKey: propInviteKey, re
           <X className="h-4 w-4" />
         </button>
         <div className="relative mr-3 h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg bg-[var(--ink)]">
-          {/* Placeholder for app icon */}
           <Image src="/images/logo.svg" alt="Loot" fill sizes="40px" className="object-cover" />
         </div>
         <div className="min-w-0 flex-1">

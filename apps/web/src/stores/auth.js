@@ -1,16 +1,16 @@
-// Auth store — Firebase user + Loot AppUser profile + (when pro) Business.
+// Auth store — the signed-in user's profile (from the API) + (when pro) Business.
 
 import { create } from 'zustand'
 
 export const useAuthStore = create((set) => ({
-  user: null,
+  /** @type {import('@loot/shared/models').AppUser | null} */
   profile: null,
+  /** @type {import('@loot/shared/models').Business | null} */
   business: null,
   isLoading: true,
   isInitialized: false,
   isNewUser: false,
 
-  setUser: (user) => set({ user }),
   setProfile: (profile) => set({ profile }),
   setBusiness: (business) => set({ business }),
   setIsLoading: (isLoading) => set({ isLoading }),
@@ -18,7 +18,6 @@ export const useAuthStore = create((set) => ({
   setIsNewUser: (isNewUser) => set({ isNewUser }),
   reset: () =>
     set({
-      user: null,
       profile: null,
       business: null,
       isLoading: false,

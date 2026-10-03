@@ -1,7 +1,7 @@
 'use client'
 
-// Pro subscription plans — TODO(loot): rebuild against the new pro
-// subscription Cloud Functions (`getProSubscriptionPlans`, `createProSubscription`,
+// Pro subscription plans — TODO(loot): rebuild against the pro subscription
+// endpoints in `@loot/shared/api` (`getProSubscriptionPlans`, `createProSubscription`,
 // `cancelProSubscription`, `getProSubscriptionStatus`).
 // Legacy storage-tier subscription has been removed.
 

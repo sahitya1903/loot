@@ -1,14 +1,14 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { useAuthStore } from './auth'
 
-const mockUser = { uid: 'user-1', displayName: 'Test User', email: 'test@example.com' }
 const mockProfile = { userId: 'user-1', name: 'Test User', username: 'testuser' }
+const mockBusiness = { businessId: 'biz-1', businessName: 'Test Cafe' }
 
 describe('useAuthStore', () => {
   beforeEach(() => {
     useAuthStore.setState({
-      user: null,
       profile: null,
+      business: null,
       isLoading: true,
       isInitialized: false,
       isNewUser: false,
@@ -17,22 +17,11 @@ describe('useAuthStore', () => {
 
   it('has correct initial state', () => {
     const state = useAuthStore.getState()
-    expect(state.user).toBeNull()
     expect(state.profile).toBeNull()
+    expect(state.business).toBeNull()
     expect(state.isLoading).toBe(true)
     expect(state.isInitialized).toBe(false)
     expect(state.isNewUser).toBe(false)
-  })
-
-  it('setUser stores the user', () => {
-    useAuthStore.getState().setUser(mockUser)
-    expect(useAuthStore.getState().user).toBe(mockUser)
-  })
-
-  it('setUser accepts null to clear user', () => {
-    useAuthStore.getState().setUser(mockUser)
-    useAuthStore.getState().setUser(null)
-    expect(useAuthStore.getState().user).toBeNull()
   })
 
   it('setProfile stores the profile', () => {
@@ -44,6 +33,11 @@ describe('useAuthStore', () => {
     useAuthStore.getState().setProfile(mockProfile)
     useAuthStore.getState().setProfile(null)
     expect(useAuthStore.getState().profile).toBeNull()
+  })
+
+  it('setBusiness stores the business', () => {
+    useAuthStore.getState().setBusiness(mockBusiness)
+    expect(useAuthStore.getState().business).toBe(mockBusiness)
   })
 
   it('setIsLoading updates loading state', () => {
@@ -68,13 +62,13 @@ describe('useAuthStore', () => {
     expect(useAuthStore.getState().isNewUser).toBe(true)
   })
 
-  it('reset clears user and profile', () => {
-    useAuthStore.getState().setUser(mockUser)
+  it('reset clears profile and business', () => {
     useAuthStore.getState().setProfile(mockProfile)
+    useAuthStore.getState().setBusiness(mockBusiness)
     useAuthStore.getState().reset()
     const state = useAuthStore.getState()
-    expect(state.user).toBeNull()
     expect(state.profile).toBeNull()
+    expect(state.business).toBeNull()
   })
 
   it('reset clears isNewUser', () => {
@@ -83,17 +77,20 @@ describe('useAuthStore', () => {
     expect(useAuthStore.getState().isNewUser).toBe(false)
   })
 
-  it('reset sets isLoading to false', () => {
+  it('reset keeps the store initialized and not loading', () => {
+    useAuthStore.getState().setIsInitialized(true)
     useAuthStore.getState().reset()
-    expect(useAuthStore.getState().isLoading).toBe(false)
+    const state = useAuthStore.getState()
+    expect(state.isLoading).toBe(false)
+    expect(state.isInitialized).toBe(true)
   })
 
   it('multiple setters compose independently', () => {
-    useAuthStore.getState().setUser(mockUser)
+    useAuthStore.getState().setProfile(mockProfile)
     useAuthStore.getState().setIsNewUser(true)
     useAuthStore.getState().setIsInitialized(true)
     const state = useAuthStore.getState()
-    expect(state.user).toBe(mockUser)
+    expect(state.profile).toBe(mockProfile)
     expect(state.isNewUser).toBe(true)
     expect(state.isInitialized).toBe(true)
     expect(state.isLoading).toBe(false)

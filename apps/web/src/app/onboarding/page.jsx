@@ -11,7 +11,7 @@ function OnboardingContent() {
   const router = useRouter()
   const params = useSearchParams()
   const redirect = params.get('redirect')
-  const { profile, refreshProfile, clearNewUserFlag } = useAuth()
+  const { clearNewUserFlag } = useAuth()
   const setProfile = useAuthStore((s) => s.setProfile)
   const [busy, setBusy] = useState(null)
   const [error, setError] = useState(null)
@@ -20,16 +20,8 @@ function OnboardingContent() {
     setError(null)
     setBusy(accountType)
     try {
-      const result = await chooseAccountType({ accountType })
-      if (!result.success) throw new Error(result.errorMessage || 'Failed')
-      if (profile) {
-        setProfile({
-          ...profile,
-          accountType,
-          businessId: result.businessId ?? profile.businessId,
-        })
-      }
-      await refreshProfile()
+      const { user } = await chooseAccountType({ accountType })
+      setProfile(user)
       clearNewUserFlag()
       if (accountType === 'professional') {
         router.push('/pro/dashboard')

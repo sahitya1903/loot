@@ -21,12 +21,11 @@ import {
   Ban,
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/auth'
-import { signOut } from '@/lib/firebase/auth'
+import { signOut } from '@/lib/auth'
 
 export default function SettingsPage() {
   const router = useRouter()
   const profile = useAuthStore((s) => s.profile)
-  const reset = useAuthStore((s) => s.reset)
   const [isSigningOut, setIsSigningOut] = useState(false)
 
   const isPro = profile?.accountType === 'professional'
@@ -35,7 +34,6 @@ export default function SettingsPage() {
     setIsSigningOut(true)
     try {
       await signOut()
-      reset()
       router.push('/login')
     } finally {
       setIsSigningOut(false)

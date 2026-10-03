@@ -1,20 +1,21 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { listLootAlerts, queryKeys } from '@loot/shared/api'
 import { useAuthStore } from '@/stores/auth'
-import { subscribeToMyAlerts } from '@/lib/firebase/firestore'
 import { Bell } from 'lucide-react'
 
 export default function NotificationsPage() {
   const profile = useAuthStore((s) => s.profile)
-  const [alerts, setAlerts] = useState(null)
-
-  useEffect(() => {
-    if (!profile?.userId) return
-    const unsub = subscribeToMyAlerts(profile.userId, 50, setAlerts)
-    return () => unsub()
-  }, [profile?.userId])
+  const { data } = useQuery({
+    queryKey: queryKeys.alerts(),
+    enabled: !!profile,
+    queryFn: () => listLootAlerts({ limit: 50 }),
+    // Poll while the page is open; push notifications cover the rest.
+    refetchInterval: 30_000,
+  })
+  const alerts = data?.items ?? null
 
   return (
     <div className="space-y-4">
