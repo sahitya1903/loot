@@ -2,7 +2,7 @@
   "name": "@loot/shared",
   "version": "0.1.0",
   "private": true,
-  "description": "Framework-free Loot domain code shared by apps/web and apps/mobile: types, API client, geo and ranking helpers.",
+  "description": "Framework-free Loot domain code shared by apps/api, apps/web and apps/mobile: REST client, domain constants, geo and ranking helpers.",
   "type": "module",
   "main": "./src/index.js",
   "exports": {
@@ -12,17 +12,16 @@
     "./geo": "./src/geo/index.js",
     "./ranking": "./src/ranking/index.js"
   },
-  "peerDependencies": {
-    "firebase": "^12.6.0"
-  },
   "scripts": {
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
     "eslint": "^9.39.5",
     "globals": "^16.4.0",
-    "prettier": "^3.9.9"
+    "prettier": "^3.9.9",
+    "vitest": "^4.1.11"
   },
   "lint-staged": {
     "*.js": [

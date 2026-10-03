@@ -1,31 +1,35 @@
-// Loot — CRUD + interactions API client.
+// Loot — CRUD (professional accounts) and reads.
 
-import { callFunction } from '../client.js'
+import { apiRequest, pathParam } from '../client.js'
 
+/** @returns {Promise<{ loot: import('../models.js').Loot }>} */
 export function createLoot(req) {
-  return callFunction('createLoot', req)
+  return apiRequest('POST', '/v1/loot', { body: req })
 }
 
-export function updateLoot(req) {
-  return callFunction('updateLoot', req)
+export function updateLoot({ lootId, ...changes }) {
+  return apiRequest('PATCH', `/v1/loot/${pathParam(lootId)}`, { body: changes })
 }
 
-export function archiveLoot(req) {
-  return callFunction('archiveLoot', req)
+export function archiveLoot({ lootId }) {
+  return apiRequest('POST', `/v1/loot/${pathParam(lootId)}/archive`)
 }
 
-export function attachLootMedia(req) {
-  return callFunction('attachLootMedia', req)
+export function attachLootMedia({ lootId, media }) {
+  return apiRequest('POST', `/v1/loot/${pathParam(lootId)}/media`, { body: { media } })
 }
 
-export function getLoot(req) {
-  return callFunction('getLoot', req)
+/** @returns {Promise<{ loot: import('../models.js').Loot }>} */
+export function getLoot({ lootId }) {
+  return apiRequest('GET', `/v1/loot/${pathParam(lootId)}`)
 }
 
-export function getLootMediaUrls(req) {
-  return callFunction('getLootMediaUrls', req)
+/** @returns {Promise<{ urls: Array<{ url: string, thumbnailUrl?: string, mimeType: string }> }>} */
+export function getLootMediaUrls({ lootId }) {
+  return apiRequest('GET', `/v1/loot/${pathParam(lootId)}/media`)
 }
 
-export function trackLootView(req) {
-  return callFunction('trackLootView', req)
+/** @param {{ lootId: string, source: string, watchTimeMs?: number }} req source is one of FEED_SOURCES */
+export function trackLootView({ lootId, source, watchTimeMs }) {
+  return apiRequest('POST', `/v1/loot/${pathParam(lootId)}/views`, { body: { source, watchTimeMs } })
 }

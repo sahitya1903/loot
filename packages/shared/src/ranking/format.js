@@ -1,13 +1,24 @@
+// Urgency tier classification + countdown label formatting.
+//
+// Used by LootCard / LootCountdown / LootDetailHero to drive the visual
+// urgency surface (chip color, pulse, "Ending soon" copy, expired state).
+
 const HOUR_MS = 3600_000
 const TWO_HOURS_MS = 2 * HOUR_MS
 const DAY_MS = 24 * HOUR_MS
 
+/**
+ * @param {string | number | null | undefined} expiryAt ISO-8601 string (as the API returns) or epoch ms
+ * @returns {number} epoch ms, or 0 when missing/unparseable
+ */
 export function expiryAtToMs(expiryAt) {
   if (!expiryAt) return 0
   if (typeof expiryAt === 'number') return expiryAt
-  return (expiryAt._seconds ?? 0) * 1000 + Math.floor((expiryAt._nanoseconds ?? 0) / 1_000_000)
+  const ms = Date.parse(expiryAt)
+  return Number.isNaN(ms) ? 0 : ms
 }
 
+/** @returns {'normal' | 'warm' | 'urgent' | 'expired'} */
 export function urgencyTier(expiryAt) {
   const ms = expiryAtToMs(expiryAt) - Date.now()
   if (ms <= 0) return 'expired'

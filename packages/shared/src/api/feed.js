@@ -1,35 +1,24 @@
-// Feed surfaces — Nearby, Following, Trending, Fresh.
+// Feed surfaces — Nearby, Following, Trending, Fresh. All cursor-paginated:
+// each returns { items: LootFeedItem[], cursor } where cursor is null at the end.
 
-import { callFunction } from '../client.js'
+import { apiRequest } from '../client.js'
 
-// Nearby uses the PostGIS-backed Cloud Function. Returns LootFeedItem[].
+/** @param {{ latitude: number, longitude: number, radiusKm?: number, category?: string, cursor?: string, limit?: number }} req */
 export function getNearbyFeed(req) {
-  return callFunction('getNearbyLoot', req).then(hydrateFeedShape)
+  return apiRequest('GET', '/v1/feed/nearby', { query: req })
 }
 
+/** @param {{ cursor?: string, limit?: number }} [req] */
 export function getFollowingFeed(req = {}) {
-  return callFunction('getFollowingFeed', req).then(hydrateFeedShape)
+  return apiRequest('GET', '/v1/feed/following', { query: req })
 }
 
+/** @param {{ geoCellId?: string, latitude?: number, longitude?: number, category?: string, cursor?: string, limit?: number }} [req] */
 export function getTrendingFeed(req = {}) {
-  return callFunction('getTrendingFeed', req).then(hydrateFeedShape)
+  return apiRequest('GET', '/v1/feed/trending', { query: req })
 }
 
+/** @param {{ latitude: number, longitude: number, radiusKm?: number, category?: string, cursor?: string, limit?: number }} req */
 export function getFreshFeed(req) {
-  return callFunction('getFreshFeed', req).then(hydrateFeedShape)
-}
-
-export function getCategoryFeed(req) {
-  // Category-scoped queries use the trending feed with a category filter;
-  // alias here so callers don't have to know the routing detail.
-  return callFunction('getTrendingFeed', req).then(hydrateFeedShape)
-}
-
-// `getNearbyLoot` returns `{ items: [{ lootId, distanceKm, score }] }` —
-// a thin reference list. The feed UI expects fully-hydrated `LootFeedItem`s,
-// so this normalizer pads the shape; downstream code can fetch full details
-// via `getLoot`/`getLootMediaUrls` on viewport entry.
-function hydrateFeedShape(resp) {
-  if (!resp.items) return { ...resp, items: [], hasMore: !!resp.cursor }
-  return resp
+  return apiRequest('GET', '/v1/feed/fresh', { query: req })
 }

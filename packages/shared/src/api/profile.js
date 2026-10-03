@@ -1,46 +1,24 @@
-// Profile API client.
+// Profile — the signed-in user's own account.
 
-import { callFunction, getLootClient } from '../client.js'
-import { doc, getDoc } from 'firebase/firestore'
+import { apiRequest } from '../client.js'
 
+/**
+ * @param {{ name?: string, username?: string, about?: string, serviceCity?: string, interests?: string[] }} req
+ * @returns {Promise<{ user: import('../models.js').AppUser }>}
+ */
 export function updateProfile(req) {
-  return callFunction('updateProfile', req)
+  return apiRequest('PATCH', '/v1/me', { body: req })
 }
 
 export function updateUsername(username) {
-  return callFunction('updateUsername', { username })
+  return updateProfile({ username })
 }
 
+/** @returns {Promise<{ uploadUrl: string, fields?: Record<string, string>, key: string }>} */
 export function getProfilePictureUploadUrl() {
-  return callFunction('getProfilePictureUploadUrl', {})
+  return apiRequest('POST', '/v1/me/profile-picture/upload-url')
 }
 
 export function deleteProfilePicture() {
-  return callFunction('deleteProfilePicture', {})
-}
-
-// Quick counter reads for trivial UI badges.
-export async function getFollowingCount(userId) {
-  return readCounter(userId, 'followingCount')
-}
-
-export async function getSavesCount(userId) {
-  return readCounter(userId, 'savesCount')
-}
-
-export async function getClaimsCount(userId) {
-  return readCounter(userId, 'claimsCount')
-}
-
-async function readCounter(userId, field) {
-  try {
-    const db = getLootClient().getDb()
-    const snap = await getDoc(doc(db, 'users', userId))
-    if (snap.exists() && typeof snap.data()[field] === 'number') {
-      return snap.data()[field]
-    }
-  } catch (e) {
-    console.error(`profile.readCounter(${field}) failed`, e)
-  }
-  return 0
+  return apiRequest('DELETE', '/v1/me/profile-picture')
 }
