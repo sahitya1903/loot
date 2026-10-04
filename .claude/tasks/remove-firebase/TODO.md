@@ -19,4 +19,4 @@ User decisions 2026-10-08: Node + Express is the only backend; no TypeScript any
 - [x] Docs: root CLAUDE.md, web docs, mobile docs, backend-rewrite PLAN/TODO
 - [x] Fix ThemeProvider (5 pre-existing failing tests)
 - [x] Verify: install, lint, test, build, mobile bundle, API boot
-- [ ] Commit; drop the js-conversion-wip stash
+- [x] Commit; drop the js-conversion-wip stash
