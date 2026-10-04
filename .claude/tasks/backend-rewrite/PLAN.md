@@ -1,14 +1,15 @@
 # PLAN — Rewrite Loot backend as a self-written API
 
 Decided 2026-09-30: replace the Firebase backend (`Backend/`) with a self-written
-TypeScript API. Clients stay Next.js (web) + Expo (Android). Product rules in the root
+API. Updated 2026-10-08: the API is plain JavaScript (the whole repo dropped TypeScript), and
+`Backend/` plus every Firebase dependency in the clients are gone (see `.claude/tasks/remove-firebase/`). Clients stay Next.js (web) + Expo (Android). Product rules in the root
 `CLAUDE.md` (vocabulary, account model, lifecycle, ranking pillars) do not change.
 
 ## Target stack
 
 | Layer | Pick |
 |---|---|
-| API | `apps/api` — Express 5 + TypeScript (Node ESM), zod validation, pino logging |
+| API | `apps/api` — Node.js + Express 5 (JavaScript ESM), zod validation, pino logging |
 | Database | MongoDB Atlas (Mumbai): `2dsphere` geo, Atlas Search, Atlas Vector Search |
 | Data access | Mongoose |
 | Cache / counters / rate limits | Redis (ioredis) |
@@ -17,7 +18,7 @@ TypeScript API. Clients stay Next.js (web) + Expo (Android). Product rules in th
 | Auth | WhatsApp Cloud API OTP → JWT access token (15 min, `jose`) + rotating refresh tokens with reuse detection |
 | Media | Cloudflare Stream (video, HLS) + R2/Images (images), direct upload from clients |
 | Moderation | AWS Rekognition |
-| Push | FCM via `firebase-admin` (server) + `expo-notifications` (app) |
+| Push | `expo-notifications` in the app; server-side sender not decided (Expo push service or FCM/APNs directly) |
 | Payments | Razorpay (orders, subscriptions, verified webhooks) |
 | Hosting | Railway/Render to start → AWS ap-south-1 later |
 | Tests | Vitest + Supertest + mongodb-memory-server + ioredis-mock |
@@ -34,15 +35,15 @@ Nearby feed (`$geoNear` → filter → score → cursor page), Following/Trendin
 save/claim/redemption (unique indexes), lifecycle jobs, trending in Redis, push alerts,
 Socket.io real-time.
 
-**2. Clients** — move zod schemas into `@loot/shared`; replace the Firebase-callable API
-client with a REST client (same `configureLootClient()` injection seam); swap the web data
-layer; build the Android MVP against the new API.
+**2. Clients** — ~~REST client in `@loot/shared`~~ and ~~web auth off Firebase~~ are done;
+remaining: build the Android MVP against the new API, and share request schemas (zod) via
+`@loot/shared` as endpoints land.
 
 **3. Business & money** — Razorpay boosts + pro subscriptions, analytics (time-series
 events collection), moderation queue, reports.
 
-**4. Cutover** — migrate Firestore/Neon data into MongoDB, update CLAUDE.md files and
-docs, CI (GitHub Actions), retire `Backend/`.
+**4. Launch** — decide whether any Firestore/Neon data needs migrating into MongoDB, CI
+(GitHub Actions), deploy. (`Backend/` is already retired.)
 
 ## Key design rules
 
@@ -56,7 +57,7 @@ docs, CI (GitHub Actions), retire `Backend/`.
 
 ## Open questions / notes
 
-- `@loot/shared` currently exports raw `.ts` with bundler resolution; the API (NodeNext ESM)
-  can't import it at runtime until shared gets a build step or the API is bundled. Resolve in phase 2.
+- ~~`@loot/shared` can't be imported by the API~~ — resolved 2026-10-08: shared is plain JS ESM
+  with `.js` import extensions, so Node, Next and Metro all load it as-is (no build step).
 - Repo stays on npm workspaces for now; pnpm + Turborepo is optional, decide in phase 4.
 - Email OTP (SES) from the old backend is not carried over yet — confirm whether it's still needed.

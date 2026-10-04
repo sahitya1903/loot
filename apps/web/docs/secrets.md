@@ -6,57 +6,37 @@ This document describes all secrets required by the Loot Web application, their 
 
 ### Vercel Deployment
 
-| Secret | Purpose | How to Obtain |
-|--------|---------|---------------|
-| `VERCEL_TOKEN` | Deploy to Vercel via CLI | [Vercel Account Settings > Tokens](https://vercel.com/account/tokens) |
-| `VERCEL_ORG_ID` | Organization identifier | `.vercel/project.json` or Vercel Dashboard |
-| `VERCEL_PROJECT_ID` | Project identifier | `.vercel/project.json` or Vercel Dashboard |
+| Secret              | Purpose                  | How to Obtain                                                         |
+| ------------------- | ------------------------ | --------------------------------------------------------------------- |
+| `VERCEL_TOKEN`      | Deploy to Vercel via CLI | [Vercel Account Settings > Tokens](https://vercel.com/account/tokens) |
+| `VERCEL_ORG_ID`     | Organization identifier  | `.vercel/project.json` or Vercel Dashboard                            |
+| `VERCEL_PROJECT_ID` | Project identifier       | `.vercel/project.json` or Vercel Dashboard                            |
 
-### Firebase Configuration (Development/Staging)
+### Loot API URL
 
-| Secret | Environment Variable | Purpose |
-|--------|---------------------|---------|
-| `STAGING_FIREBASE_API_KEY` | `NEXT_PUBLIC_FIREBASE_API_KEY` | Firebase API key |
-| `STAGING_FIREBASE_AUTH_DOMAIN` | `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | Firebase Auth domain |
-| `STAGING_FIREBASE_PROJECT_ID` | `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | Firebase project ID |
-| `STAGING_FIREBASE_STORAGE_BUCKET` | `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | Storage bucket |
-| `STAGING_FIREBASE_MESSAGING_SENDER_ID` | `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | FCM sender |
-| `STAGING_FIREBASE_APP_ID` | `NEXT_PUBLIC_FIREBASE_APP_ID` | Firebase app ID |
-
-### Firebase Configuration (Production)
-
-| Secret | Environment Variable | Purpose |
-|--------|---------------------|---------|
-| `PROD_FIREBASE_API_KEY` | `NEXT_PUBLIC_FIREBASE_API_KEY` | Firebase API key |
-| `PROD_FIREBASE_AUTH_DOMAIN` | `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | Firebase Auth domain |
-| `PROD_FIREBASE_PROJECT_ID` | `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | Firebase project ID |
-| `PROD_FIREBASE_STORAGE_BUCKET` | `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | Storage bucket |
-| `PROD_FIREBASE_MESSAGING_SENDER_ID` | `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | FCM sender |
-| `PROD_FIREBASE_APP_ID` | `NEXT_PUBLIC_FIREBASE_APP_ID` | Firebase app ID |
+| Secret            | Environment Variable  | Purpose                      |
+| ----------------- | --------------------- | ---------------------------- |
+| `STAGING_API_URL` | `NEXT_PUBLIC_API_URL` | Staging Loot API base URL    |
+| `PROD_API_URL`    | `NEXT_PUBLIC_API_URL` | Production Loot API base URL |
 
 ### Google APIs
 
-| Secret | Environment Variable | Purpose |
-|--------|---------------------|---------|
+| Secret                          | Environment Variable                | Purpose              |
+| ------------------------------- | ----------------------------------- | -------------------- |
 | `STAGING_GOOGLE_PLACES_API_KEY` | `NEXT_PUBLIC_GOOGLE_PLACES_API_KEY` | Address autocomplete |
-| `PROD_GOOGLE_PLACES_API_KEY` | `NEXT_PUBLIC_GOOGLE_PLACES_API_KEY` | Address autocomplete |
+| `PROD_GOOGLE_PLACES_API_KEY`    | `NEXT_PUBLIC_GOOGLE_PLACES_API_KEY` | Address autocomplete |
 
-### AWS Configuration
+### API server secrets (`apps/api`, set on the API host — never in the web app)
 
-| Secret | Environment Variable | Purpose |
-|--------|---------------------|---------|
-| `AWS_REGION` | `NEXT_PUBLIC_AWS_REGION` | AWS region for Cognito |
-| `AWS_COGNITO_IDENTITY_POOL_ID` | `NEXT_PUBLIC_AWS_COGNITO_IDENTITY_POOL_ID` | Face liveness |
+See `apps/api/.env.example` for the full list.
 
-### Firebase Function Secrets (set via Firebase CLI, not GitHub)
-
-These are stored in Google Cloud Secret Manager and injected at runtime into Cloud Functions.
-Set them with: `firebase functions:secrets:set SECRET_NAME`
-
-| Secret Name | Purpose |
-|---|---|
-| `UPSTASH_REDIS_REST_URL` | Upstash Redis REST endpoint — used by counter triggers to bust the cache |
-| `UPSTASH_REDIS_REST_TOKEN` | Upstash Redis REST auth token — used by counter triggers to bust the cache |
+| Variable                                            | Purpose                                                       |
+| --------------------------------------------------- | ------------------------------------------------------------- |
+| `JWT_ACCESS_SECRET`                                 | Signs access tokens (≥ 32 random characters)                  |
+| `OTP_SECRET`                                        | HMAC key for stored OTP hashes (≥ 32 random characters)       |
+| `MONGODB_URI`                                       | MongoDB connection string                                     |
+| `REDIS_URL`                                         | Redis connection string                                       |
+| `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_ACCESS_TOKEN` | WhatsApp Cloud API, for OTP delivery (required in production) |
 
 ## GitHub Secrets Setup
 
@@ -66,17 +46,17 @@ Set them with: `firebase functions:secrets:set SECRET_NAME`
 
 ### Environments to Create
 
-1. **staging** - For develop branch deployments
-2. **production** - For main branch deployments (with protection rules)
+1. **staging** - For staging branch deployments
+2. **production** - For production branch deployments (with protection rules)
 
 ## Rotation Procedures
 
-### Firebase API Keys
+### API secrets (`JWT_ACCESS_SECRET`, `OTP_SECRET`)
 
-1. Generate new key in Firebase Console
-2. Update GitHub Secrets
-3. Redeploy affected environments
-4. Remove old key after confirming new deployment works
+1. Generate a new value: `node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"`
+2. Update it on the API host and restart
+3. Rotating `JWT_ACCESS_SECRET` invalidates live access tokens; clients refresh automatically.
+   Rotating `OTP_SECRET` only invalidates codes sent in the last few minutes.
 
 ### Vercel Token
 

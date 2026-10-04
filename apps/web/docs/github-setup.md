@@ -1,6 +1,9 @@
 # GitHub Setup Guide
 
-This guide covers the GitHub-specific configuration required for the CI/CD pipelines.
+This guide covers the GitHub-specific configuration the CI/CD pipelines need.
+
+> **Status:** this monorepo has no GitHub Actions workflows yet (CI is planned in the backend
+> rewrite, Phase 4). The steps below describe the intended setup for when they're added.
 
 ## Creating Environments
 
@@ -8,7 +11,7 @@ GitHub Environments are required for the staging and production deployment workf
 
 ### Step 1: Navigate to Environments Settings
 
-1. Go to your repository: https://github.com/realitysynthesizer/loot-web
+1. Go to the repository on GitHub
 2. Click **Settings** → **Environments**
 
 ### Step 2: Create Staging Environment
@@ -43,59 +46,50 @@ Secrets are needed for deployment and API access.
 
 ### Step 2: Add Required Secrets
 
-| Secret Name | Description | Where to Get |
-|-------------|-------------|--------------|
-| `VERCEL_TOKEN` | Vercel API token | [Vercel Account Settings](https://vercel.com/account/tokens) |
-| `VERCEL_ORG_ID` | Vercel organization ID | `.vercel/project.json` after `vercel link` |
-| `VERCEL_PROJECT_ID` | Vercel project ID | `.vercel/project.json` after `vercel link` |
+| Secret Name         | Description            | Where to Get                                                 |
+| ------------------- | ---------------------- | ------------------------------------------------------------ |
+| `VERCEL_TOKEN`      | Vercel API token       | [Vercel Account Settings](https://vercel.com/account/tokens) |
+| `VERCEL_ORG_ID`     | Vercel organization ID | `.vercel/project.json` after `vercel link`                   |
+| `VERCEL_PROJECT_ID` | Vercel project ID      | `.vercel/project.json` after `vercel link`                   |
 
 ### Step 3: Add Environment-Specific Secrets
 
 For each environment (staging/production), add these in **Settings → Environments → [env] → Environment secrets**:
 
 **Staging Environment:**
-| Secret | Value Source |
-|--------|--------------|
-| `STAGING_FIREBASE_API_KEY` | Firebase Console (dev project) |
-| `STAGING_FIREBASE_AUTH_DOMAIN` | Firebase Console |
-| `STAGING_FIREBASE_PROJECT_ID` | `_Loot staging project ID_` |
-| `STAGING_FIREBASE_STORAGE_BUCKET` | Firebase Console |
-| `STAGING_FIREBASE_MESSAGING_SENDER_ID` | Firebase Console |
-| `STAGING_FIREBASE_APP_ID` | Firebase Console |
-| `STAGING_APP_URL` | `https://staging.<your-loot-domain>` |
-| `STAGING_GOOGLE_PLACES_API_KEY` | Google Cloud Console |
-| `AWS_REGION` | `ap-south-1` |
-| `AWS_COGNITO_IDENTITY_POOL_ID` | AWS Console |
+
+| Secret                          | Value Source                         |
+| ------------------------------- | ------------------------------------ |
+| `STAGING_API_URL`               | Staging Loot API base URL            |
+| `STAGING_APP_URL`               | `https://staging.<your-loot-domain>` |
+| `STAGING_GOOGLE_PLACES_API_KEY` | Google Cloud Console                 |
 
 **Production Environment:**
-| Secret | Value Source |
-|--------|--------------|
-| `PROD_FIREBASE_API_KEY` | Firebase Console (prod project) |
-| `PROD_FIREBASE_AUTH_DOMAIN` | Firebase Console |
-| `PROD_FIREBASE_PROJECT_ID` | `_Loot prod project ID_` |
-| `PROD_FIREBASE_STORAGE_BUCKET` | Firebase Console |
-| `PROD_FIREBASE_MESSAGING_SENDER_ID` | Firebase Console |
-| `PROD_FIREBASE_APP_ID` | Firebase Console |
-| `PROD_APP_URL` | `https://www.<your-loot-domain>` |
-| `PROD_GOOGLE_PLACES_API_KEY` | Google Cloud Console |
-| `AWS_REGION` | `ap-south-1` |
-| `AWS_COGNITO_IDENTITY_POOL_ID` | AWS Console |
+
+| Secret                       | Value Source                     |
+| ---------------------------- | -------------------------------- |
+| `PROD_API_URL`               | Production Loot API base URL     |
+| `PROD_APP_URL`               | `https://www.<your-loot-domain>` |
+| `PROD_GOOGLE_PLACES_API_KEY` | Google Cloud Console             |
 
 ---
 
 ## Getting Vercel Credentials
 
 1. **Install Vercel CLI** (if not installed):
+
    ```bash
    npm install -g vercel
    ```
 
 2. **Link your project**:
+
    ```bash
    vercel link
    ```
 
 3. **Get IDs** from `.vercel/project.json`:
+
    ```json
    {
      "orgId": "your-org-id",

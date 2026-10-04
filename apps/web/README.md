@@ -1,18 +1,16 @@
 # Loot Web
 
-Production-ready web application for Loot — built with **Next.js 16**, **TypeScript**, and **TailwindCSS**.
+Web application for Loot — built with **Next.js 16**, **JavaScript (React 19)**, and **TailwindCSS**. It talks to the Loot API (`apps/api`) through the `@loot/shared` REST client.
 
 ## Quick Start
 
 ```bash
-# Install dependencies
+# From the repo root: install every workspace, then start the API
 npm install
+npm run api            # needs apps/api/.env, MongoDB and Redis — see apps/api/.env.example
 
-# Configure environment
-cp .env.example .env.local
-# Edit .env.local with your Firebase config
-
-# Start development
+# In apps/web
+cp .env.example .env.dev
 npm run dev
 ```
 
@@ -23,11 +21,11 @@ Open [http://localhost:3000](http://localhost:3000)
 | Category      | Technology                            |
 | ------------- | ------------------------------------- |
 | **Framework** | Next.js 16 (App Router)               |
-| **Language**  | TypeScript 5                          |
+| **Language**  | JavaScript (ESM, JSX) — no TypeScript |
 | **Styling**   | TailwindCSS 4                         |
 | **UI**        | Radix UI (shadcn/ui)                  |
 | **State**     | Zustand + TanStack Query              |
-| **Backend**   | Firebase (Auth, Firestore, Functions) |
+| **Backend**   | `apps/api` (Node + Express) over REST |
 | **Hosting**   | Vercel                                |
 
 ## Scripts
@@ -38,43 +36,31 @@ Open [http://localhost:3000](http://localhost:3000)
 | `npm run build`         | Production build         |
 | `npm run start`         | Start production server  |
 | `npm run lint`          | Run ESLint               |
-| `npm run type-check`    | TypeScript type checking |
 | `npm run test`          | Run unit tests           |
 | `npm run test:coverage` | Run tests with coverage  |
 | `npm run test:e2e`      | Run E2E tests            |
 
 ## Environment Configuration
 
-Copy `.env.example` to `.env.local` and configure:
+Copy `.env.example` to `.env.dev` (copied to `.env.local` by `npm run dev`) and configure:
 
-| Variable                                   | Required | Description         |
-| ------------------------------------------ | -------- | ------------------- |
-| `NEXT_PUBLIC_FIREBASE_API_KEY`             | Yes      | Firebase API key    |
-| `NEXT_PUBLIC_FIREBASE_PROJECT_ID`          | Yes      | Firebase project ID |
-| `NEXT_PUBLIC_APP_URL`                      | Yes      | Application URL     |
-| `NEXT_PUBLIC_GOOGLE_PLACES_API_KEY`        | Yes      | Google Places API   |
-| `NEXT_PUBLIC_AWS_REGION`                   | Yes      | AWS region          |
-| `NEXT_PUBLIC_AWS_COGNITO_IDENTITY_POOL_ID` | Yes      | Cognito pool ID     |
-
-Environment validation is powered by Zod — missing variables will throw descriptive errors.
+| Variable                            | Required | Description                                         |
+| ----------------------------------- | -------- | --------------------------------------------------- |
+| `NEXT_PUBLIC_API_URL`               | Yes      | Loot API base URL (default `http://localhost:4000`) |
+| `NEXT_PUBLIC_APP_URL`               | Yes      | This app's public URL                               |
+| `NEXT_PUBLIC_GOOGLE_PLACES_API_KEY` | Yes      | Google Places API (address autocomplete)            |
+| `NEXT_PUBLIC_AIRBRIDGE_APP`         | No       | Airbridge deep links (disabled when unset)          |
+| `NEXT_PUBLIC_AIRBRIDGE_WEB_TOKEN`   | No       | Airbridge web token                                 |
 
 ## Deployment
 
-### Environments
+| Environment | API            | URL                   |
+| ----------- | -------------- | --------------------- |
+| Development | localhost:4000 | localhost:3000        |
+| Staging     | TBD            | staging.<loot-domain> |
+| Production  | TBD            | www.<loot-domain>     |
 
-| Environment | Branch  | Firebase          | URL                         |
-| ----------- | ------- | ----------------- | --------------------------- |
-| Development | local   | TBD               | localhost:3000              |
-| Staging     | develop | TBD               | staging.<loot-domain>       |
-| Production  | main    | TBD               | www.<loot-domain>           |
-
-### CI/CD Pipelines
-
-| Workflow      | Trigger         | Actions                                |
-| ------------- | --------------- | -------------------------------------- |
-| PR Validation | Pull request    | Lint, type-check, test, build          |
-| Staging       | Push to develop | Test, deploy to Vercel preview         |
-| Production    | Push to main    | Full test, deploy, verify, tag release |
+Hosted on Vercel; see [CONTRIBUTING.md](./CONTRIBUTING.md) for the branch flow. There are no GitHub Actions workflows yet.
 
 ## Testing
 
@@ -100,21 +86,21 @@ npm run test:e2e:headed   # With browser window
 src/
 ├── app/                  # Next.js App Router
 │   ├── (main)/          # Authenticated routes
-│   ├── login/           # Authentication
-│   ├── onboarding/      # User setup
+│   ├── login/           # Phone OTP sign-in
+│   ├── onboarding/      # Account type choice
 │   └── api/health/      # Health endpoint
 ├── components/          # React components
-├── hooks/              # Custom hooks
-├── lib/                # Utilities
-│   ├── firebase/       # Firebase clients (wires @loot/shared in config.ts)
-│   └── logger.ts      # Structured logging
-├── stores/             # Zustand stores
-└── types/              # Web-only ambient types (Google Maps)
+├── hooks/               # Custom hooks
+├── lib/
+│   ├── api.js           # Configures the @loot/shared client (API URL, token storage)
+│   ├── auth.js          # Sign-in, session restore, sign-out
+│   └── logger.js        # Structured logging
+└── stores/              # Zustand stores
 ```
 
-Loot domain code — model types, the Cloud Function API client, query keys, geo and
-ranking helpers — lives in [`@loot/shared`](../../packages/shared) and is shared with
-the mobile app.
+Loot domain code — the REST client, enum constants and model shapes, query keys, geo and
+ranking helpers — lives in [`@loot/shared`](../../packages/shared) and is shared with the
+mobile app and the API.
 
 ## Documentation
 
@@ -136,7 +122,7 @@ The `/api/health` endpoint returns system status:
 }
 ```
 
-## Related Projects
+## Related
 
-- [Loot Flutter App](../Loot-Flutter) — Mobile app
-- [Firebase Backend](../Firebase) — Cloud Functions & Firestore
+- [`apps/api`](../api) — the backend (Express + MongoDB + Redis)
+- [`apps/mobile`](../mobile) — the Expo consumer app

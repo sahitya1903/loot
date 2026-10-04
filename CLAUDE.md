@@ -63,35 +63,49 @@ Urgency is a first-class concern: feed ranking, notifications, UI badges, and re
 ## Repo structure
 
 ```
-/Backend           Firebase project — functions/ (Node 22 ESM), firestore.rules, firestore.indexes.json
-                   (legacy: being replaced by apps/api, see .claude/tasks/backend-rewrite/)
-/apps/api          Self-written backend — Express 5 + TypeScript (NodeNext ESM), MongoDB (Mongoose),
-                   Redis, zod, jose JWT auth. Tests: Vitest + Supertest + mongodb-memory-server
+/apps/api          The backend — Node.js + Express 5 (JavaScript ESM), MongoDB (Mongoose), Redis,
+                   zod validation, jose JWT auth. Tests: Vitest + Supertest + mongodb-memory-server
 /apps/web          Next.js 16 App Router — landing, share-link pages, business dashboard
-                   (TS, Tailwind 4, Radix, TanStack Query, Zustand, Firebase web SDK)
+                   (JavaScript/JSX, Tailwind 4, Radix, TanStack Query, Zustand)
 /apps/mobile       Expo (React Native) — the consumer feed app
-/packages/shared   @loot/shared — framework-free types, Cloud Function API client, geo + ranking helpers
+/packages/shared   @loot/shared — framework-free REST client for apps/api, domain constants +
+                   JSDoc model shapes, query keys, geo + ranking helpers
 ```
 
+**JavaScript only.** The whole repo is plain JavaScript (ESM; `.jsx` for files containing JSX).
+Do not add TypeScript files or `tsconfig.json`. Document shapes with JSDoc (`@typedef`, `@param`)
+where it helps; validate data at runtime with zod in the API.
+
+**apps/api is the only backend.** There is no Firebase (no Auth, Firestore, Functions or Storage);
+the old `Backend/` Firebase project was deleted on 2026-10-08 and lives only in git history.
+
 npm workspaces: run `npm install` once at the repo root (covers `apps/*` and `packages/*`).
-`Backend/functions` is **not** a workspace — it keeps its own `package.json`/lockfile for Firebase deploys.
 Run the API with `npm run api` after copying `apps/api/.env.example` to `apps/api/.env` (needs MongoDB + Redis).
+Root scripts: `npm run lint`, `npm test` run across every workspace.
 
-Domain code both apps need (model types, API calls, query keys, geo/ranking helpers) goes in
-`packages/shared`, never duplicated into an app. It must stay React- and DOM-free; each app injects
-its Firebase instances via `configureLootClient()`.
+Domain code more than one app needs (API calls, enum constants, query keys, geo/ranking helpers)
+goes in `packages/shared`, never duplicated into an app. It must stay React-, DOM- and Node-built-in-free
+(only `fetch` and ES globals) and use explicit `.js` extensions on relative imports so Node can load it.
+Each app calls `configureLootClient({ baseUrl, tokenStore })` once at startup; every API function in
+`@loot/shared/api` maps to a REST endpoint under `/v1`. Endpoints the API doesn't implement yet answer 404.
 
-`Backend/` and `apps/web/` have their own `CLAUDE.md`, `ARCHITECTURE.md`, and `ONBOARDING.md`; `apps/mobile/` has `CLAUDE.md` + `AGENTS.md`.
+`apps/web/` has its own `CLAUDE.md`, `ARCHITECTURE.md`, and `ONBOARDING.md`; `apps/mobile/` has `CLAUDE.md` + `AGENTS.md`.
+The backend plan lives in `.claude/tasks/backend-rewrite/`.
 
-## Shared infrastructure (carried over, still useful)
+## Infrastructure
 
-- Firebase Auth — phone OTP via WhatsApp Cloud API → SMS fallback
-- Firestore — primary metadata DB, asia-south1 region
-- AWS S3 + CloudFront — media storage and signed download URLs
+In use:
+- MongoDB — primary database (Atlas, Mumbai region in production); `2dsphere` indexes for geo
+- Redis — rate limits (counters, trending sorted sets and job queues are planned)
+- WhatsApp Cloud API — phone OTP delivery (the API issues its own JWT sessions)
+
+Planned (see `.claude/tasks/backend-rewrite/PLAN.md`):
+- BullMQ — loot lifecycle jobs (expiry, ending-soon, trending decay)
+- Socket.io — real-time feed updates
+- Cloudflare Stream + R2 — media upload and delivery
 - AWS Rekognition — content moderation
-- Neon Postgres + PostGIS — geospatial queries (already in use; load-bearing for Nearby feed)
 - Razorpay — payments (boosts, pro subscriptions)
-- Qdrant — vector DB (recommendation embeddings)
+- MongoDB Atlas Vector Search — recommendation embeddings
 
 ## Task continuity
 
@@ -99,4 +113,4 @@ For any multi-step task, write a plan + checklist in `.claude/tasks/<task-slug>/
 
 ## graphify
 
-Knowledge graphs at `Backend/graphify-out/` and `apps/web/graphify-out/` may be stale (built against the pre-Loot codebase). Trust the current source files over the graph. After substantive changes, run `graphify update .` from the modified subfolder.
+The knowledge graph at `apps/web/graphify-out/` is stale (built against the pre-Loot TypeScript codebase). Trust the current source files over the graph. After substantive changes, run `graphify update .` from the modified subfolder.

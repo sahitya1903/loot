@@ -26,9 +26,10 @@
 - [ ] Socket.io rooms (loot, geohash cell)
 
 ## Phase 2 — Clients
-- [ ] zod schemas into @loot/shared; build step so the API can import it
-- [ ] REST client in @loot/shared behind configureLootClient()
-- [ ] Web: swap data layer off Firebase
+- [x] @loot/shared importable by the API (plain JS ESM, no build step)
+- [x] REST client in @loot/shared behind configureLootClient() (+ contract test against the API)
+- [x] Web: auth + data layer off Firebase (pages call REST endpoints; 404 until Phase 1 builds them)
+- [ ] Share request schemas (zod) via @loot/shared as endpoints land
 - [ ] Mobile: Android MVP on the new API
 
 ## Phase 3 — Business & money
@@ -36,7 +37,7 @@
 - [ ] Analytics (time-series events)
 - [ ] Reports + moderation queue
 
-## Phase 4 — Cutover
-- [ ] Data migration Firestore/Neon → MongoDB
+## Phase 4 — Launch
+- [ ] Decide whether Firestore/Neon data needs migrating to MongoDB
 - [ ] GitHub Actions CI
-- [ ] Update CLAUDE.md files + docs; retire Backend/
+- [x] Update CLAUDE.md files + docs; retire Backend/ (2026-10-08)

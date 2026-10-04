@@ -8,20 +8,20 @@ npm install
 cd apps/web
 
 # 2. Copy env template
-cp .env.example .env.local
-# Fill in dev values — ask a teammate for the secrets
+cp .env.example .env.dev
+# Fill in values — ask a teammate for the secrets
 
 # 3. Start dev server
-npm run dev        # localhost:3000 (dev Firebase)
-npm run dev:staging  # localhost:3000 (staging Firebase)
+npm run dev          # localhost:3000, API at NEXT_PUBLIC_API_URL (default localhost:4000)
+npm run dev:staging  # localhost:3000 against the staging API
 ```
 
-## Firebase Functions (local)
+## API (local)
 
 ```bash
-cd Firebase && npm run serve
-# Starts emulators at localhost:4000 (UI), :5001 (functions)
-# Set NEXT_PUBLIC_USE_EMULATORS=true in .env.local to connect
+# From the repo root (needs MongoDB + Redis; copy apps/api/.env.example to apps/api/.env first)
+npm run api
+# API at http://localhost:4000. Without WhatsApp credentials it logs OTPs instead of sending them.
 ```
 
 ## Branch Strategy
@@ -61,19 +61,18 @@ type(scope): short description
 Examples:
 
 ```
-feat(auth): add Apple Sign-In
-fix(gallery): resolve race condition on upload
-chore(deps): bump firebase to 12.7.0
+feat(feed): add category filter to Nearby
+fix(loot): stop countdown at zero
+chore(deps): bump next to 16.2.4
 ```
-
-The pre-commit hook will reject commits that don't match this format.
 
 ## Pre-commit Hooks
 
 Husky runs automatically on every commit:
 
-- **pre-commit**: runs `lint-staged` (ESLint + Prettier on staged files)
-- **commit-msg**: validates commit message format via commitlint
+- **pre-commit**: runs `lint-staged` (ESLint + Prettier on staged files, in every workspace)
+
+The commit message format isn't enforced by a hook — follow it anyway.
 
 If the hook blocks your commit, fix the error it reports — don't skip with `--no-verify`.
 
@@ -91,7 +90,6 @@ npm run test:e2e:ui       # Interactive Playwright UI
 
 Before opening a PR:
 
-- [ ] `npm run type-check` passes
 - [ ] `npm run lint` passes
 - [ ] `npm run test` passes
 - [ ] PR title follows Conventional Commits format
@@ -103,6 +101,6 @@ Before opening a PR:
 | -------------- | ------------------------------------ |
 | `.env.example` | Template — commit changes here       |
 | `.env.local`   | Your local overrides — never commit  |
-| `.env.dev`     | Dev Firebase project values          |
+| `.env.dev`     | Development values                   |
 | `.env.staging` | Staging values                       |
 | `.env.prod`    | Production values — handle with care |

@@ -10,18 +10,18 @@ The web app is **mobile-first**. Every layout is designed for vertical phone vie
 
 ## Stack
 
-| Layer | Tech |
-|---|---|
-| Framework | Next.js 16 App Router |
-| Language | TypeScript 5 + React 19 |
-| Styling | TailwindCSS 4 |
-| Client state | Zustand 5 |
-| Server state | TanStack Query 5 |
-| Firebase | firebase 12 (auth + firestore + functions) |
-| Forms | React Hook Form 7 + Zod |
-| Animation | Framer Motion + GSAP |
-| Testing | Vitest (unit), Playwright (E2E) |
-| Hosting | Vercel |
+| Layer        | Tech                                                                  |
+| ------------ | --------------------------------------------------------------------- |
+| Framework    | Next.js 16 App Router                                                 |
+| Language     | JavaScript (ESM, `.jsx` for JSX) + React 19 — no TypeScript           |
+| Styling      | TailwindCSS 4                                                         |
+| Client state | Zustand 5                                                             |
+| Server state | TanStack Query 5                                                      |
+| Backend      | `apps/api` (Express) via the `@loot/shared` REST client — no Firebase |
+| Forms        | React Hook Form 7 + Zod                                               |
+| Animation    | Framer Motion + GSAP                                                  |
+| Testing      | Vitest (unit), Playwright (E2E)                                       |
+| Hosting      | Vercel                                                                |
 
 ## Commands
 
@@ -32,7 +32,6 @@ npm run dev:prod
 npm run build
 npm run lint           # ESLint
 npm run lint:fix
-npm run type-check
 npm run test           # Vitest single
 npm run test:watch
 npm run test:e2e
@@ -44,12 +43,12 @@ The primary surface is the **feed**. Loot details are secondary; `/business/{id}
 
 ```
 src/app/
-├── page.tsx                     # Public landing
-├── layout.tsx                   # Root layout (theme, providers)
+├── page.jsx                     # Public landing
+├── layout.jsx                   # Root layout (theme, providers)
 ├── login/
 ├── onboarding/                  # Personal vs Professional choice + flows
 ├── (main)/                      # Authenticated route group
-│   ├── layout.tsx               # Auth guard + bottom nav
+│   ├── layout.jsx               # Auth guard + bottom nav
 │   ├── feed/                    # PRIMARY surface — Nearby/Following/Trending/Fresh tabs
 │   ├── nearby/                  # Map-based discovery
 │   ├── loot/[id]/               # Loot detail (claim, save, share)
@@ -59,7 +58,7 @@ src/app/
 │   ├── claims/                  # User's claimed redemptions
 │   ├── notifications/
 │   ├── profile/                 # Personal: my saves/claims; Pro: my dashboard
-│   ├── pro/                     # Professional-only routes
+│   ├── pro/                     # Professional-only routes (PLANNED — not built yet)
 │   │   ├── dashboard/           # Loot list + analytics overview
 │   │   ├── create/              # Create loot
 │   │   ├── loot/[id]/           # Manage loot (edit, archive, boost, analytics)
@@ -74,12 +73,18 @@ src/app/
 ```
 Component
   → useQuery / useMutation (TanStack Query)
-    → API client function (packages/shared/src/api/*.ts)
-      → callFunction() (packages/shared/src/client.ts — Firebase injected by src/lib/firebase/config.ts)
-        → Cloud Function (asia-south1)
+    → API function (packages/shared/src/api/*.js)
+      → apiRequest() (packages/shared/src/client.js — bearer token, refresh on 401)
+        → apps/api REST endpoint under /v1
 ```
 
-Real-time loot views, feed, claim counts use direct Firestore listeners (read-only).
+`src/lib/api.js` configures the client once (`NEXT_PUBLIC_API_URL`, tokens in `localStorage`);
+`src/components/providers.jsx` imports it before anything else. Errors are thrown as `ApiError`
+(`status`, `code`, `message`, `details`). Endpoints apps/api hasn't built yet answer 404.
+
+Auth: phone OTP only (WhatsApp). `src/lib/auth.js` owns sign-in (`sendPhoneOtp`,
+`verifyPhoneOtp`), `restoreSession()` (run once by `Providers`) and `signOut()`.
+There is no Google/Apple/email sign-in. Nothing is real-time yet — the notifications page polls.
 
 ## Forbidden patterns in this codebase
 
@@ -105,23 +110,22 @@ Pro UI uses a distinct visual treatment — different accent color, "Business" b
 ## State
 
 **Zustand** (client):
-```ts
-// stores/auth.ts
-interface AuthState {
-  user: FirebaseUser | null
-  profile: AppUser | null            // includes accountType + businessId
-  business: Business | null          // hydrated when accountType === "professional"
-  geo: { lat: number; lng: number } | null  // current location for Nearby feed
-  isInitialized: boolean
+
+```js
+// stores/auth.js — signed in === profile !== null
+{
+  ;(profile, business, isLoading, isInitialized, isNewUser)
 }
+// stores/geo.js — current location for the Nearby feed
 ```
 
-**TanStack Query** (server): query keys live in `packages/shared/src/api/keys.ts`.
+**TanStack Query** (server): query keys live in `packages/shared/src/api/keys.js`.
 
 ## Path aliases
 
-`@/` maps to `src/`.
-```ts
+`@/` maps to `src/` (`jsconfig.json`).
+
+```js
 import { LootCard } from '@/components/loot/LootCard'
 import { useNearbyFeed } from '@/hooks/use-nearby-feed'
 import { claimLoot } from '@loot/shared/api'
@@ -139,7 +143,7 @@ Tokens live in `tailwind.config` + `src/app/globals.css`. See `ARCHITECTURE.md` 
 
 ## Env
 
-Listed in `.env.example`. Files: `.env.dev`, `.env.staging`, `.env.prod` (auto-copied to `.env.local` by `npm run dev*`).
+Listed in `.env.example` (`NEXT_PUBLIC_API_URL` points at apps/api, default `http://localhost:4000`). Files: `.env.dev`, `.env.staging`, `.env.prod` (auto-copied to `.env.local` by `npm run dev*`).
 
 ## Task continuity
 
