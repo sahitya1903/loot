@@ -71,12 +71,12 @@ export function ThemeProvider({ children }) {
     return () => mediaQuery.removeEventListener('change', handleChange)
   }, [theme])
 
-  if (!mounted) {
-    return <>{children}</>
-  }
-
+  // Always render the provider: swapping a fragment for it after mount would
+  // remount the whole tree, and consumers rendered before mount would throw.
+  // Consumers that show theme-specific UI should wait for `mounted` to avoid
+  // hydration mismatches.
   return (
-    <ThemeContext.Provider value={{ theme, resolvedTheme, setTheme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, resolvedTheme, setTheme, toggleTheme, mounted }}>
       {children}
     </ThemeContext.Provider>
   )
