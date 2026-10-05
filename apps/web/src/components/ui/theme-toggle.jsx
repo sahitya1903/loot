@@ -1,34 +1,14 @@
 'use client'
 
-import { useState, useEffect, useSyncExternalStore } from 'react'
 import { motion } from 'framer-motion'
 import { Sun, Moon } from 'lucide-react'
+import { useTheme } from '@/hooks/use-theme'
 import { cn } from '@/lib/utils'
 
+// Reads and changes the app theme through ThemeProvider, which persists it
+// under the same key the no-flash script in app/layout.jsx reads.
 export function ThemeToggle({ className }) {
-  const [theme, setTheme] = useState(() => {
-    if (typeof window === 'undefined') return 'light'
-    const stored = localStorage.getItem('theme')
-    if (stored === 'dark' || stored === 'light') return stored
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark'
-    return 'light'
-  })
-  const mounted = useSyncExternalStore(
-    () => () => {},
-    () => true,
-    () => false
-  )
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark')
-  }, [theme])
-
-  const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light'
-    setTheme(newTheme)
-    localStorage.setItem('theme', newTheme)
-    document.documentElement.classList.toggle('dark', newTheme === 'dark')
-  }
+  const { resolvedTheme: theme, toggleTheme, mounted } = useTheme()
 
   // Prevent hydration mismatch
   if (!mounted) {
