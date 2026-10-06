@@ -2,34 +2,10 @@
 
 import { useEffect, useRef } from 'react'
 
-const ITEMS_1 = [
-  'Capture',
-  'Share',
-  'Relive',
-  'Connect',
-  'Remember',
-  'Celebrate',
-  'Capture',
-  'Share',
-  'Relive',
-  'Connect',
-  'Remember',
-  'Celebrate',
-]
-const ITEMS_2 = [
-  'Awarded Platform',
-  'Best App 2024',
-  'Top Rated',
-  'Privacy First',
-  'Unlimited Storage',
-  'Always Secure',
-  'Awarded Platform',
-  'Best App 2024',
-  'Top Rated',
-  'Privacy First',
-  'Unlimited Storage',
-  'Always Secure',
-]
+const ROW_1 = ['Flash deals', 'Drops', 'Restocks', 'Pop-ups', 'Happy hours', 'Free trials']
+const ROW_2 = ['Food & drink', 'Nightlife', 'Retail', 'Wellness', 'Entertainment', 'Experiences']
+const ITEMS_1 = [...ROW_1, ...ROW_1]
+const ITEMS_2 = [...ROW_2, ...ROW_2]
 
 export function LandingMarquee() {
   const track1Ref = useRef(null)

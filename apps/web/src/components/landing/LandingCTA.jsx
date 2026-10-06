@@ -38,24 +38,23 @@ export function LandingCTA({ ctaHref }) {
       <div className="l-ctabc l-cb2" />
 
       <div className="l-sr l-sru">
-        <span className="l-ctaey">Ready to preserve your moments?</span>
+        <span className="l-ctaey">Something&apos;s dropping near you</span>
         <h2 className="l-ctatitle">
-          Make every
+          Don&apos;t miss
           <br />
-          memory
+          what&apos;s
           <br />
-          <span className="it">last forever.</span>
+          <span className="it">happening now.</span>
         </h2>
         <p className="l-ctasub">
-          Join thousands of event creators who trust Loot to capture and share their most precious
-          moments. Free to start, no credit card required.
+          Loot is free for hunters. Businesses can start dropping loot in minutes.
         </p>
         <div className="l-mag">
           <Link href={ctaHref} className="l-bcta" ref={btnRef}>
-            Start for free →
+            Start hunting →
           </Link>
         </div>
-        <div className="l-ctanote">Free to join · No credit card required · Always private</div>
+        <div className="l-ctanote">Free to join · Sign in with your phone · Loot near you</div>
       </div>
     </section>
   )

@@ -6,26 +6,19 @@ import { useAuth } from '@/hooks'
 import { LandingNav } from '@/components/landing/LandingNav'
 import { LandingHero } from '@/components/landing/LandingHero'
 import { LandingMarquee } from '@/components/landing/LandingMarquee'
-import { LandingMoodBoard } from '@/components/landing/LandingMoodBoard'
 import { LandingFeaturePillars } from '@/components/landing/LandingFeaturePillars'
-import { LandingTestimonials } from '@/components/landing/LandingTestimonials'
 import { LandingHowItWorks } from '@/components/landing/LandingHowItWorks'
-import { LandingStats } from '@/components/landing/LandingStats'
-import { LandingTrustBanner } from '@/components/landing/LandingTrustBanner'
 import { LandingCTA } from '@/components/landing/LandingCTA'
 import { LandingFooterNew } from '@/components/landing/LandingFooterNew'
 import { LandingPreloader } from '@/components/ui/LandingPreloader'
 import { LandingCursor } from '@/components/ui/LandingCursor'
 
 /* ── Section IDs for nav dots ── */
-const SECTIONS = ['hero', 'moodboard', 'pillars', 'testimonials', 'howitworks', 'stats', 'cta']
+const SECTIONS = ['hero', 'pillars', 'howitworks', 'cta']
 const SECTION_LABELS = {
   hero: 'Home',
-  moodboard: 'Memories',
   pillars: 'Features',
-  testimonials: 'Stories',
   howitworks: 'How it works',
-  stats: 'Stats',
   cta: 'Get Started',
 }
 
@@ -137,28 +130,16 @@ export default function LandingPage() {
       {/* 2. Marquee */}
       <LandingMarquee />
 
-      {/* 3. Mood Board (includes torn paper dividers) */}
-      <LandingMoodBoard />
-
-      {/* 4. Feature Pillars */}
+      {/* 3. Feature Pillars */}
       <LandingFeaturePillars />
 
-      {/* 5. Testimonials (quote carousel + cards) */}
-      <LandingTestimonials />
-
-      {/* 6. How It Works + Community stories */}
+      {/* 4. How It Works */}
       <LandingHowItWorks />
 
-      {/* 7. Stats bars */}
-      <LandingStats />
-
-      {/* 8. Trust banner */}
-      <LandingTrustBanner />
-
-      {/* 9. CTA */}
+      {/* 5. CTA */}
       <LandingCTA ctaHref={ctaHref} />
 
-      {/* 10. Footer marquee strip */}
+      {/* 6. Footer marquee strip */}
       <div className="l-footer-mq">
         <div className="l-mt rev" style={{ animationDuration: '25s' }}>
           {Array(12)
@@ -166,13 +147,13 @@ export default function LandingPage() {
             .map((_, i) => (
               <div className="l-mi" key={i}>
                 <span className="l-md" />
-                {['Loot', 'Your Memories', 'Your Way', 'Forever'][i % 4]}
+                {['Loot', 'Nearby', 'Right now', 'Gone soon'][i % 4]}
               </div>
             ))}
         </div>
       </div>
 
-      {/* 11. Footer */}
+      {/* 7. Footer */}
       <LandingFooterNew />
     </div>
   )

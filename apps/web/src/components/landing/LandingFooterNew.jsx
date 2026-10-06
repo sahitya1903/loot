@@ -8,9 +8,7 @@ const LINKS = [
     items: [
       { label: 'How it works', href: '#howitworks' },
       { label: 'Features', href: '#pillars' },
-      { label: 'Pricing', href: '#' },
-      { label: 'Gallery', href: '#' },
-      { label: 'QR Sharing', href: '#' },
+      { label: 'For business', href: '/login' },
     ],
   },
   {
@@ -46,7 +44,7 @@ export function LandingFooterNew() {
             Loot<span>.</span>
           </Link>
           <p className="l-ftag">
-            Capture, share, and relive your most precious moments — beautifully, together.
+            The live feed of what&apos;s happening around you — deals, drops and pop-ups nearby.
           </p>
           <div className="l-fsocs">
             {SOCIALS.map((s) => (
@@ -78,7 +76,7 @@ export function LandingFooterNew() {
       <div className="l-fb">
         <span>© 2026 Loot. All rights reserved.</span>
         <span>Crafted with love ✦</span>
-        <span>Your memories, your way</span>
+        <span>Nearby. Right now.</span>
       </div>
     </footer>
   )

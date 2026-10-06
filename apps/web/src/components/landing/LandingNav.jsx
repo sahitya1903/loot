@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 
-export function LandingNav({ ctaHref, bizHref = '/business', bizLabel = 'For Business' }) {
+export function LandingNav({ ctaHref, bizHref = '/login', bizLabel = 'For Business' }) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const ctaRef = useRef(null)

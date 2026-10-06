@@ -1,32 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-
-const COLLAGE_CARDS = [
-  {
-    cls: 'l-hc1',
-    cf: 'l-cf1',
-    cap: 'Wedding Day',
-    sp: '0.06',
-    tape: { col: 'rgba(212,168,67,.7)', type: 'solid', rot: '-8deg', left: '20%' },
-  },
-  {
-    cls: 'l-hc2',
-    cf: 'l-cf2',
-    cap: 'Graduation',
-    sp: '-0.04',
-    tape: { col: 'rgba(200,75,47,.65)', type: 'stripe', rot: '6deg', left: '25%' },
-  },
-  { cls: 'l-hc3', cf: 'l-cf3', cap: 'Reunion', sp: '0.05', tape: null },
-  {
-    cls: 'l-hc4',
-    cf: 'l-cf4',
-    cap: 'Concert',
-    sp: '-0.07',
-    tape: { col: 'rgba(120,160,200,.6)', type: 'dots', rot: '-4deg', left: '20%' },
-  },
-  { cls: 'l-hc5', cf: 'l-cf5', cap: 'Birthday', sp: '0.09', tape: null },
-]
+import { LOOT_DROPS, LootDropCard } from '@/components/landing/LootDropCard'
 
 export function LoginPolaroidCollage() {
   const collageRef = useRef(null)
@@ -63,27 +38,8 @@ export function LoginPolaroidCollage() {
 
   return (
     <div ref={collageRef} className="l-hr login-collage-wrap">
-      {COLLAGE_CARDS.map((card) => (
-        <div key={card.cls} className={`l-hc ${card.cls} l-pol`} data-sp={card.sp}>
-          <div className={`l-cf ${card.cf}`} style={{ height: 'calc(100% - 34px)' }} />
-          <span className="l-pol-cap">{card.cap}</span>
-          {card.tape && (
-            <div
-              className={`l-tape l-tape-${card.tape.type}`}
-              style={{
-                ['--tape-col']: card.tape.col,
-                position: 'absolute',
-                width: '70px',
-                top: '-7px',
-                left: card.tape.left,
-                transform: `rotate(${card.tape.rot})`,
-                zIndex: 10,
-              }}
-            >
-              <div className="l-tape-inner" />
-            </div>
-          )}
-        </div>
+      {LOOT_DROPS.map((drop) => (
+        <LootDropCard key={drop.cls} drop={drop} />
       ))}
 
       {/* ✦ background deco */}

@@ -12,7 +12,7 @@ const PAD_W = 90
 const PAD_H = 14
 const PAD_SPEED = 9
 const BASE_SPAWN_RATE = 75
-const EMOJIS = ['📸', '🌅', '🎉', '❤️', '🌟', '🎊', '🏖️', '🎭', '✨', '🎆', '🫶', '🥂']
+const EMOJIS = ['☕', '🍕', '🎧', '👟', '🍩', '🛍️', '🎁', '💸', '🔥', '🌮', '🍦', '✨']
 
 export function NotFoundGame() {
   const canvasRef = useRef(null)
@@ -113,7 +113,7 @@ export function NotFoundGame() {
     ctx.fillStyle = danger
     ctx.fillRect(0, H - 50, W, 50)
 
-    // Photos — polaroid style
+    // Falling loot — polaroid style
     photos.current.forEach((ph) => {
       ctx.save()
       ctx.translate(ph.x, ph.y)
@@ -174,7 +174,7 @@ export function NotFoundGame() {
 
     // Idle floating emojis
     if (phase.current === 'idle') {
-      const floatEmojis = ['📸', '🌟', '❤️', '🎉', '✨']
+      const floatEmojis = ['🛍️', '🔥', '☕', '🎁', '✨']
       floatEmojis.forEach((em, i) => {
         const ex = (W / 6) * (i + 0.5) + Math.sin(t + i * 1.2) * 14
         const ey = H / 2 - 80 + Math.cos(t * 0.8 + i) * 20
@@ -330,10 +330,10 @@ export function NotFoundGame() {
             </span>
           </div>
           <h1 className="font-playfair text-3xl font-bold text-[var(--ink)] sm:text-4xl">
-            Lost in the memories?
+            This page dropped off the map.
           </h1>
           <p className="font-caveat mt-2 text-lg text-[var(--l-muted)]">
-            While you&apos;re here — catch some moments!
+            While you&apos;re here — catch some loot!
           </p>
         </motion.div>
       </div>
@@ -397,12 +397,12 @@ export function NotFoundGame() {
                 className="absolute inset-0 flex flex-col items-center justify-center gap-5 bg-[var(--ivory)]/40 backdrop-blur-[2px]"
               >
                 <div className="text-center">
-                  <div className="mb-3 text-5xl">📸</div>
+                  <div className="mb-3 text-5xl">🛍️</div>
                   <h2 className="font-playfair mb-1 text-xl font-bold text-[var(--ink)]">
-                    Catch the Memories
+                    Catch the Loot
                   </h2>
                   <p className="font-instrument max-w-[230px] text-sm text-[var(--ink)]/55">
-                    Move the camera to catch falling polaroids before they hit the ground!
+                    Move your bag to catch falling loot before it hits the ground!
                   </p>
                 </div>
                 <div className="font-instrument flex items-center gap-1.5 text-xs text-[var(--ink)]/35">
@@ -440,13 +440,13 @@ export function NotFoundGame() {
                   transition={{ delay: 0.1 }}
                   className="text-center"
                 >
-                  <div className="mb-2 text-4xl">🎞️</div>
+                  <div className="mb-2 text-4xl">⏰</div>
                   <h2 className="font-playfair text-2xl font-bold text-[var(--ink)]">
-                    Reel&apos;s Over
+                    Time&apos;s Up
                   </h2>
                   <p className="font-instrument mt-1 text-sm text-[var(--ink)]/60">
                     You caught <span className="font-semibold text-[var(--rust)]">{uiScore}</span>{' '}
-                    pts of memories
+                    pts of loot
                   </p>
                   {uiScore > 0 && uiScore === highScore && (
                     <motion.p
@@ -482,7 +482,7 @@ export function NotFoundGame() {
 
         {uiPhase === 'playing' && (
           <p className="font-instrument mt-2 text-center text-xs text-[var(--l-muted)]">
-            ← → or mouse/touch to move the camera
+            ← → or mouse/touch to move the bag
           </p>
         )}
       </motion.div>

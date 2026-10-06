@@ -2,42 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useRef } from 'react'
-
-const HERO_CARDS = [
-  {
-    cls: 'l-hc1',
-    cf: 'l-cf1',
-    img: '/images/wedding.png',
-    cap: 'Wedding Day',
-    sp: '0.06',
-    tape: { col: 'rgba(212,168,67,.7)', type: 'solid', rot: '-8deg', left: '20%' },
-  },
-  {
-    cls: 'l-hc2',
-    cf: 'l-cf2',
-    img: '/images/graduation.png',
-    cap: 'Graduation',
-    sp: '-0.04',
-    tape: { col: 'rgba(200,75,47,.65)', type: 'stripe', rot: '6deg', left: '25%' },
-  },
-  { cls: 'l-hc3', cf: 'l-cf3', img: '/images/reunion.png', cap: 'Reunion', sp: '0.05', tape: null },
-  {
-    cls: 'l-hc4',
-    cf: 'l-cf4',
-    img: '/images/concert.png',
-    cap: 'Concert',
-    sp: '-0.07',
-    tape: { col: 'rgba(120,160,200,.6)', type: 'dots', rot: '-4deg', left: '20%' },
-  },
-  {
-    cls: 'l-hc5',
-    cf: 'l-cf5',
-    img: '/images/birthday.png',
-    cap: 'Birthday',
-    sp: '0.09',
-    tape: null,
-  },
-]
+import { LOOT_DROPS, LootDropCard } from './LootDropCard'
 
 export function LandingHero({ ctaHref }) {
   const collageRef = useRef(null)
@@ -77,26 +42,27 @@ export function LandingHero({ ctaHref }) {
       <div className="l-hl">
         <h1 className="l-ht">
           <span className="l-htl">
-            <span className="l-htli">Capture.</span>
+            <span className="l-htli">Nearby.</span>
           </span>
           <span className="l-htl">
-            <span className="l-htli">Share.</span>
+            <span className="l-htli">Right now.</span>
           </span>
           <span className="l-htl">
-            <span className="l-htli">Relive.</span>
+            <span className="l-htli">Gone soon.</span>
           </span>
         </h1>
 
         <p className="l-hd">
-          Preserve every precious moment from your events. Upload photos instantly, collaborate with
-          guests in real-time, and build beautiful galleries that last forever.
+          Loot is the live feed of what&apos;s happening around you — flash deals, limited drops and
+          pop-up offers from businesses nearby. Every loot has a clock on it, so claim it before
+          it&apos;s gone.
         </p>
 
         <div className="l-ha">
           <Link href={ctaHref} className="l-bp">
             Explore Loot
           </Link>
-          <Link href="/business" className="l-bs">
+          <Link href="/login" className="l-bs">
             For Business
           </Link>
         </div>
@@ -104,36 +70,8 @@ export function LandingHero({ ctaHref }) {
 
       {/* RIGHT col — polaroid collage */}
       <div className="l-hr" ref={collageRef} id="lhcollage">
-        {HERO_CARDS.map((card) => (
-          <div key={card.cls} className={`l-hc ${card.cls} l-pol`} data-sp={card.sp}>
-            <div
-              className={`l-cf ${card.cf}`}
-              style={{
-                height: 'calc(100% - 34px)',
-                backgroundImage: `url(${card.img})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-              }}
-            />
-            <span className="l-pol-cap">{card.cap}</span>
-            {card.tape && (
-              <div
-                className={`l-tape l-tape-${card.tape.type}`}
-                style={{
-                  ['--tape-col']: card.tape.col,
-                  position: 'absolute',
-                  width: '70px',
-                  top: '-7px',
-                  left: card.tape.left,
-                  transform: `rotate(${card.tape.rot})`,
-                  zIndex: 10,
-                }}
-              >
-                <div className="l-tape-inner" />
-              </div>
-            )}
-          </div>
+        {LOOT_DROPS.map((drop) => (
+          <LootDropCard key={drop.cls} drop={drop} />
         ))}
 
         {/* wavy lines deco */}
@@ -219,10 +157,10 @@ export function LandingHero({ ctaHref }) {
       {/* stats row */}
       <div className="l-hstats">
         {[
-          { val: '10M', sup: '+', label: 'Memories shared' },
-          { val: '500K', sup: '+', label: 'Happy users' },
-          { val: '99.9', sup: '%', label: 'Uptime' },
-          { val: '4.9', sup: '★', label: 'App rating' },
+          { val: '5', sup: 'km', label: 'Discovery radius' },
+          { val: '4', sup: '', label: 'Live feeds' },
+          { val: '1', sup: 'tap', label: 'To claim' },
+          { val: 'Free', sup: '', label: 'For hunters' },
         ].map((s) => (
           <div key={s.label}>
             <div className="l-hsn">

@@ -204,16 +204,6 @@ export function Sidebar() {
 
             {/* Content */}
             <div className="relative flex items-end gap-3">
-              {/* Camera illustration */}
-              <Image
-                src="/camera_on_tripod.svg"
-                alt=""
-                aria-hidden="true"
-                width={80}
-                height={80}
-                className="pointer-events-none w-[80px] shrink-0 opacity-60 select-none"
-              />
-
               {/* Text side */}
               <div className="flex-1 pb-1">
                 {/* Washi tape strips */}
@@ -227,13 +217,13 @@ export function Sidebar() {
                   className="font-caveat text-[15px] text-[var(--rust)] opacity-80"
                   style={{ transform: 'rotate(-1deg)' }}
                 >
-                  capture the moment ✦
+                  what&apos;s dropping nearby ✦
                 </p>
                 <p
                   className="font-caveat mt-0.5 text-[12px] text-[var(--ink-muted)]"
                   style={{ transform: 'rotate(0.5deg)' }}
                 >
-                  collect · share · relive
+                  spot · claim · go
                 </p>
               </div>
             </div>
