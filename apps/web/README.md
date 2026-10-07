@@ -9,8 +9,7 @@ Web application for Loot — built with **Next.js 16**, **JavaScript (React 19)*
 npm install
 npm run api            # needs apps/api/.env, MongoDB and Redis — see apps/api/.env.example
 
-# In apps/web
-cp .env.example .env.dev
+# In apps/web (first run creates .env.dev from .env.example)
 npm run dev
 ```
 
@@ -42,7 +41,7 @@ Open [http://localhost:3000](http://localhost:3000)
 
 ## Environment Configuration
 
-Copy `.env.example` to `.env.dev` (copied to `.env.local` by `npm run dev`) and configure:
+`npm run dev` copies `.env.dev` to `.env.local` (creating `.env.dev` from `.env.example` on first run). Configure:
 
 | Variable                            | Required | Description                                         |
 | ----------------------------------- | -------- | --------------------------------------------------- |

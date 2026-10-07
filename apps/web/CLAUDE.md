@@ -58,7 +58,7 @@ src/app/
 │   ├── claims/                  # User's claimed redemptions
 │   ├── notifications/
 │   ├── profile/                 # Personal: my saves/claims; Pro: my dashboard
-│   ├── pro/                     # Professional-only routes (PLANNED — not built yet)
+│   ├── pro/[[...section]]/      # "Coming soon" placeholder for every /pro/* link until the business tools are built
 │   │   ├── dashboard/           # Loot list + analytics overview
 │   │   ├── create/              # Create loot
 │   │   ├── loot/[id]/           # Manage loot (edit, archive, boost, analytics)

@@ -18,8 +18,7 @@ cp apps/api/.env.example apps/api/.env   # then fill in the two secrets it asks 
 npm run api                          # API on http://localhost:4000
 
 cd apps/web
-cp .env.example .env.dev             # NEXT_PUBLIC_API_URL defaults to http://localhost:4000
-npm run dev                          # web on http://localhost:3000
+npm run dev                          # web on http://localhost:3000 (creates .env.dev on first run)
 ```
 
 In development without WhatsApp credentials, the API **logs the OTP** to its console instead of sending it — sign in with any phone number and copy the code from the API logs.
@@ -79,9 +78,9 @@ The API is the source of truth: professional-only endpoints reject personal acco
 
 Edit `packages/shared/src/ranking/format.js`. Add a Vitest test asserting the new tier boundaries.
 
-### Add a pro-only screen (once `/pro` exists)
+### Add a pro-only screen
 
-1. Add the route under `src/app/(main)/pro/`
+1. Add the route under `src/app/(main)/pro/` (a real route takes precedence over the `[[...section]]` placeholder)
 2. Guard it on `profile.accountType === 'professional'` in the layout
 3. Add the tab to the pro bottom-nav in `src/components/layout/bottom-nav.jsx`
 

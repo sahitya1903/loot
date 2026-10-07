@@ -44,7 +44,7 @@ src/
 │   │   ├── notifications/             # Loot alerts (polled)
 │   │   ├── profile/ (+ edit/)
 │   │   ├── settings/                  # blocked, reports, subscription, verified
-│   │   └── pro/                       # (planned) dashboard, create, loot/[id], branches, analytics
+│   │   └── pro/[[...section]]/        # placeholder for /pro/* — dashboard, create, branches, analytics are planned
 │   └── api/health/                    # Next.js route handler
 │
 ├── components/
@@ -176,7 +176,7 @@ Components: `LootCard`, `LootMedia`, `LootCountdown`, `LootMeta`, `LootActions`.
 Bottom nav adapts to `profile.accountType`:
 
 **Personal:** Feed · Nearby · Saved · Claims · Profile
-**Professional:** Dashboard · Create · Analytics · Branches · Profile _(planned — the `/pro/*` routes don't exist yet)_
+**Professional:** Dashboard · Create · Analytics · Branches · Profile _(planned — `/pro/*` shows a "coming soon" placeholder for now)_
 
 Visual differentiation:
 

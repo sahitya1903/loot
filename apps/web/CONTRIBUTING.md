@@ -7,11 +7,8 @@
 npm install
 cd apps/web
 
-# 2. Copy env template
-cp .env.example .env.dev
-# Fill in values — ask a teammate for the secrets
-
-# 3. Start dev server
+# 2. Start dev server (the first run creates .env.dev from .env.example;
+#    ask a teammate for staging/prod values)
 npm run dev          # localhost:3000, API at NEXT_PUBLIC_API_URL (default localhost:4000)
 npm run dev:staging  # localhost:3000 against the staging API
 ```
