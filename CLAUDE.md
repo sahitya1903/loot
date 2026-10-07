@@ -113,4 +113,4 @@ For any multi-step task, write a plan + checklist in `.claude/tasks/<task-slug>/
 
 ## graphify
 
-The knowledge graph at `apps/web/graphify-out/` is stale (built against the pre-Loot TypeScript codebase). Trust the current source files over the graph. After substantive changes, run `graphify update .` from the modified subfolder.
+No knowledge graph is checked in — the old `graphify-out/` graphs were built against the pre-Loot TypeScript code and were deleted. If you use graphify, build a fresh graph from a subfolder (`graphify .`) and trust the current source over it.
