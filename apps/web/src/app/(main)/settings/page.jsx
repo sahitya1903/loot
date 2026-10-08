@@ -1,25 +1,9 @@
 'use client'
 
-// Loot — settings landing.
-//
-// This is a fresh, slim Loot-native settings page. The legacy 1900-line
-// settings file (account whitelisting, legacy storage plans, affiliate
-// invites, face liveness) was removed during the Loot migration; rebuild
-// individual surfaces here as needed.
-
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import {
-  ChevronRight,
-  LogOut,
-  Bell,
-  Shield,
-  Trash2,
-  CreditCard,
-  FileBarChart,
-  Ban,
-} from 'lucide-react'
+import { ChevronRight, LogOut, Bell, Trash2, CreditCard } from 'lucide-react'
 import { useAuthStore } from '@/stores/auth'
 import { signOut } from '@/lib/auth'
 
@@ -52,12 +36,12 @@ export default function SettingsPage() {
           <Row href="/profile/edit" label="Edit profile" />
           {isPro ? (
             <Row
-              href="/settings/subscription"
+              href="/pro/subscription"
               label="Pro subscription"
               icon={<CreditCard size={16} />}
             />
           ) : (
-            <Row href="/onboarding/professional" label="Become a business" accent />
+            <Row href="/onboarding" label="Become a business" accent />
           )}
         </Group>
       </section>
@@ -76,18 +60,9 @@ export default function SettingsPage() {
             <Row href="/pro/dashboard" label="Pro dashboard" />
             <Row href="/pro/branches" label="Branch management" />
             <Row href="/pro/analytics" label="Analytics" />
-            <Row href="/settings/reports" label="Reports" icon={<FileBarChart size={16} />} />
-            <Row href="/settings/verified" label="Verified badge" icon={<Shield size={16} />} />
           </Group>
         </section>
       )}
-
-      <section>
-        <SectionLabel>Safety</SectionLabel>
-        <Group>
-          <Row href="/settings/blocked" label="Blocked accounts" icon={<Ban size={16} />} />
-        </Group>
-      </section>
 
       <section>
         <SectionLabel>Danger zone</SectionLabel>

@@ -31,7 +31,7 @@ export default function LandingPage() {
   // Redirect authenticated users
   useEffect(() => {
     if (isInitialized && isAuthenticated) {
-      router.push('/home')
+      router.push('/feed')
     }
   }, [isInitialized, isAuthenticated, router])
 
@@ -97,7 +97,7 @@ export default function LandingPage() {
     return () => obs.disconnect()
   }, [])
 
-  const ctaHref = isAuthenticated ? '/home' : '/login'
+  const ctaHref = isAuthenticated ? '/feed' : '/login'
 
   return (
     <div

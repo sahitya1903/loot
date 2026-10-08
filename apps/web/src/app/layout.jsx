@@ -3,7 +3,6 @@ import './globals.css'
 import { Providers } from '@/components/providers'
 import { Toaster } from '@/components/ui/toaster'
 import { Analytics } from '@vercel/analytics/next'
-import { AirbridgeAnalytics } from '@/components/analytics/airbridge'
 
 const playfairDisplay = Playfair_Display({
   variable: '--font-playfair',
@@ -68,7 +67,6 @@ export default function RootLayout({ children }) {
         className={`${playfairDisplay.variable} ${instrumentSans.variable} ${caveat.variable} font-sans antialiased`}
       >
         <Providers>{children}</Providers>
-        <AirbridgeAnalytics />
         <Toaster />
         <Analytics />
       </body>

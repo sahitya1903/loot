@@ -8,7 +8,6 @@ import { ApiError } from '@loot/shared'
 import { sendPhoneOtp, verifyPhoneOtp } from '@/lib/auth'
 import { useAuth } from '@/hooks'
 import { LoadingScreen, ThemeToggle, LandingCursor, LandingPreloader } from '@/components/ui'
-import { SmartBanner } from '@/components/common/smart-banner'
 import { LoginPolaroidCollage } from '@/components/login/LoginPolaroidCollage'
 
 // Only follow same-site relative redirects (no `//evil.com` or absolute URLs).
@@ -109,7 +108,6 @@ function LoginContent() {
     <div className="landing-page relative flex min-h-screen flex-col bg-[var(--ivory)] lg:flex-row">
       <LandingPreloader />
       <LandingCursor />
-      <SmartBanner redirectUrl={redirectParam || undefined} />
 
       {/* ── Left Panel — Desktop only ─────────────────────────────────────── */}
       <div className="login-left hidden lg:relative lg:flex lg:w-1/2 lg:overflow-hidden lg:bg-[var(--ivory)]">
