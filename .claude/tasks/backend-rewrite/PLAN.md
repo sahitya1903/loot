@@ -1,8 +1,8 @@
 # PLAN — Rewrite Loot backend as a self-written API
 
 Decided 2026-09-30: replace the Firebase backend (`Backend/`) with a self-written
-API. Updated 2026-10-08: the API is plain JavaScript (the whole repo dropped TypeScript), and
-`Backend/` plus every Firebase dependency in the clients are gone (see `.claude/tasks/remove-firebase/`). Clients stay Next.js (web) + Expo (Android). Product rules in the root
+API. Since then: the API is plain JavaScript (the whole repo dropped TypeScript), and
+`Backend/` plus every Firebase dependency in the clients are gone. Clients stay Next.js (web) + Expo (Android). Product rules in the root
 `CLAUDE.md` (vocabulary, account model, lifecycle, ranking pillars) do not change.
 
 ## Target stack
@@ -42,8 +42,8 @@ remaining: build the Android MVP against the new API, and share request schemas 
 **3. Business & money** — Razorpay boosts + pro subscriptions, analytics (time-series
 events collection), moderation queue, reports.
 
-**4. Launch** — decide whether any Firestore/Neon data needs migrating into MongoDB, CI
-(GitHub Actions), deploy. (`Backend/` is already retired.)
+**4. Launch** — CI (GitHub Actions), deploy. No old data is migrated: the Firestore/Neon
+data was unreachable and has been deleted, so MongoDB starts empty.
 
 ## Key design rules
 
@@ -57,7 +57,7 @@ events collection), moderation queue, reports.
 
 ## Open questions / notes
 
-- ~~`@loot/shared` can't be imported by the API~~ — resolved 2026-10-08: shared is plain JS ESM
+- ~~`@loot/shared` can't be imported by the API~~ — resolved: shared is plain JS ESM
   with `.js` import extensions, so Node, Next and Metro all load it as-is (no build step).
 - Repo stays on npm workspaces for now; pnpm + Turborepo is optional, decide in phase 4.
 - Email OTP (SES) from the old backend is not carried over yet — confirm whether it's still needed.

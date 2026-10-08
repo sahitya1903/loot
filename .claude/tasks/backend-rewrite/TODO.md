@@ -14,7 +14,9 @@
 - [x] Root: `api` script; .env.example; README section in root CLAUDE.md
 
 ## Phase 1 — Core API
-- [ ] Profile update, username uniqueness
+Clients already call 41 endpoints (`packages/shared/src/api/`); the API serves 5. Build in this order.
+- [ ] PUT /v1/me/account-type — onboarding is stuck without it (first thing new users hit)
+- [ ] PATCH /v1/me profile update, username uniqueness; profile picture upload URL
 - [ ] Business onboarding (personal → professional), branches
 - [ ] Loot model + indexes; create/update/archive (professional only)
 - [ ] Media upload URLs (Cloudflare Stream / R2) + ready webhooks + Rekognition
@@ -22,7 +24,7 @@
 - [ ] Following / Trending / Fresh feeds
 - [ ] Save / claim / redemption codes
 - [ ] BullMQ: expiry, ending-soon, sweeper, trending decay
-- [ ] FCM tokens + loot alerts
+- [ ] Push tokens + loot alerts (GET /v1/me/alerts, mark read)
 - [ ] Socket.io rooms (loot, geohash cell)
 
 ## Phase 2 — Clients
@@ -38,6 +40,6 @@
 - [ ] Reports + moderation queue
 
 ## Phase 4 — Launch
-- [ ] Decide whether Firestore/Neon data needs migrating to MongoDB
+- [x] Old data: nothing to migrate (Firestore/Neon was unreachable and is deleted)
 - [ ] GitHub Actions CI
-- [x] Update CLAUDE.md files + docs; retire Backend/ (2026-10-08)
+- [x] Update CLAUDE.md files + docs; retire Backend/
