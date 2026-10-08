@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getLoot, getLootMediaUrls, trackLootView } from '@loot/shared/api'
-import { claimLoot, saveLoot, unsaveLoot, shareLoot, getRedemptionByLoot } from '@loot/shared/api'
+import { claimLoot, saveLoot, unsaveLoot, shareLoot } from '@loot/shared/api'
 import { queryKeys } from '@loot/shared/api'
 
 export function useLoot(lootId) {
@@ -53,13 +53,5 @@ export function useShareLoot() {
 export function useTrackLootView() {
   return useMutation({
     mutationFn: ({ lootId, source, watchTimeMs }) => trackLootView({ lootId, source, watchTimeMs }),
-  })
-}
-
-export function useRedemption(lootId) {
-  return useQuery({
-    queryKey: lootId ? ['redemption', lootId] : ['redemption', 'noop'],
-    enabled: !!lootId,
-    queryFn: () => getRedemptionByLoot(lootId),
   })
 }

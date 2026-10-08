@@ -1,6 +1,9 @@
 'use client'
 import { ReactLenis, useLenis } from 'lenis/react'
-import { prefersReducedMotion } from '@/lib/motion'
+
+function prefersReducedMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+}
 
 export function SmoothScrollProvider({ children }) {
   const shouldDisable = typeof window !== 'undefined' && prefersReducedMotion()
