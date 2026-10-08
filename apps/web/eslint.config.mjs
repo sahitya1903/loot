@@ -9,6 +9,10 @@ const eslintConfig = defineConfig([
     '.next/**',
     'out/**',
     'build/**',
+    // Generated reports
+    'coverage/**',
+    'playwright-report/**',
+    'test-results/**',
   ]),
   {
     // eslint-plugin-react-hooks v7 introduced new rules that flag patterns
