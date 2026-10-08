@@ -1,150 +1,91 @@
 # Loot — Web App (Next.js)
 
-Guidance for Claude Code when working in this subfolder.
+Guidance for Claude Code when working in `apps/web`. Read the root `../../CLAUDE.md` first —
+product positioning, forbidden vocabulary and the account model apply here unchanged.
 
-## Product
-
-This is the web app (`apps/web`) for **Loot**, a hyperlocal real-time discovery platform. Read the root `../../CLAUDE.md` first for product positioning, forbidden vocabulary, and architectural pillars. Everything below assumes that context.
-
-The web app is **mobile-first**. Every layout is designed for vertical phone viewports first; desktop is a graceful upscale, not the primary surface.
+The web app is **mobile-first**: every layout is designed for a vertical phone viewport first;
+desktop is a graceful upscale.
 
 ## Stack
 
 | Layer        | Tech                                                                  |
 | ------------ | --------------------------------------------------------------------- |
-| Framework    | Next.js 16 App Router                                                 |
+| Framework    | Next.js 16 App Router (Turbopack)                                     |
 | Language     | JavaScript (ESM, `.jsx` for JSX) + React 19 — no TypeScript           |
-| Styling      | TailwindCSS 4                                                         |
+| Styling      | TailwindCSS 4 + CSS variables in `src/app/globals.css`                |
 | Client state | Zustand 5                                                             |
 | Server state | TanStack Query 5                                                      |
 | Backend      | `apps/api` (Express) via the `@loot/shared` REST client — no Firebase |
-| Forms        | React Hook Form 7 + Zod                                               |
-| Animation    | Framer Motion + GSAP                                                  |
-| Testing      | Vitest (unit), Playwright (E2E)                                       |
+| Animation    | Framer Motion, Lenis (smooth scroll on the landing page)              |
+| Testing      | Vitest (unit), Playwright (E2E, `e2e/`)                               |
 | Hosting      | Vercel                                                                |
 
 ## Commands
 
 ```bash
-npm run dev            # localhost:3000 (.env.dev)
-npm run dev:staging
-npm run dev:prod
+npm run dev            # localhost:3000; copies .env.dev → .env.local (created from .env.example on first run)
+npm run dev:staging    # same, with .env.staging
 npm run build
-npm run lint           # ESLint
-npm run lint:fix
-npm run test           # Vitest single
-npm run test:watch
-npm run test:e2e
+npm run lint
+npm run test           # Vitest
+npm run test:e2e       # Playwright (needs the dev server)
 ```
 
-## App-router structure
+## Routes
 
-The primary surface is the **feed**. Loot details are secondary; `/business/{id}`, search, settings are tertiary.
+The primary surface is the **feed**. Loot detail is secondary; business profile, search and
+settings are tertiary.
 
 ```
 src/app/
-├── page.jsx                     # Public landing
-├── layout.jsx                   # Root layout (theme, providers)
-├── login/
-├── onboarding/                  # Personal vs Professional choice + flows
-├── (main)/                      # Authenticated route group
-│   ├── layout.jsx               # Auth guard + bottom nav
-│   ├── feed/                    # PRIMARY surface — Nearby/Following/Trending/Fresh tabs
-│   ├── nearby/                  # Map-based discovery
-│   ├── loot/[id]/               # Loot detail (claim, save, share)
-│   ├── business/[id]/           # Business profile (their loots, follow, branches)
-│   ├── search/                  # Category & locality exploration
-│   ├── saved/                   # User's saved loot
-│   ├── claims/                  # User's claimed redemptions
-│   ├── notifications/
-│   ├── profile/                 # Personal: my saves/claims; Pro: my dashboard
-│   ├── pro/[[...section]]/      # "Coming soon" placeholder for every /pro/* link until the business tools are built
-│   │   ├── dashboard/           # Loot list + analytics overview
-│   │   ├── create/              # Create loot
-│   │   ├── loot/[id]/           # Manage loot (edit, archive, boost, analytics)
-│   │   ├── branches/            # Branch/outlet management
-│   │   └── analytics/
-│   └── settings/
-└── api/                         # Next.js API routes (health)
+├── page.jsx                 # Public landing
+├── login/                   # Phone OTP sign-in (WhatsApp)
+├── onboarding/              # Personal vs Professional choice
+├── (main)/                  # Signed-in routes — layout.jsx is the auth guard + nav
+│   ├── feed/                # Nearby | Following | Trending | Fresh tabs
+│   ├── nearby/  search/  saved/  claims/  notifications/
+│   ├── loot/[id]/           # Loot detail (claim, save, share)
+│   ├── business/[id]/       # Business profile
+│   ├── profile/ (+ edit/)   settings/
+│   └── pro/[[...section]]/  # "Coming soon" for every /pro/* link until the business tools exist
+└── api/health/              # Health check
 ```
+
+A real route under `pro/` (e.g. `pro/dashboard/page.jsx`) takes precedence over the placeholder.
 
 ## Data flow
 
 ```
-Component
-  → useQuery / useMutation (TanStack Query)
-    → API function (packages/shared/src/api/*.js)
-      → apiRequest() (packages/shared/src/client.js — bearer token, refresh on 401)
-        → apps/api REST endpoint under /v1
+Component → hook in src/hooks (useQuery / useMutation)
+  → function in @loot/shared/api (one per REST endpoint)
+    → apiRequest() in packages/shared/src/client.js (bearer token, refresh on 401)
+      → apps/api /v1/...
 ```
 
-`src/lib/api.js` configures the client once (`NEXT_PUBLIC_API_URL`, tokens in `localStorage`);
-`src/components/providers.jsx` imports it before anything else. Errors are thrown as `ApiError`
-(`status`, `code`, `message`, `details`). Endpoints apps/api hasn't built yet answer 404.
+- `src/lib/api.js` configures the client once (`NEXT_PUBLIC_API_URL`, tokens in `localStorage`
+  under `loot_session`); `src/components/providers.jsx` imports it before anything else.
+- Failures throw `ApiError` (`status`, `code`, `message`, `details`). Lists are `{ items, cursor }`.
+- Query keys come from `queryKeys` in `@loot/shared/api` — never hand-write them.
+- Endpoints apps/api hasn't built yet answer 404, so most signed-in pages show errors until Phase 1.
+- Nothing is real-time yet; the notifications page polls.
 
-Auth: phone OTP only (WhatsApp). `src/lib/auth.js` owns sign-in (`sendPhoneOtp`,
-`verifyPhoneOtp`), `restoreSession()` (run once by `Providers`) and `signOut()`.
-There is no Google/Apple/email sign-in. Nothing is real-time yet — the notifications page polls.
-
-## Forbidden patterns in this codebase
-
-The repo descends from a previous product. Treat these as bugs to fix:
-
-- Any `Event*` type, `event*` route, `events/[id]` URL → use `Loot*` / `loot*` / `loot/[id]`
-- `organizer`, `host`, `creator` of content → `business`
-- `attendee`, `participant`, `whoCanJoin`, `whoCanUpload` → not applicable; delete
-- `RSVP`, `interested`, `going` → `claim`, `saved`
-- `inviteKey`, whitelisting, request-to-join → not applicable; delete
-- Calendar widgets, multi-day spans, `startDateTime` + `endDateTime` pairs → use single `expiryAt`
-- Photo galleries owned by an "event" → loot has its own `media[]`; no multi-uploader gallery model
-
-When you encounter these, redesign — don't blindly rename.
+Auth is phone OTP only. `src/lib/auth.js` owns `sendPhoneOtp`, `verifyPhoneOtp`,
+`restoreSession()` (run once by `Providers`) and `signOut()`. Zustand `stores/auth.js` holds
+`{ profile, business, isLoading, isInitialized, isNewUser }`; signed in means `profile !== null`.
+`stores/geo.js` holds the current location for the feeds.
 
 ## Account types
 
-- `accountType: "personal"` — bottom nav: Feed / Nearby / Saved / Claims / Profile
-- `accountType: "professional"` — bottom nav: Dashboard / Create / Analytics / Branches / Profile (with toggle to consumer surfaces)
+- `personal` — nav: Feed / Nearby / Saved / Claims / Profile
+- `professional` — nav: Dashboard / Create / Analytics / Branches / Profile, with a distinct
+  accent and a "Business" badge
 
-Pro UI uses a distinct visual treatment — different accent color, "Business" badge, dashboard density.
+The API enforces account type (`403 account_type_required`); UI hiding is only cosmetic.
 
-## State
+## Conventions
 
-**Zustand** (client):
-
-```js
-// stores/auth.js — signed in === profile !== null
-{
-  ;(profile, business, isLoading, isInitialized, isNewUser)
-}
-// stores/geo.js — current location for the Nearby feed
-```
-
-**TanStack Query** (server): query keys live in `packages/shared/src/api/keys.js`.
-
-## Path aliases
-
-`@/` maps to `src/` (`jsconfig.json`).
-
-```js
-import { LootCard } from '@/components/loot/LootCard'
-import { useNearbyFeed } from '@/hooks/use-nearby-feed'
-import { claimLoot } from '@loot/shared/api'
-```
-
-## Design language
-
-- Mobile-native, dark-first, energetic
-- High contrast, vivid accent (e.g. neon coral / electric lime)
-- Vertical scroll, swipe interactions, sticky CTAs
-- Urgency baked into every loot card: countdown chip, "ending soon" pulse, claim count badge
-- No calendar/agenda/dashboard-table aesthetics
-
-Tokens live in `tailwind.config` + `src/app/globals.css`. See `ARCHITECTURE.md` for the design system summary.
-
-## Env
-
-Listed in `.env.example` (`NEXT_PUBLIC_API_URL` points at apps/api, default `http://localhost:4000`). Files: `.env.dev`, `.env.staging`, `.env.prod` (auto-copied to `.env.local` by `npm run dev*`).
-
-## Task continuity
-
-For any multi-step task, write `.claude/tasks/<task-slug>/PLAN.md` and `TODO.md` before touching code. Mark items `- [x]` as soon as each step completes.
+- `@/` maps to `src/` (`jsconfig.json`).
+- Domain code (API calls, enums, geo, urgency tiers) comes from `@loot/shared` — don't copy it here.
+- Every loot card shows urgency: countdown chip, "ending soon" pulse, claim count.
+  Tiers come from `@loot/shared/ranking` (`urgencyTier`, `countdown`).
+- Dark-first, high contrast, vertical scroll. No calendar/agenda/table aesthetics.

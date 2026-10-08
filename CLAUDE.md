@@ -77,7 +77,7 @@ Do not add TypeScript files or `tsconfig.json`. Document shapes with JSDoc (`@ty
 where it helps; validate data at runtime with zod in the API.
 
 **apps/api is the only backend.** There is no Firebase (no Auth, Firestore, Functions or Storage);
-the old `Backend/` Firebase project was deleted on 2026-10-08 and lives only in git history.
+the old `Backend/` Firebase project was deleted and lives only in git history.
 
 npm workspaces: run `npm install` once at the repo root (covers `apps/*` and `packages/*`).
 Run the API with `npm run api` after copying `apps/api/.env.example` to `apps/api/.env` (needs MongoDB + Redis).
@@ -89,8 +89,8 @@ goes in `packages/shared`, never duplicated into an app. It must stay React-, DO
 Each app calls `configureLootClient({ baseUrl, tokenStore })` once at startup; every API function in
 `@loot/shared/api` maps to a REST endpoint under `/v1`. Endpoints the API doesn't implement yet answer 404.
 
-`apps/web/` has its own `CLAUDE.md`, `ARCHITECTURE.md`, and `ONBOARDING.md`; `apps/mobile/` has `CLAUDE.md` + `AGENTS.md`.
-The backend plan lives in `.claude/tasks/backend-rewrite/`.
+`apps/web/` has its own `CLAUDE.md`; `apps/mobile/` has `CLAUDE.md` + `AGENTS.md`. `README.md` covers how to
+run everything and the current project status. The roadmap lives in `.claude/tasks/backend-rewrite/`.
 
 ## Infrastructure
 
@@ -109,7 +109,7 @@ Planned (see `.claude/tasks/backend-rewrite/PLAN.md`):
 
 ## Task continuity
 
-For any multi-step task, write a plan + checklist in `.claude/tasks/<task-slug>/PLAN.md` and `TODO.md`. Mark items `- [x]` immediately when each step completes. When resuming, read the existing plan first and continue from the first unchecked item.
+For any multi-step task, write a plan + checklist in `.claude/tasks/<task-slug>/PLAN.md` and `TODO.md`. Mark items `- [x]` immediately when each step completes. When resuming, read the existing plan first and continue from the first unchecked item. Delete the task folder once every item is done — git history keeps it.
 
 ## graphify
 
