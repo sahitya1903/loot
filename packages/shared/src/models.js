@@ -102,29 +102,50 @@ export const MAX_BOOST_MULTIPLIER = 1.3
  * @property {string} updatedAt
  */
 
+/** Live statuses: visible in feeds and claimable until expiryAt. */
+export const LIVE_LOOT_STATUSES = ['active', 'trending', 'expiring']
+
+/** A live loot switches to `expiring` this long before expiryAt. */
+export const ENDING_SOON_MS = 2 * 3600_000
+
 /**
  * @typedef {object} LootMedia
- * @property {string} key storage key
- * @property {string} [thumbnailKey]
- * @property {string} mimeType
+ * @property {string} url
+ * @property {string} [thumbnailUrl]
  * @property {'image' | 'video'} mediaType
- * @property {number} [durationMs]
- * @property {number} [width]
- * @property {number} [height]
  */
 
 /**
- * @typedef {object} Loot
+ * The signed-in user's relationship to a loot. Absent when signed out.
+ * @typedef {object} LootViewerState
+ * @property {boolean} saved
+ * @property {boolean} claimed
+ */
+
+/**
+ * Offer and stock fields carried by both Loot and LootFeedItem.
+ * @typedef {object} LootOffer
+ * @property {string | null} offerText e.g. "Buy 1 Get 1"
+ * @property {number | null} originalPrice in `currency`
+ * @property {number | null} offerPrice
+ * @property {string} currency ISO 4217, "INR"
+ * @property {number | null} totalQuantity null = unlimited
+ * @property {number | null} remainingQuantity null = unlimited
+ */
+
+/**
+ * @typedef {LootOffer & object} Loot
  * @property {string} id
  * @property {string} businessId
- * @property {string} [branchId]
+ * @property {string} branchId
+ * @property {{ businessId: string, businessName: string, username: string, category: string, logo: string | null, verified: boolean }} business
  * @property {string} title
  * @property {string} description
  * @property {LootMedia[]} media
  * @property {string} category one of LOOT_CATEGORIES
  * @property {string[]} tags
- * @property {string} [terms]
- * @property {{ name: string, placeId?: string }} location
+ * @property {string | null} terms
+ * @property {{ name: string, address: string }} location the branch
  * @property {number} latitude
  * @property {number} longitude
  * @property {string} geoHash
@@ -132,39 +153,56 @@ export const MAX_BOOST_MULTIPLIER = 1.3
  * @property {string} status one of LOOT_STATUSES
  * @property {string} lootType one of LOOT_TYPES
  * @property {string} redemptionType one of REDEMPTION_TYPES
- * @property {{ hours?: string, instructions?: string, phone?: string }} [outletInfo]
+ * @property {{ hours?: string, phone?: string }} outletInfo
  * @property {string} createdAt
  * @property {string} updatedAt
+ * @property {string | null} publishedAt
  * @property {string} expiryAt single expiry, never start/end pairs
  * @property {number} viewCount
  * @property {number} saveCount
  * @property {number} claimCount
+ * @property {number} redeemedCount
  * @property {number} shareCount
  * @property {number} trendingScore
- * @property {number} velocityScore
  * @property {{ active: boolean, multiplier: number, startedAt: string, endsAt: string }} [boost]
+ * @property {LootViewerState} [viewer]
  */
 
 /**
- * Slim shape returned by feed endpoints.
- * @typedef {object} LootFeedItem
+ * Slim shape returned by feed and list endpoints.
+ * @typedef {LootOffer & object} LootFeedItem
  * @property {string} id
  * @property {string} businessId
  * @property {string} businessName
  * @property {string} businessUsername
  * @property {boolean} businessVerified
- * @property {string} [businessLogo]
+ * @property {string | null} businessLogo
+ * @property {string} branchName
  * @property {string} title
- * @property {string} [thumbnailUrl]
- * @property {string} [primaryMediaUrl]
+ * @property {string | null} thumbnailUrl
+ * @property {string | null} primaryMediaUrl
  * @property {'image' | 'video'} primaryMediaType
  * @property {string} category
  * @property {string} status
  * @property {string} expiryAt
- * @property {number} distanceKm
+ * @property {string} createdAt
+ * @property {number} latitude
+ * @property {number} longitude
+ * @property {number | null} distanceKm null outside location-based feeds
  * @property {number} claimCount
  * @property {number} saveCount
  * @property {number} trendingScore
+ * @property {LootViewerState} [viewer]
+ */
+
+/**
+ * Live counters pushed over Socket.io (event `loot:counters`, room `loot:<id>`).
+ * @typedef {object} LootCounters
+ * @property {string} lootId
+ * @property {string} status
+ * @property {number} claimCount
+ * @property {number} saveCount
+ * @property {number | null} remainingQuantity
  */
 
 /**
@@ -175,12 +213,12 @@ export const MAX_BOOST_MULTIPLIER = 1.3
  * @property {string} businessId
  * @property {string} [branchId]
  * @property {string} redemptionType
- * @property {string} [code] e.g. "LOOT-7Q3X"
- * @property {string} [qrPayload]
- * @property {'issued' | 'used' | 'expired'} status
+ * @property {string} code e.g. "LOOT-7Q3XAB" — the business types or scans this to redeem
+ * @property {string} qrPayload what a QR code for this redemption encodes
+ * @property {'issued' | 'used' | 'expired'} status `expired` is derived: issued and past expiresAt
  * @property {string} issuedAt
  * @property {string} expiresAt
- * @property {string} [usedAt]
+ * @property {string | null} usedAt
  */
 
 /**
