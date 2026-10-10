@@ -15,7 +15,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@loot/shared": "*",
     "eslint": "^10.12.0",
     "globals": "^17.13.0",
     "ioredis-mock": "^8.13.1",
@@ -27,6 +26,7 @@
     "vitest": "^5.0.3"
   },
   "dependencies": {
+    "@loot/shared": "*",
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "helmet": "^8.3.0",

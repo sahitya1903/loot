@@ -27,3 +27,8 @@ export const notFound = (code = 'not_found', message = 'Not found') => new HttpE
 
 export const tooManyRequests = (code, message, retryAfterSeconds) =>
   new HttpError(429, code, message, undefined, retryAfterSeconds)
+
+export const conflict = (code, message, details) => new HttpError(409, code, message, details)
+
+/** The resource existed but is no longer available, e.g. an expired loot. */
+export const gone = (code, message, details) => new HttpError(410, code, message, details)

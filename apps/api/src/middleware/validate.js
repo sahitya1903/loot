@@ -5,3 +5,11 @@ export function validateBody(schema) {
     next()
   }
 }
+
+/** Parses the query string into `req.parsedQuery` (Express 5 makes `req.query` read-only). */
+export function validateQuery(schema) {
+  return (req, _res, next) => {
+    req.parsedQuery = schema.parse(req.query)
+    next()
+  }
+}
