@@ -2,7 +2,11 @@
 
 import { apiRequest, pathParam } from '../client.js'
 
-/** @returns {Promise<{ redemption: import('../models.js').Redemption }>} */
+/**
+ * Claims the loot and issues a redemption code. Idempotent: claiming again returns the same
+ * redemption. Fails with `loot_sold_out`, `loot_expired` or `loot_not_claimable`.
+ * @returns {Promise<{ redemption: import('../models.js').Redemption }>}
+ */
 export function claimLoot({ lootId }) {
   return apiRequest('POST', `/v1/loot/${pathParam(lootId)}/claim`)
 }
@@ -38,4 +42,14 @@ export function getMySavedLoot({ cursor, limit } = {}) {
 /** Each item also carries its `redemption`. */
 export function getMyClaimedLoot({ cursor, limit } = {}) {
   return apiRequest('GET', '/v1/me/claims', { query: { cursor, limit } })
+}
+
+/**
+ * Business side: marks a customer's redemption code as used. Each code redeems once.
+ * Fails with `redemption_not_found`, `redemption_already_used` or `redemption_expired`.
+ * @param {{ code: string }} req e.g. "LOOT-7Q3XAB" (case, spaces and the prefix are optional)
+ * @returns {Promise<{ redemption: import('../models.js').Redemption, loot: import('../models.js').LootFeedItem }>}
+ */
+export function redeemCode({ code }) {
+  return apiRequest('POST', '/v1/businesses/me/redemptions', { body: { code } })
 }

@@ -11,6 +11,11 @@ export function updateLoot({ lootId, ...changes }) {
   return apiRequest('PATCH', `/v1/loot/${pathParam(lootId)}`, { body: changes })
 }
 
+/** Publishes a draft: it goes live in feeds until its expiryAt. */
+export function publishLoot({ lootId }) {
+  return apiRequest('POST', `/v1/loot/${pathParam(lootId)}/publish`)
+}
+
 export function archiveLoot({ lootId }) {
   return apiRequest('POST', `/v1/loot/${pathParam(lootId)}/archive`)
 }

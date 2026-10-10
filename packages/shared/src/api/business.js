@@ -18,6 +18,14 @@ export function onboardBusiness(req) {
   return apiRequest('POST', '/v1/businesses', { body: req })
 }
 
+/**
+ * The signed-in professional's own business, including its branches.
+ * @returns {Promise<{ business: import('../models.js').Business }>}
+ */
+export function getMyBusiness() {
+  return apiRequest('GET', '/v1/businesses/me')
+}
+
 export function updateBusiness(req) {
   return apiRequest('PATCH', '/v1/businesses/me', { body: req })
 }
@@ -50,7 +58,8 @@ export function getBusiness({ businessId }) {
 
 /**
  * @param {{ businessId: string, status?: string, cursor?: string, limit?: number }} req
- *   status 'all_active' (default) = active + trending + expiring
+ *   status 'all_active' (default) = active + trending + expiring. The owner can also ask for
+ *   'draft', 'expired', 'archived' or 'all'.
  * @returns {Promise<import('../models.js').Page<import('../models.js').LootFeedItem>>}
  */
 export function getBusinessLoot({ businessId, ...query }) {
