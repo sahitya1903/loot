@@ -10,9 +10,24 @@ import { createAuthRouter } from './modules/auth/auth.routes.js'
 import { createAuthService } from './modules/auth/auth.service.js'
 import { createTokenService } from './modules/auth/tokens.js'
 import { createBusinessesRouter } from './modules/businesses/businesses.routes.js'
+import { noopLifecycleScheduler } from './modules/loot/lifecycle.js'
+import { createBusinessLootRouter, createLootRouter } from './modules/loot/loot.routes.js'
 import { createUsersRouter } from './modules/users/users.routes.js'
+import { noopRealtime } from './realtime/noop.js'
 
-export function createApp({ env, logger, redis, otpSender }) {
+/**
+ * @param {object} deps
+ * @param {{ lootCounters: Function, lootPublished: Function }} [deps.realtime] Socket.io publisher
+ * @param {{ scheduleLoot: Function }} [deps.lifecycle] BullMQ scheduler for expiry jobs
+ */
+export function createApp({
+  env,
+  logger,
+  redis,
+  otpSender,
+  realtime = noopRealtime,
+  lifecycle = noopLifecycleScheduler,
+}) {
   const tokens = createTokenService(env)
   const auth = createAuthService({ env, logger, otpSender, tokens })
 
@@ -67,7 +82,9 @@ export function createApp({ env, logger, redis, otpSender }) {
   const v1 = express.Router()
   v1.use('/auth', createAuthRouter(auth, redis))
   v1.use('/', createUsersRouter(authenticated))
+  v1.use('/businesses', createBusinessLootRouter({ guards }))
   v1.use('/businesses', createBusinessesRouter(guards))
+  v1.use('/loot', createLootRouter({ guards, lifecycle, realtime, logger }))
   app.use('/v1', v1)
 
   app.use(notFoundHandler)
