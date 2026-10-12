@@ -10,6 +10,7 @@ import { createAuthRouter } from './modules/auth/auth.routes.js'
 import { createAuthService } from './modules/auth/auth.service.js'
 import { createTokenService } from './modules/auth/tokens.js'
 import { createBusinessesRouter } from './modules/businesses/businesses.routes.js'
+import { createEngagementRouter } from './modules/engagement/engagement.routes.js'
 import { createFeedRouter } from './modules/feed/feed.routes.js'
 import { noopLifecycleScheduler } from './modules/loot/lifecycle.js'
 import { createBusinessLootRouter, createLootRouter } from './modules/loot/loot.routes.js'
@@ -83,6 +84,7 @@ export function createApp({
   const v1 = express.Router()
   v1.use('/auth', createAuthRouter(auth, redis))
   v1.use('/', createUsersRouter(authenticated))
+  v1.use('/', createEngagementRouter({ guards, redis, realtime }))
   v1.use('/businesses', createBusinessLootRouter({ guards }))
   v1.use('/businesses', createBusinessesRouter(guards))
   v1.use('/loot', createLootRouter({ guards, lifecycle, realtime, logger }))
