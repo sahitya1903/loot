@@ -10,6 +10,7 @@ import { createAuthRouter } from './modules/auth/auth.routes.js'
 import { createAuthService } from './modules/auth/auth.service.js'
 import { createTokenService } from './modules/auth/tokens.js'
 import { createBusinessesRouter } from './modules/businesses/businesses.routes.js'
+import { createFeedRouter } from './modules/feed/feed.routes.js'
 import { noopLifecycleScheduler } from './modules/loot/lifecycle.js'
 import { createBusinessLootRouter, createLootRouter } from './modules/loot/loot.routes.js'
 import { createUsersRouter } from './modules/users/users.routes.js'
@@ -85,6 +86,7 @@ export function createApp({
   v1.use('/businesses', createBusinessLootRouter({ guards }))
   v1.use('/businesses', createBusinessesRouter(guards))
   v1.use('/loot', createLootRouter({ guards, lifecycle, realtime, logger }))
+  v1.use('/feed', createFeedRouter({ guards }))
   app.use('/v1', v1)
 
   app.use(notFoundHandler)
