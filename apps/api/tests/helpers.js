@@ -1,6 +1,7 @@
 import RedisMock from 'ioredis-mock'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import mongoose from 'mongoose'
+import request from 'supertest'
 import { createApp } from '../src/app.js'
 import { loadEnv } from '../src/config/env.js'
 import { createLogger } from '../src/lib/logger.js'
@@ -28,6 +29,20 @@ export function createCapturingOtpSender() {
   return sender
 }
 
+/** Records Socket.io broadcasts instead of sending them. */
+export function createCapturingRealtime() {
+  const events = []
+  return {
+    events,
+    lootCounters(loot) {
+      events.push({ type: 'counters', lootId: loot._id.toString(), claimCount: loot.claimCount, status: loot.status })
+    },
+    lootPublished(loot) {
+      events.push({ type: 'published', lootId: loot._id.toString() })
+    },
+  }
+}
+
 export async function startTestServer() {
   const mongo = await MongoMemoryServer.create()
   await mongoose.connect(mongo.getUri())
@@ -36,15 +51,22 @@ export async function startTestServer() {
 
   const redis = new RedisMock()
   const otpSender = createCapturingOtpSender()
-  const app = createApp({ env: testEnv, logger: createLogger(testEnv), redis, otpSender })
+  const realtime = createCapturingRealtime()
+  const scheduled = []
+  const lifecycle = { scheduleLoot: (loot) => scheduled.push(loot._id.toString()) }
+  const app = createApp({ env: testEnv, logger: createLogger(testEnv), redis, otpSender, realtime, lifecycle })
 
   return {
     app,
     redis,
     otpSender,
+    realtime,
+    scheduled,
     async reset() {
       await redis.flushall()
       otpSender.codes.clear()
+      realtime.events.length = 0
+      scheduled.length = 0
       otpSender.fail = false
       await Promise.all(Object.values(mongoose.connection.collections).map((c) => c.deleteMany({})))
     },
@@ -53,4 +75,65 @@ export async function startTestServer() {
       await mongo.stop()
     },
   }
+}
+
+// ---------------------------------------------------------------- fixtures
+
+/** Bengaluru, Indiranagar 100ft Road. */
+export const ORIGIN = { latitude: 12.9719, longitude: 77.6412 }
+
+/** A point `km` north of ORIGIN (1 degree of latitude ≈ 111.2 km). */
+export function north(km) {
+  return { latitude: ORIGIN.latitude + km / 111.195, longitude: ORIGIN.longitude }
+}
+
+let phoneSeq = 0
+
+/** Signs in a fresh phone number; returns { token, user, auth: [header, value] }. */
+export async function signIn(server, phoneNumber = `+9198${String(++phoneSeq).padStart(8, '0')}`) {
+  await request(server.app).post('/v1/auth/otp/send').send({ phoneNumber }).expect(200)
+  const code = server.otpSender.codes.get(phoneNumber)
+  const res = await request(server.app).post('/v1/auth/otp/verify').send({ phoneNumber, code }).expect(200)
+  return { token: res.body.accessToken, user: res.body.user, auth: ['Authorization', `Bearer ${res.body.accessToken}`] }
+}
+
+/** Signs in and onboards a business with one branch at `at`. */
+export async function signInBusiness(server, { at = ORIGIN, username = `biz${++phoneSeq}` } = {}) {
+  const session = await signIn(server)
+  const res = await request(server.app)
+    .post('/v1/businesses')
+    .set(...session.auth)
+    .send({
+      businessName: 'Third Wave Cafe',
+      username,
+      category: 'cafe',
+      branch: { name: 'Indiranagar', address: '100ft Road', ...at },
+    })
+    .expect(201)
+  return { ...session, business: res.body.business, branchId: res.body.business.branchLocations[0].branchId }
+}
+
+export function lootBody(branchId, overrides = {}) {
+  return {
+    title: 'Two-for-one cold brew',
+    description: 'Every cold brew is buy one get one until the timer runs out.',
+    category: 'food_drink',
+    branchId,
+    offerText: 'Buy 1 Get 1',
+    originalPrice: 240,
+    offerPrice: 120,
+    expiryAt: new Date(Date.now() + 6 * 3600_000).toISOString(),
+    media: [{ url: 'https://images.example.com/brew.jpg', mediaType: 'image' }],
+    ...overrides,
+  }
+}
+
+/** Creates a published loot as `biz`; returns the API's loot. */
+export async function createLoot(server, biz, overrides = {}) {
+  const res = await request(server.app)
+    .post('/v1/loot')
+    .set(...biz.auth)
+    .send(lootBody(biz.branchId, overrides))
+  if (res.status !== 201) throw new Error(`createLoot ${res.status}: ${JSON.stringify(res.body)}`)
+  return res.body.loot
 }
