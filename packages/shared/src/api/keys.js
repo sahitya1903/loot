@@ -20,6 +20,7 @@ export const queryKeys = {
     media: (id) => ['loot', id, 'media'],
     analytics: (id) => ['loot', id, 'analytics'],
     redemption: (id) => ['loot', id, 'redemption'],
+    counters: (id) => ['loot', id, 'counters'],
   },
   business: {
     mine: () => ['business', 'me'],

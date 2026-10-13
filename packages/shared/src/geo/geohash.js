@@ -45,3 +45,27 @@ export function geoHash(lat, lng, precision = 7) {
 export function geoCellId(lat, lng) {
   return geoHash(lat, lng, 5)
 }
+
+/** Size in degrees of one geoHash cell at this precision. */
+export function geoHashCellSize(precision) {
+  const bits = precision * 5
+  return { latDegrees: 180 / 2 ** Math.floor(bits / 2), lngDegrees: 360 / 2 ** Math.ceil(bits / 2) }
+}
+
+/**
+ * The cell containing the point plus its 8 neighbours (fewer near the poles), so a
+ * radius search never misses loot just across a cell edge.
+ * @returns {string[]}
+ */
+export function geoHashNeighborhood(lat, lng, precision) {
+  const { latDegrees, lngDegrees } = geoHashCellSize(precision)
+  const cells = new Set()
+  for (const dLat of [-1, 0, 1]) {
+    for (const dLng of [-1, 0, 1]) {
+      const cellLat = Math.max(-90, Math.min(90, lat + dLat * latDegrees))
+      const cellLng = ((((lng + dLng * lngDegrees + 180) % 360) + 360) % 360) - 180
+      cells.add(geoHash(cellLat, cellLng, precision))
+    }
+  }
+  return [...cells]
+}

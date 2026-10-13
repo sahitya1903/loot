@@ -11,7 +11,8 @@
     "./api": "./src/api/index.js",
     "./geo": "./src/geo/index.js",
     "./ranking": "./src/ranking/index.js",
-    "./schemas": "./src/schemas.js"
+    "./schemas": "./src/schemas.js",
+    "./realtime": "./src/realtime.js"
   },
   "scripts": {
     "lint": "eslint .",

@@ -38,3 +38,11 @@ export function getLootMediaUrls({ lootId }) {
 export function trackLootView({ lootId, source, watchTimeMs }) {
   return apiRequest('POST', `/v1/loot/${pathParam(lootId)}/views`, { body: { source, watchTimeMs } })
 }
+
+/**
+ * Live counters without the full loot: the REST fallback when the socket is down.
+ * @returns {Promise<{ counters: import('../models.js').LootCounters }>}
+ */
+export function getLootCounters({ lootId }) {
+  return apiRequest('GET', `/v1/loot/${pathParam(lootId)}/counters`)
+}
