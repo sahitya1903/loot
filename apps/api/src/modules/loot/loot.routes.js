@@ -17,7 +17,7 @@ import { Business } from '../businesses/business.model.js'
 import { liveStatusFor } from './lifecycle.js'
 import { loadViewerStates, toFeedItems } from './loot.hydrate.js'
 import { Loot, liveLootFilter } from './loot.model.js'
-import { effectiveStatus, toLoot } from './loot.serialize.js'
+import { effectiveStatus, toLoot, toLootCounters } from './loot.serialize.js'
 
 export const lootNotFound = () => notFound('loot_not_found', 'Loot not found')
 
@@ -69,7 +69,7 @@ export async function visibleLoot(req) {
  * @param {object} deps
  * @param {{ auth: Function[], optionalAuth: Function, business: Function[] }} deps.guards
  * @param {{ scheduleLoot: (loot: object) => unknown }} deps.lifecycle
- * @param {{ lootCounters: Function, lootPublished: Function }} deps.realtime
+ * @param {{ lootCounters: Function, lootPublished: Function }} deps.realtime Socket.io publisher
  * @param {import('pino').Logger} deps.logger
  */
 export function createLootRouter({ guards, lifecycle, realtime, logger }) {
@@ -83,9 +83,9 @@ export function createLootRouter({ guards, lifecycle, realtime, logger }) {
       )
   }
 
-  function published(loot) {
+  function published(loot, business) {
     schedule(loot)
-    realtime.lootPublished(loot)
+    realtime.lootPublished(loot, business)
   }
 
   router.post('/', guards.business, validateBody(CreateLootBody), async (req, res) => {
@@ -101,7 +101,7 @@ export function createLootRouter({ guards, lifecycle, realtime, logger }) {
       status: live ? liveStatusFor(fields.expiryAt, now) : 'draft',
       publishedAt: live ? new Date(now) : undefined,
     })
-    if (live) published(loot)
+    if (live) published(loot, req.business)
     res.status(201).json({ loot: toLoot(loot, req.business) })
   })
 
@@ -172,7 +172,7 @@ export function createLootRouter({ guards, lifecycle, realtime, logger }) {
       { returnDocument: 'after' },
     )
     if (!updated) throw conflict('loot_not_draft', 'Only drafts can be published')
-    published(updated)
+    published(updated, req.business)
     res.json({ loot: toLoot(updated, req.business) })
   })
 
@@ -202,6 +202,11 @@ export function createLootRouter({ guards, lifecycle, realtime, logger }) {
     res.json({
       urls: loot.media.map((m) => ({ url: m.url, thumbnailUrl: m.thumbnailUrl ?? null, mediaType: m.mediaType })),
     })
+  })
+
+  // REST fallback for the `loot:counters` socket event: clients poll this while disconnected.
+  router.get('/:lootId/counters', guards.optionalAuth, async (req, res) => {
+    res.json({ counters: toLootCounters(await visibleLoot(req)) })
   })
 
   // Engagement counters. Fire-and-forget from the client; never fail the UI.

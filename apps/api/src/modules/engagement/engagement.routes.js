@@ -51,7 +51,7 @@ async function lootFor(rows) {
  * @param {object} deps
  * @param {{ personal: Function[], business: Function[], auth: Function[] }} deps.guards
  * @param {import('ioredis').Redis} deps.redis
- * @param {{ lootCounters: Function }} deps.realtime
+ * @param {{ lootCounters: Function, redemptionUpdated: Function }} deps.realtime
  */
 export function createEngagementRouter({ guards, redis, realtime }) {
   const router = Router()
@@ -216,6 +216,7 @@ export function createEngagementRouter({ guards, redis, realtime }) {
     }
 
     const loot = await Loot.findByIdAndUpdate(claim.lootId, { $inc: { redeemedCount: 1 } }, { returnDocument: 'after' })
+    realtime.redemptionUpdated(claim)
     res.json({ redemption: toRedemption(claim), loot: toFeedItem(loot, req.business) })
   })
 

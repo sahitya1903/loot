@@ -21,12 +21,14 @@
     "mongodb-memory-server": "^11.3.0",
     "pino-pretty": "^13.2.0",
     "prettier": "^3.9.9",
+    "socket.io-client": "^4.8.4",
     "supertest": "^7.3.1",
     "vite": "^8.3.4",
     "vitest": "^5.0.3"
   },
   "dependencies": {
     "@loot/shared": "*",
+    "@socket.io/redis-adapter": "^8.3.0",
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "helmet": "^8.3.0",
@@ -35,6 +37,7 @@
     "mongoose": "^9.11.1",
     "pino": "^10.4.0",
     "pino-http": "^11.0.0",
+    "socket.io": "^4.8.4",
     "zod": "^4.6.5"
   },
   "main": "src/index.js",

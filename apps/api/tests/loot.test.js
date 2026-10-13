@@ -41,7 +41,11 @@ describe('POST /v1/loot', () => {
     })
     expect(loot.publishedAt).not.toBeNull()
     expect(server.scheduled).toEqual([loot.id])
-    expect(server.realtime.events).toContainEqual({ type: 'published', lootId: loot.id })
+    expect(server.realtime.events).toContainEqual({
+      type: 'published',
+      lootId: loot.id,
+      businessId: biz.business.businessId,
+    })
   })
 
   it('starts as `expiring` when it ends within two hours', async () => {

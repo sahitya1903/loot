@@ -19,8 +19,10 @@ import { noopRealtime } from './realtime/noop.js'
 
 /**
  * @param {object} deps
- * @param {{ lootCounters: Function, lootPublished: Function }} [deps.realtime] Socket.io publisher
+ * @param {{ lootCounters: Function, lootPublished: Function, redemptionUpdated: Function }} [deps.realtime]
+ *   Socket.io publisher (src/realtime/socket.js)
  * @param {{ scheduleLoot: Function }} [deps.lifecycle] BullMQ scheduler for expiry jobs
+ * @param {ReturnType<typeof createTokenService>} [deps.tokens] shared with Socket.io auth
  */
 export function createApp({
   env,
@@ -29,8 +31,8 @@ export function createApp({
   otpSender,
   realtime = noopRealtime,
   lifecycle = noopLifecycleScheduler,
+  tokens = createTokenService(env),
 }) {
-  const tokens = createTokenService(env)
   const auth = createAuthService({ env, logger, otpSender, tokens })
 
   const authenticated = requireAuth(tokens)

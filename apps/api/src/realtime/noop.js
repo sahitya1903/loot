@@ -2,4 +2,6 @@
 export const noopRealtime = {
   lootCounters() {},
   lootPublished() {},
+  redemptionUpdated() {},
+  async close() {},
 }

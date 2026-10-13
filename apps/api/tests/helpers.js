@@ -1,3 +1,4 @@
+import { createServer } from 'node:http'
 import RedisMock from 'ioredis-mock'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import mongoose from 'mongoose'
@@ -5,6 +6,8 @@ import request from 'supertest'
 import { createApp } from '../src/app.js'
 import { loadEnv } from '../src/config/env.js'
 import { createLogger } from '../src/lib/logger.js'
+import { createTokenService } from '../src/modules/auth/tokens.js'
+import { createSocketRealtime } from '../src/realtime/socket.js'
 
 export const testEnv = loadEnv({
   NODE_ENV: 'test',
@@ -37,27 +40,47 @@ export function createCapturingRealtime() {
     lootCounters(loot) {
       events.push({ type: 'counters', lootId: loot._id.toString(), claimCount: loot.claimCount, status: loot.status })
     },
-    lootPublished(loot) {
-      events.push({ type: 'published', lootId: loot._id.toString() })
+    lootPublished(loot, business) {
+      events.push({ type: 'published', lootId: loot._id.toString(), businessId: business._id.toString() })
     },
+    redemptionUpdated(claim) {
+      events.push({ type: 'redemption', code: claim.code, status: claim.status })
+    },
+    async close() {},
   }
 }
 
-export async function startTestServer() {
+/**
+ * @param {object} [options]
+ * @param {boolean} [options.socket] serve over a real HTTP port with Socket.io attached
+ *   (no Redis adapter); `url` is then the base URL and `realtime.events` stays empty.
+ */
+export async function startTestServer({ socket = false } = {}) {
   const mongo = await MongoMemoryServer.create()
   await mongoose.connect(mongo.getUri())
   // Build unique and TTL indexes up front so uniqueness is enforced in tests.
   await Promise.all(Object.values(mongoose.models).map((model) => model.init()))
 
+  const logger = createLogger(testEnv)
+  const tokens = createTokenService(testEnv)
   const redis = new RedisMock()
   const otpSender = createCapturingOtpSender()
-  const realtime = createCapturingRealtime()
+  const realtime = socket ? createSocketRealtime({ env: testEnv, tokens, logger }) : createCapturingRealtime()
   const scheduled = []
   const lifecycle = { scheduleLoot: (loot) => scheduled.push(loot._id.toString()) }
-  const app = createApp({ env: testEnv, logger: createLogger(testEnv), redis, otpSender, realtime, lifecycle })
+  const app = createApp({ env: testEnv, logger, redis, otpSender, realtime, lifecycle, tokens })
+
+  let url
+  if (socket) {
+    const httpServer = createServer(app)
+    realtime.io.attach(httpServer)
+    await new Promise((resolve) => httpServer.listen(0, '127.0.0.1', resolve))
+    url = `http://127.0.0.1:${httpServer.address().port}`
+  }
 
   return {
     app,
+    url,
     redis,
     otpSender,
     realtime,
@@ -65,12 +88,13 @@ export async function startTestServer() {
     async reset() {
       await redis.flushall()
       otpSender.codes.clear()
-      realtime.events.length = 0
+      if (realtime.events) realtime.events.length = 0
       scheduled.length = 0
       otpSender.fail = false
       await Promise.all(Object.values(mongoose.connection.collections).map((c) => c.deleteMany({})))
     },
     async stop() {
+      await realtime.close()
       await mongoose.disconnect()
       await mongo.stop()
     },
