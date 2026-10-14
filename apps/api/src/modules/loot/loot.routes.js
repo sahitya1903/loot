@@ -22,7 +22,7 @@ import { effectiveStatus, toLoot, toLootCounters } from './loot.serialize.js'
 export const lootNotFound = () => notFound('loot_not_found', 'Loot not found')
 
 /** Location fields a loot copies from its branch. */
-function branchFields(branch) {
+export function branchFields(branch) {
   return {
     branchId: branch._id,
     location: { type: 'Point', coordinates: [...branch.location.coordinates] },

@@ -11,7 +11,8 @@
     "dev": "node --watch src/index.js",
     "start": "node src/index.js",
     "lint": "eslint .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "seed": "node scripts/seed.js"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
