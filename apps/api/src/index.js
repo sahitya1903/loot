@@ -7,6 +7,7 @@ import { createLogger } from './lib/logger.js'
 import { createRedis } from './lib/redis.js'
 import { createLoggingOtpSender, createWhatsAppOtpSender } from './modules/auth/otpSender.js'
 import { createTokenService } from './modules/auth/tokens.js'
+import { createLifecycleJobs } from './modules/loot/lifecycle.jobs.js'
 import { createSocketRealtime } from './realtime/socket.js'
 
 // Load .env when present (local development); hosted environments set real env vars.
@@ -33,11 +34,13 @@ const otpSender =
 
 const tokens = createTokenService(env)
 const realtime = createSocketRealtime({ env, tokens, logger, redis })
+const lifecycle = createLifecycleJobs({ redisUrl: env.REDIS_URL, realtime, logger })
 
-const app = createApp({ env, logger, redis, otpSender, realtime, tokens })
+const app = createApp({ env, logger, redis, otpSender, realtime, lifecycle, tokens })
 // Express handles plain HTTP; Socket.io takes /socket.io/ on the same port.
 const server = createServer(app)
 realtime.io.attach(server)
+await lifecycle.start()
 
 server.listen(env.PORT, () => {
   logger.info(`Loot API listening on http://localhost:${env.PORT}`)
@@ -46,7 +49,7 @@ server.listen(env.PORT, () => {
 async function shutdown(signal) {
   logger.info({ signal }, 'Shutting down')
   // Closing Socket.io also closes the HTTP server.
-  await realtime.close()
+  await Promise.allSettled([realtime.close(), lifecycle.close()])
   await Promise.allSettled([mongoose.disconnect(), redis.quit()])
   process.exit(0)
 }
