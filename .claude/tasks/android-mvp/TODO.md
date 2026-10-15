@@ -1,22 +1,23 @@
 # TODO — Android MVP
 
 ## Shared
-- [ ] zod schemas (business, branch, loot create/update, feed query, profile) in @loot/shared
-- [ ] Model JSDoc: offer/price, quantity, viewer state, branch on loot
-- [ ] Ranking weights + scoreLoot; new client fns (getMyBusiness, publishLoot, redeemCode, getNearby...)
+- [x] zod schemas (business, branch, loot create/update, feed query, profile) in @loot/shared
+- [x] Model JSDoc: offer/price, quantity, viewer state, branch on loot
+- [x] Ranking weights + scoreLoot; new client fns (getMyBusiness, publishLoot, redeemCode, getNearby...)
 
-## API
-- [ ] PATCH /v1/me, PUT /v1/me/account-type
-- [ ] Businesses: onboard, get, get mine, update, branches add/remove
-- [ ] Loot model + indexes; create/update/publish/archive/get; business loot list
-- [ ] Nearby + fresh feeds ($geoNear, score, cursor)
-- [ ] Save/unsave, saved list
-- [ ] Claim, claims list, redemption by loot, business redeem
-- [ ] Views/shares counters
-- [ ] Lifecycle: sweeper + BullMQ delayed jobs
-- [ ] Socket.io counters (+ Redis adapter)
-- [ ] Tests for every rule above
-- [ ] Seed script + run locally against real Mongo/Redis
+## API (Phases 2-3 done: 102 API tests incl. real-Redis BullMQ; smoke-tested against local Mongo + Docker Redis)
+- [x] PATCH /v1/me, PUT /v1/me/account-type
+- [x] Businesses: onboard, get, get mine, update, branches add/remove
+- [x] Loot model + indexes; create/update/publish/archive/get; business loot list
+- [x] Nearby + fresh feeds ($geoNear, score, cursor)
+- [x] Save/unsave, saved list
+- [x] Claim, claims list, redemption by loot, business redeem
+- [x] Views/shares counters
+- [x] Lifecycle: sweeper (state transitions, idempotent handlers)
+- [x] Lifecycle: BullMQ delayed jobs + periodic sweeper in the server process
+- [x] Socket.io counters (+ Redis adapter)
+- [x] Tests for every rule above
+- [x] Seed script + run locally against real Mongo/Redis
 
 ## Mobile
 - [ ] Deps + Expo Router skeleton, providers, client config, secure token store
