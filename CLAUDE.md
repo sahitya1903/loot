@@ -80,7 +80,8 @@ where it helps; validate data at runtime with zod in the API.
 the old `Backend/` Firebase project was deleted and lives only in git history.
 
 npm workspaces: run `npm install` once at the repo root (covers `apps/*` and `packages/*`).
-Run the API with `npm run api` after copying `apps/api/.env.example` to `apps/api/.env` (needs MongoDB + Redis).
+Run the API with `npm run api` after copying `apps/api/.env.example` to `apps/api/.env` (needs MongoDB + Redis);
+`npm run seed` loads demo businesses and loot around Bengaluru.
 Root scripts: `npm run lint`, `npm test` run across every workspace.
 
 Domain code more than one app needs (API calls, enum constants, query keys, geo/ranking helpers)
@@ -96,13 +97,13 @@ run everything and the current project status. The roadmap lives in `.claude/tas
 
 In use:
 - MongoDB — primary database (Atlas, Mumbai region in production); `2dsphere` indexes for geo
-- Redis — rate limits (counters, trending sorted sets and job queues are planned)
+- Redis — rate limits, the BullMQ queue and the Socket.io adapter (trending sorted sets are planned)
+- BullMQ — loot lifecycle jobs: delayed ending-soon and expiry jobs plus a one-minute sweeper (trending decay is planned)
+- Socket.io — live loot counters, new-loot-nearby announcements and redemption updates; the event contract is in `@loot/shared` (`realtime.js`)
 - WhatsApp Cloud API — phone OTP delivery (the API issues its own JWT sessions)
 
 Planned (see `.claude/tasks/backend-rewrite/PLAN.md`):
-- BullMQ — loot lifecycle jobs (expiry, ending-soon, trending decay)
-- Socket.io — real-time feed updates
-- Cloudflare Stream + R2 — media upload and delivery
+- Cloudflare Stream + R2 — media upload and delivery (loot media are https links until then)
 - AWS Rekognition — content moderation
 - Razorpay — payments (boosts, pro subscriptions)
 - MongoDB Atlas Vector Search — recommendation embeddings

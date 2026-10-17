@@ -14,25 +14,28 @@
 - [x] Root: `api` script; .env.example; README section in root CLAUDE.md
 
 ## Phase 1 — Core API
-Clients already call 41 endpoints (`packages/shared/src/api/`); the API serves 5. Build in this order.
-- [ ] PUT /v1/me/account-type — onboarding is stuck without it (first thing new users hit)
-- [ ] PATCH /v1/me profile update, username uniqueness; profile picture upload URL
-- [ ] Business onboarding (personal → professional), branches
-- [ ] Loot model + indexes; create/update/archive (professional only)
+Built for the Android MVP (see `.claude/tasks/android-mvp/` in git history). Remaining items below.
+- [x] PUT /v1/me/account-type
+- [x] PATCH /v1/me profile update, username uniqueness
+- [ ] Profile picture upload URL
+- [x] Business onboarding (personal → professional), branches, follows
+- [x] Loot model + indexes; create/update/publish/archive (business only); drafts
 - [ ] Media upload URLs (Cloudflare Stream / R2) + ready webhooks + Rekognition
-- [ ] Nearby feed ($geoNear + scoring + cursor pagination)
-- [ ] Following / Trending / Fresh feeds
-- [ ] Save / claim / redemption codes
-- [ ] BullMQ: expiry, ending-soon, sweeper, trending decay
+- [x] Nearby feed ($geoNear + scoring + cursor pagination)
+- [x] Fresh feed
+- [ ] Following / Trending feeds
+- [x] Save / claim / redemption codes (stock-safe, one-time redeem)
+- [x] BullMQ: expiry, ending-soon, sweeper
+- [ ] BullMQ: trending decay (Redis sorted sets → trendingScore)
 - [ ] Push tokens + loot alerts (GET /v1/me/alerts, mark read)
-- [ ] Socket.io rooms (loot, geohash cell)
+- [x] Socket.io rooms (loot, geohash cell, user) + Redis adapter
 
 ## Phase 2 — Clients
 - [x] @loot/shared importable by the API (plain JS ESM, no build step)
 - [x] REST client in @loot/shared behind configureLootClient() (+ contract test against the API)
 - [x] Web: auth + data layer off Firebase (pages call REST endpoints; 404 until Phase 1 builds them)
-- [ ] Share request schemas (zod) via @loot/shared as endpoints land
-- [ ] Mobile: Android MVP on the new API
+- [x] Share request schemas (zod) via @loot/shared as endpoints land
+- [x] Mobile: Android MVP on the new API
 
 ## Phase 3 — Business & money
 - [ ] Razorpay boosts + pro subscriptions + webhooks

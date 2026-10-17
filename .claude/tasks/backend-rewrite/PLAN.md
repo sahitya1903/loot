@@ -35,9 +35,9 @@ Nearby feed (`$geoNear` → filter → score → cursor page), Following/Trendin
 save/claim/redemption (unique indexes), lifecycle jobs, trending in Redis, push alerts,
 Socket.io real-time.
 
-**2. Clients** — ~~REST client in `@loot/shared`~~ and ~~web auth off Firebase~~ are done;
-remaining: build the Android MVP against the new API, and share request schemas (zod) via
-`@loot/shared` as endpoints land.
+**2. Clients** — ~~REST client in `@loot/shared`~~, ~~web auth off Firebase~~, ~~the Android MVP
+against the new API~~ and ~~shared request schemas (zod)~~ are done; the web pages still need
+moving onto the endpoints that now exist.
 
 **3. Business & money** — Razorpay boosts + pro subscriptions, analytics (time-series
 events collection), moderation queue, reports.
