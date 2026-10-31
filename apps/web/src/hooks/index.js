@@ -1,5 +1,4 @@
 export { useAuth } from './use-auth'
-export { useDebounce } from './use-debounce'
 export { useToast, toast } from './use-toast'
 export { useTheme, ThemeProvider } from './use-theme'
 export { useScrollReveal } from './use-scroll-reveal'

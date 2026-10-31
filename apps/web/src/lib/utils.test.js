@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { cn, getInitials, isValidPhoneNumber, truncate } from './utils'
+import { cn, getInitials, truncate } from './utils'
 
 describe('cn (className merge)', () => {
   it('merges simple class names', () => {
@@ -38,32 +38,6 @@ describe('getInitials', () => {
 
   it('converts to uppercase', () => {
     expect(getInitials('john doe')).toBe('JD')
-  })
-})
-
-describe('isValidPhoneNumber', () => {
-  it('validates correct international format', () => {
-    expect(isValidPhoneNumber('+14155552671')).toBe(true)
-  })
-
-  it('validates Indian phone number', () => {
-    expect(isValidPhoneNumber('+919876543210')).toBe(true)
-  })
-
-  it('handles spaces in phone number', () => {
-    expect(isValidPhoneNumber('+1 415 555 2671')).toBe(true)
-  })
-
-  it('rejects phone without +', () => {
-    expect(isValidPhoneNumber('14155552671')).toBe(false)
-  })
-
-  it('rejects too short phone number', () => {
-    expect(isValidPhoneNumber('+123456789')).toBe(false)
-  })
-
-  it('rejects too long phone number', () => {
-    expect(isValidPhoneNumber('+12345678901234567')).toBe(false)
   })
 })
 
