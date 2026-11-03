@@ -11,7 +11,7 @@ nearby find them in an urgency-driven feed. Product rules live in [CLAUDE.md](CL
 | 1 — Core API | Profiles, businesses + branches, loot CRUD, Nearby, Fresh, Following and Trending feeds, save/claim/redemption, lifecycle and trending jobs, real-time | ✅ Mostly done |
 | 2 — Clients | Android MVP on the API; web is wired to the client | ✅ Android MVP done |
 | 3 — Business & money | Razorpay boosts + pro subscriptions, analytics, moderation | Not started |
-| 4 — Launch | CI, deploy | CI added; deploy not started |
+| 4 — Launch | CI, deploy | CI added; deploy guide in [DEPLOY.md](DEPLOY.md), nothing deployed yet |
 
 **What works today (Android MVP):** sign in with a phone OTP; see live loot near you (GPS or a chosen
 area) ranked by distance, freshness, urgency and engagement; save and claim loot and get a one-time
@@ -38,6 +38,8 @@ packages/shared   @loot/shared — REST client, zod request schemas, ranking, re
 Plain JavaScript (ESM) everywhere, npm workspaces, Node 22+.
 
 ## Run it
+
+This section is for local development. To put Loot online, follow [DEPLOY.md](DEPLOY.md).
 
 Install once from the repo root. Use the folder's exact on-disk casing (`loot`, lowercase) or
 Next and Metro can't resolve `@loot/shared`. A postinstall step ([scripts/patch-metro.mjs](scripts/patch-metro.mjs))
@@ -79,6 +81,9 @@ directly, so expired loot never shows or sells even if a job is late.
 npm run mobile   # press `a` for the Android emulator, or scan the QR code with Expo Go on a phone
 ```
 
+Or start the API and Metro together with `npm run dev:mobile`. It runs in raw mode so Expo keeps its
+QR code and key shortcuts, which means API and Metro logs share the terminal without name prefixes.
+
 The app calls the API on the machine running Metro, port 4000 (its LAN IP from a phone). On the
 Android emulator, `10.0.2.2` is more reliable than the LAN IP (no firewall prompts):
 
@@ -117,6 +122,7 @@ The generated `android/` folder is gitignored; change native settings in `app.js
 
 ```bash
 npm run web      # http://localhost:3000 — first run creates apps/web/.env.dev from .env.example
+npm run dev      # API + web together, logs prefixed [api] / [web]
 ```
 
 ## Demo script
@@ -169,7 +175,8 @@ pretends the production integration exists.
 - **Live "new loot nearby"** covers geohash cells about 20 km around the viewer; beyond that, loot appears on refresh.
 - **Sockets** keep the identity they connected with after the 15-minute access token expires; they pick up the refreshed token on the next reconnect.
 - **Account switching:** a business owner can switch their account type back to personal and claim their own loot.
-- **Release APKs** are signed with the debug key and, when pointed at an http API, allow cleartext traffic.
+- **Local release APKs** (`expo run:android --variant release`) are signed with the debug key and, when
+  pointed at an http API, allow cleartext traffic. Builds to share come from EAS (see [DEPLOY.md](DEPLOY.md)).
 
 ## Check
 

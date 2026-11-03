@@ -44,5 +44,8 @@ Built for the Android MVP (see `.claude/tasks/android-mvp/` in git history). Rem
 
 ## Phase 4 — Launch
 - [x] Old data: nothing to migrate (Firestore/Neon was unreachable and is deleted)
-- [ ] GitHub Actions CI
+- [ ] GitHub Actions CI (workflow added; tick once a run passes on GitHub)
+- [x] Deploy guide (DEPLOY.md) + API Dockerfile
+- [ ] Deploy: API, website, Android beta build
+- [ ] Play Store review account (fixed test number + code from config)
 - [x] Update CLAUDE.md files + docs; retire Backend/

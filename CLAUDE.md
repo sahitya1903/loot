@@ -90,6 +90,9 @@ goes in `packages/shared`, never duplicated into an app. It must stay React-, DO
 Each app calls `configureLootClient({ baseUrl, tokenStore })` once at startup; every API function in
 `@loot/shared/api` maps to a REST endpoint under `/v1`. Endpoints the API doesn't implement yet answer 404.
 
+Production setup is in `DEPLOY.md`. The API ships as a Docker image built from the repo root
+(`docker build -f apps/api/Dockerfile .`); if you add a workspace, copy its `package.json` in that Dockerfile.
+
 `apps/web/` has its own `CLAUDE.md`; `apps/mobile/` has `CLAUDE.md` + `AGENTS.md`. `README.md` covers how to
 run everything and the current project status. The roadmap lives in `.claude/tasks/backend-rewrite/`.
 

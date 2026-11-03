@@ -1,0 +1,22 @@
+# Build context for apps/api/Dockerfile (run from the repo root).
+**/node_modules
+**/.env
+**/.env.*
+!**/.env.example
+.git
+.github
+.husky
+.claude
+*.pdf
+
+# Other apps: only their package.json is needed (npm ci checks the workspaces).
+apps/web/**
+!apps/web/package.json
+apps/mobile/**
+!apps/mobile/package.json
+
+# Tests and dev-only files never ship.
+apps/api/tests
+apps/api/scripts
+apps/api/vitest.config.js
+packages/shared/**/*.test.js
