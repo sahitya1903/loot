@@ -47,7 +47,7 @@ src/app/
 │   ├── loot/[id]/           # Loot detail (claim, save, share)
 │   ├── business/[id]/       # Business profile
 │   ├── profile/ (+ edit/)   settings/
-│   └── pro/[[...section]]/  # "Coming soon" for every /pro/* link until the business tools exist
+│   └── pro/[[...section]]/  # Every /pro/* link until web business tools exist: explains setting up in the Android app
 └── api/health/              # Health check
 ```
 
@@ -66,7 +66,9 @@ Component → hook in src/hooks (useQuery / useMutation)
   under `loot_session`); `src/components/providers.jsx` imports it before anything else.
 - Failures throw `ApiError` (`status`, `code`, `message`, `details`). Lists are `{ items, cursor }`.
 - Query keys come from `queryKeys` in `@loot/shared/api` — never hand-write them.
-- Endpoints apps/api hasn't built yet answer 404, so most signed-in pages show errors until Phase 1.
+- Endpoints apps/api hasn't built yet answer 404. The web only calls one: `GET /v1/me/alerts`, which the
+  Notifications page shows as "coming soon". Handle any new not-built endpoint the same way, not as an error.
+- `NEXT_PUBLIC_ANDROID_APP_URL` (optional) adds a "Get the Android app" button to the business pages.
 - Nothing is real-time yet; the notifications page polls.
 
 Auth is phone OTP only. `src/lib/auth.js` owns `sendPhoneOtp`, `verifyPhoneOtp`,

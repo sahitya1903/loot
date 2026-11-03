@@ -16,20 +16,22 @@ function OnboardingContent() {
   const [busy, setBusy] = useState(null)
   const [error, setError] = useState(null)
 
-  const choose = async (accountType) => {
+  // Everyone starts as a personal account. A business account is created by setting up the
+  // business itself (the Android app, for now), so "I run a business" only shows how.
+  const choose = async (choice) => {
     setError(null)
-    setBusy(accountType)
+    setBusy(choice)
     try {
-      const { user } = await chooseAccountType({ accountType })
+      const { user } = await chooseAccountType({ accountType: 'personal' })
       setProfile(user)
       clearNewUserFlag()
-      if (accountType === 'professional') {
+      if (choice === 'business') {
         router.push('/pro/dashboard')
       } else {
         router.push(redirect && redirect !== '/onboarding' ? redirect : '/feed')
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to set account type')
+      setError(err instanceof Error ? err.message : 'Something went wrong, please try again')
       setBusy(null)
     }
   }
@@ -50,17 +52,17 @@ function OnboardingContent() {
           title="I'm here to discover"
           body="Find what's dropping near you — claim, save, share."
           icon={<Compass size={22} className="text-[var(--accent,_#ff4d6d)]" aria-hidden />}
-          loading={busy === 'personal'}
+          loading={busy === 'discover'}
           disabled={!!busy}
-          onClick={() => choose('personal')}
+          onClick={() => choose('discover')}
         />
         <Choice
           title="I run a business"
-          body="Drop loot to nearby people. Track who shows up."
+          body="Drop loot to nearby people. Set up in the Loot Android app."
           icon={<Building2 size={22} className="text-[var(--accent-2,_#c4ff3b)]" aria-hidden />}
-          loading={busy === 'professional'}
+          loading={busy === 'business'}
           disabled={!!busy}
-          onClick={() => choose('professional')}
+          onClick={() => choose('business')}
         />
       </div>
 

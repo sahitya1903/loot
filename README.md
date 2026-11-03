@@ -20,8 +20,9 @@ onboard with a branch, create and publish loot, and redeem customers' codes at t
 
 **API only so far:** Following and Trending feeds (the web app uses them; the Android app shows Nearby only).
 
-**Not built yet:** media upload (loot photos are pasted https links), push notifications, map view, video, analytics, payments. The web app still calls some endpoints that
-don't exist and shows errors there. The checklist is in
+**Not built yet:** media upload (loot photos are pasted https links), push notifications, map view, video, analytics, payments. On the web, businesses are pointed to the
+Android app (its business pages explain how to set up there) and Notifications says "coming soon" until
+the API serves alerts. The checklist is in
 [.claude/tasks/backend-rewrite/TODO.md](.claude/tasks/backend-rewrite/TODO.md).
 
 ## Repo
