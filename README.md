@@ -28,7 +28,7 @@ don't exist and shows errors there. The checklist is in
 ```
 apps/api          Node + Express 5 API — MongoDB (Mongoose), Redis, BullMQ, Socket.io, zod, jose JWT
 apps/web          Next.js 16 — landing page, sign-in, feed pages, business dashboard (planned)
-apps/mobile       Expo SDK 57 (React Native, Expo Router) — the Android app
+apps/mobile       Expo SDK 58 (React Native, Expo Router) — the Android app
 packages/shared   @loot/shared — REST client, zod request schemas, ranking, realtime contract, geo helpers
 ```
 
@@ -37,7 +37,9 @@ Plain JavaScript (ESM) everywhere, npm workspaces, Node 22+.
 ## Run it
 
 Install once from the repo root. Use the folder's exact on-disk casing (`loot`, lowercase) or
-Next and Metro can't resolve `@loot/shared`.
+Next and Metro can't resolve `@loot/shared`. A postinstall step ([scripts/patch-metro.mjs](scripts/patch-metro.mjs))
+patches Expo's Metro file watcher so it doesn't mistake files for symlinks on Windows; it warns if an
+Expo update changes the code it patches.
 
 ```bash
 npm install
