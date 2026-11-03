@@ -10,19 +10,22 @@
     "mobile": "npm run start --workspace=apps/mobile",
     "api": "npm run dev --workspace=apps/api",
     "seed": "npm run seed --workspace=apps/api",
+    "dev": "concurrently -n api,web -c blue,magenta \"npm:api\" \"npm:web\"",
+    "dev:mobile": "concurrently --raw \"npm:api\" \"npm:mobile\"",
     "lint": "npm run lint --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "prepare": "husky",
     "postinstall": "node scripts/patch-metro.mjs"
   },
   "devDependencies": {
+    "concurrently": "^10.0.6",
     "husky": "^9.1.7",
     "lint-staged": "^17.6.0"
   },
   "version": "1.0.0",
   "dependencies": {
-    "expo": "~58.0.17",
+    "expo": "~58.0.23",
     "react": "19.3.0",
-    "react-native": "0.88.0"
+    "react-native": "0.88.1"
   }
 }
