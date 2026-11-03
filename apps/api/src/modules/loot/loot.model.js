@@ -38,7 +38,10 @@ const lootSchema = new Schema(
     saveCount: { type: Number, default: 0 },
     viewCount: { type: Number, default: 0 },
     shareCount: { type: Number, default: 0 },
+    // Decaying engagement points (see @loot/shared trending.js). Engagement adds points with $inc;
+    // the trending job decays them from trendingDecayedAt and sets status active ⇄ trending.
     trendingScore: { type: Number, default: 0 },
+    trendingDecayedAt: { type: Date },
 
     // Copied from the branch so the feed is a single $geoNear.
     location: { type: pointSchema, required: true },
@@ -67,8 +70,12 @@ const lootSchema = new Schema(
 lootSchema.index({ location: '2dsphere', status: 1, expiryAt: 1 })
 // A business's own loot lists.
 lootSchema.index({ businessId: 1, status: 1, _id: -1 })
+// Following feed: followed businesses' loot, newest first.
+lootSchema.index({ businessId: 1, publishedAt: -1, _id: -1 })
 // Lifecycle sweeper.
 lootSchema.index({ status: 1, expiryAt: 1 })
+// Trending job: live loot that still has points.
+lootSchema.index({ status: 1, trendingScore: -1 })
 
 export const Loot = model('Loot', lootSchema)
 

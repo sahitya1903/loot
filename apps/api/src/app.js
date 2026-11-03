@@ -89,7 +89,7 @@ export function createApp({
   v1.use('/', createEngagementRouter({ guards, redis, realtime }))
   v1.use('/businesses', createBusinessLootRouter({ guards }))
   v1.use('/businesses', createBusinessesRouter(guards))
-  v1.use('/loot', createLootRouter({ guards, lifecycle, realtime, logger }))
+  v1.use('/loot', createLootRouter({ guards, redis, lifecycle, realtime, logger }))
   v1.use('/feed', createFeedRouter({ guards }))
   app.use('/v1', v1)
 

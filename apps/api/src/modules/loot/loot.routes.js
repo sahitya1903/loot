@@ -4,6 +4,7 @@ import {
   LIVE_LOOT_STATUSES,
   MIN_LOOT_LIFETIME_MS,
   ShareBody,
+  TRENDING_POINTS,
   UpdateLootBody,
   ViewBody,
   checkLootRules,
@@ -12,6 +13,8 @@ import { Router } from 'express'
 import { decodeCursor, paginate } from '../../lib/cursor.js'
 import { badRequest, conflict, forbidden, notFound } from '../../lib/errors.js'
 import { parseObjectId } from '../../lib/ids.js'
+import { getAuth } from '../../middleware/auth.js'
+import { rateLimit } from '../../middleware/rateLimit.js'
 import { validateBody, validateQuery } from '../../middleware/validate.js'
 import { Business } from '../businesses/business.model.js'
 import { liveStatusFor } from './lifecycle.js'
@@ -20,6 +23,9 @@ import { Loot, liveLootFilter } from './loot.model.js'
 import { effectiveStatus, toLoot, toLootCounters } from './loot.serialize.js'
 
 export const lootNotFound = () => notFound('loot_not_found', 'Loot not found')
+
+/** A user's shares of one loot earn trending points once per this window. */
+export const SHARE_POINTS_WINDOW_SECONDS = 24 * 3600
 
 /** Location fields a loot copies from its branch. */
 export function branchFields(branch) {
@@ -68,11 +74,12 @@ export async function visibleLoot(req) {
 /**
  * @param {object} deps
  * @param {{ auth: Function[], optionalAuth: Function, business: Function[] }} deps.guards
+ * @param {import('ioredis').Redis} deps.redis
  * @param {{ scheduleLoot: (loot: object) => unknown }} deps.lifecycle
  * @param {{ lootCounters: Function, lootPublished: Function }} deps.realtime Socket.io publisher
  * @param {import('pino').Logger} deps.logger
  */
-export function createLootRouter({ guards, lifecycle, realtime, logger }) {
+export function createLootRouter({ guards, redis, lifecycle, realtime, logger }) {
   const router = Router()
 
   function schedule(loot) {
@@ -216,15 +223,31 @@ export function createLootRouter({ guards, lifecycle, realtime, logger }) {
     res.status(204).end()
   })
 
-  router.post('/:lootId/shares', guards.auth, validateBody(ShareBody), async (req, res) => {
-    const lootId = parseObjectId(req.params.lootId, lootNotFound)
-    const { matchedCount } = await Loot.updateOne(
-      { _id: lootId, status: { $ne: 'draft' } },
-      { $inc: { shareCount: 1 } },
-    )
-    if (!matchedCount) throw lootNotFound()
-    res.status(204).end()
-  })
+  router.post(
+    '/:lootId/shares',
+    guards.auth,
+    rateLimit(redis, { name: 'share-user', limit: 20, windowSeconds: 60, key: (req) => req.auth?.userId }),
+    validateBody(ShareBody),
+    async (req, res) => {
+      const { userId } = getAuth(req)
+      const lootId = parseObjectId(req.params.lootId, lootNotFound)
+      // Every share counts, but only a user's first share of a loot per window adds trending
+      // points, so one person can't push a loot up by sharing it over and over.
+      const firstShare = await redis.set(
+        `share-points:${userId}:${lootId}`,
+        '1',
+        'EX',
+        SHARE_POINTS_WINDOW_SECONDS,
+        'NX',
+      )
+      const { matchedCount } = await Loot.updateOne(
+        { _id: lootId, status: { $ne: 'draft' } },
+        { $inc: { shareCount: 1, ...(firstShare ? { trendingScore: TRENDING_POINTS.share } : {}) } },
+      )
+      if (!matchedCount) throw lootNotFound()
+      res.status(204).end()
+    },
+  )
 
   return router
 }

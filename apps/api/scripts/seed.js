@@ -1,5 +1,6 @@
 // Demo data for local development: four fictional businesses around Indiranagar/Koramangala,
-// Bengaluru, a dozen live loot with varied urgency and stock, and one hunter account.
+// Bengaluru, a dozen live loot with varied urgency and stock, and one hunter account that
+// follows two of them. A few loot start with trending scores so the Trending feed has content.
 //
 //   npm run seed --workspace=apps/api
 //
@@ -7,7 +8,7 @@
 // `demo_` usernames) and never drops a collection. Refuses to run in production.
 // Sign in with any demo phone; the OTP is printed in the API log (no WhatsApp in dev).
 
-import { geoHash } from '@loot/shared'
+import { TRENDING_THRESHOLD, geoHash } from '@loot/shared'
 import mongoose from 'mongoose'
 import { loadEnv } from '../src/config/env.js'
 import { Business, toBranchFields } from '../src/modules/businesses/business.model.js'
@@ -33,6 +34,15 @@ if (env.NODE_ENV === 'production') {
 const HUNTER_PHONE = '+919999900100'
 const MIN = 60_000
 const HOUR = 60 * MIN
+/** Businesses the demo hunter follows (Following feed). */
+const HUNTER_FOLLOWS = ['demo_brewlab', 'demo_threadloom']
+/** Starting trending scores; at or above TRENDING_THRESHOLD the loot starts as `trending`. */
+const TRENDING_SCORES = {
+  'Buy 1 Get 1 cold brew': 16,
+  'Happy hour extended till 10pm': 12,
+  'Flash sale: kurtas at ₹499': 7,
+  'First boxing class free': 3,
+}
 const image = (seed) => [{ url: `https://picsum.photos/seed/${seed}/800/1000`, mediaType: 'image' }]
 
 const BUSINESSES = [
@@ -227,13 +237,14 @@ async function main() {
           about: spec.about,
           logo: `https://picsum.photos/seed/${spec.username}-logo/200/200`,
           branches: [toBranchFields(spec.branch)],
-          followersCount: 0,
+          followersCount: HUNTER_FOLLOWS.includes(spec.username) ? 1 : 0,
           totalClaimsCount: 0,
         },
       },
       { upsert: true, returnDocument: 'after' },
     )
     await User.updateOne({ _id: owner._id }, { businessId: business._id })
+    if (HUNTER_FOLLOWS.includes(spec.username)) await Follow.create({ userId: hunter._id, businessId: business._id })
 
     const branch = business.branches[0]
     for (const [i, item] of spec.loot.entries()) {
@@ -241,23 +252,29 @@ async function main() {
       const expiryAt = new Date(now + expiresIn)
       // Stagger publish times so Fresh and the freshness signal have something to sort.
       const publishedAt = new Date(now - (i * 3 + 1) * 17 * MIN)
+      const trendingScore = TRENDING_SCORES[item.title] ?? 0
+      const status = liveStatusFor(expiryAt, now)
       await Loot.create({
         ...fields,
         description: `${item.offerText} at ${spec.businessName}, ${spec.branch.name}. Show your code at the counter.`,
         media: image(`${spec.username}-${i}`),
         ...branchFields(branch),
         businessId: business._id,
-        status: liveStatusFor(expiryAt, now),
+        status: status === 'active' && trendingScore >= TRENDING_THRESHOLD ? 'trending' : status,
         publishedAt,
         expiryAt,
         // Some engagement so the ranking has signal.
         saveCount: (i * 7 + spec.username.length) % 23,
         viewCount: 40 + i * 13,
         shareCount: i % 3,
+        trendingScore,
+        ...(trendingScore ? { trendingDecayedAt: new Date(now) } : {}),
       })
       lootCount++
     }
   }
+
+  await User.updateOne({ _id: hunter._id }, { followingCount: HUNTER_FOLLOWS.length })
 
   console.log(`Seeded ${BUSINESSES.length} businesses and ${lootCount} live loot near ${geoHash(12.9719, 77.6412, 5)}.`)
   console.log('\nSign in with (OTP appears in the API log):')

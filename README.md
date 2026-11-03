@@ -8,7 +8,7 @@ nearby find them in an urgency-driven feed. Product rules live in [CLAUDE.md](CL
 | Phase | What | State |
 | --- | --- | --- |
 | 0 — Foundations | `apps/api` scaffold, phone OTP → JWT auth, shared REST client, web sign-in | ✅ Done |
-| 1 — Core API | Profiles, businesses + branches, loot CRUD, Nearby + Fresh feeds, save/claim/redemption, lifecycle jobs, real-time | ✅ Mostly done |
+| 1 — Core API | Profiles, businesses + branches, loot CRUD, Nearby, Fresh, Following and Trending feeds, save/claim/redemption, lifecycle and trending jobs, real-time | ✅ Mostly done |
 | 2 — Clients | Android MVP on the API; web is wired to the client | ✅ Android MVP done |
 | 3 — Business & money | Razorpay boosts + pro subscriptions, analytics, moderation | Not started |
 | 4 — Launch | CI, deploy | CI added; deploy not started |
@@ -18,8 +18,9 @@ area) ranked by distance, freshness, urgency and engagement; save and claim loot
 redemption code (QR + text); watch claim counts, stock and "redeemed" update live. Businesses
 onboard with a branch, create and publish loot, and redeem customers' codes at the counter.
 
-**Not built yet:** media upload (loot photos are pasted https links), Following and Trending feeds,
-push notifications, map view, video, analytics, payments. The web app still calls some endpoints that
+**API only so far:** Following and Trending feeds (the web app uses them; the Android app shows Nearby only).
+
+**Not built yet:** media upload (loot photos are pasted https links), push notifications, map view, video, analytics, payments. The web app still calls some endpoints that
 don't exist and shows errors there. The checklist is in
 [.claude/tasks/backend-rewrite/TODO.md](.claude/tasks/backend-rewrite/TODO.md).
 
@@ -40,6 +41,10 @@ Install once from the repo root. Use the folder's exact on-disk casing (`loot`, 
 Next and Metro can't resolve `@loot/shared`. A postinstall step ([scripts/patch-metro.mjs](scripts/patch-metro.mjs))
 patches Expo's Metro file watcher so it doesn't mistake files for symlinks on Windows; it warns if an
 Expo update changes the code it patches.
+
+`node_modules/@loot/shared` must be a link to `packages/shared` (a junction on Windows). If edits to
+`packages/shared` don't show up in the API or web app, it has become a plain copy, for example after
+copying `node_modules` between folders: delete `node_modules/@loot` and run `npm install` again.
 
 ```bash
 npm install
@@ -133,7 +138,9 @@ With the API running and `npm run seed` done:
    to *Redeemed* live; redeeming the same code again is refused.
 4. **Business:** *My loot* → *+ New loot* → fill in an offer, pick *Ends in 1 hour* → *Publish now*.
    It goes live in hunters' feeds straight away (an open Nearby feed shows a "new loot nearby" pill).
-5. **No GPS needed:** deny location or pick any preset area; the choice is remembered.
+5. **Following and Trending:** the hunter follows Brew Lab Cafe and Thread & Loom, so the web
+   app's Following tab lists their loot; a few seeded loot have trending scores for the Trending tab.
+6. **No GPS needed:** deny location or pick any preset area; the choice is remembered.
 
 ## Development stand-ins
 
@@ -150,7 +157,11 @@ pretends the production integration exists.
 ## Known limitations
 
 - **Media:** no uploads or video yet (P1). The QR code encodes `loot:redeem:<code>`; there's no scanner in the business app yet.
-- **Feeds:** Nearby and Fresh only. Following and Trending return 404, and `trendingScore` stays 0 until trending decay jobs exist.
+- **Feeds:** the Android app shows Nearby only and has no follow button yet. Trending pages are
+  best-effort: scores move every 5 minutes, so a later page can occasionally repeat or skip an item.
+- **Trending:** saves, claims and shares add points to `trendingScore` (a user's shares of one loot
+  count once a day); a job every 5 minutes halves points every 3 hours and moves loot between `active`
+  and `trending`. Views don't count.
 - **Live "new loot nearby"** covers geohash cells about 20 km around the viewer; beyond that, loot appears on refresh.
 - **Sockets** keep the identity they connected with after the 15-minute access token expires; they pick up the refreshed token on the next reconnect.
 - **Account switching:** a business owner can switch their account type back to personal and claim their own loot.

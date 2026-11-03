@@ -32,7 +32,7 @@ OTP → JWT → refresh auth flow, account-type guard, tests.
 
 **1. Core API** — users/profile, businesses + branches, loot CRUD with media upload,
 Nearby feed (`$geoNear` → filter → score → cursor page), Following/Trending/Fresh feeds,
-save/claim/redemption (unique indexes), lifecycle jobs, trending in Redis, push alerts,
+save/claim/redemption (unique indexes), lifecycle jobs, trending decay, push alerts,
 Socket.io real-time.
 
 **2. Clients** — ~~REST client in `@loot/shared`~~, ~~web auth off Firebase~~, ~~the Android MVP
@@ -49,7 +49,10 @@ data was unreachable and has been deleted, so MongoDB starts empty.
 
 - Loot documents embed a GeoJSON `location` point (copied from the branch) with a `2dsphere` index.
 - Counters live on documents (`$inc`); raw engagement events go to a time-series collection.
-- Trending = Redis sorted sets with time decay, written back as `trendingScore` by a job. No single signal dominates; boost multiplier capped at 1.3.
+- Trending = decaying engagement points kept in `trendingScore` on the loot itself: engagement `$inc`s it and a
+  BullMQ job decays it (half-life 3 h) and sets `active ⇄ trending`. Not Redis sorted sets — every engagement
+  already writes the loot, so a second store added nothing (decided 2026-11-03). No single signal dominates;
+  boost multiplier capped at 1.3.
 - Expiry = delayed BullMQ job at `expiryAt` + periodic sweeper. Never a TTL index on loot (we archive, not delete).
 - Unique indexes on `{userId, lootId}` for saves and claims.
 - Only `professional` accounts create/manage loot — enforced by `requireAccountType` middleware.

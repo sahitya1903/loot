@@ -8,13 +8,19 @@ export function getNearbyFeed(req) {
   return apiRequest('GET', '/v1/feed/nearby', { query: req })
 }
 
-/** @param {{ cursor?: string, limit?: number }} [req] */
+/**
+ * Live loot from businesses the signed-in user follows, newest first. Pass both coordinates to get distanceKm.
+ * @param {{ latitude?: number, longitude?: number, category?: string, cursor?: string, limit?: number }} [req]
+ */
 export function getFollowingFeed(req = {}) {
   return apiRequest('GET', '/v1/feed/following', { query: req })
 }
 
-/** @param {{ geoCellId?: string, latitude?: number, longitude?: number, category?: string, cursor?: string, limit?: number }} [req] */
-export function getTrendingFeed(req = {}) {
+/**
+ * Live loot in the area with a trending score, highest first. Empty when nothing nearby is trending.
+ * @param {{ latitude: number, longitude: number, radiusKm?: number, category?: string, cursor?: string, limit?: number }} req
+ */
+export function getTrendingFeed(req) {
   return apiRequest('GET', '/v1/feed/trending', { query: req })
 }
 

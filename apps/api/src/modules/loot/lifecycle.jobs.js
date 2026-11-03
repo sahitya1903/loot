@@ -2,16 +2,18 @@
 //   expiring-<lootId>-<expiryMs>  delayed until ENDING_SOON_MS before expiryAt
 //   expire-<lootId>-<expiryMs>    delayed until expiryAt
 //   sweep                         every minute; catches anything the delayed jobs missed
+//   trending                      every 5 minutes; decays trending scores, moves active ⇄ trending
 // Job ids include the expiry, so editing expiryAt schedules new jobs; the old ones still
 // run but change nothing, because every handler re-checks expiryAt against the clock.
 
 import { ENDING_SOON_MS } from '@loot/shared'
 import { Queue, Worker } from 'bullmq'
 import { Redis } from 'ioredis'
-import { expireLoot, markLootExpiring, sweepLootLifecycle } from './lifecycle.js'
+import { expireLoot, markLootExpiring, refreshTrending, sweepLootLifecycle } from './lifecycle.js'
 
 export const LIFECYCLE_QUEUE = 'loot-lifecycle'
 export const SWEEP_EVERY_MS = 60_000
+export const TRENDING_EVERY_MS = 5 * 60_000
 
 /** The delayed jobs for one live loot. */
 export function lifecycleJobsFor(loot, now = Date.now()) {
@@ -41,6 +43,11 @@ export async function runLifecycleJob(job, { realtime }) {
     for (const loot of [...expired, ...expiring]) realtime.lootCounters(loot)
     return { expired: expired.length, expiring: expiring.length }
   }
+  if (job.name === 'trending') {
+    const { trending, active } = await refreshTrending()
+    for (const loot of [...trending, ...active]) realtime.lootCounters(loot)
+    return { trending: trending.length, active: active.length }
+  }
   const transition = { expire: expireLoot, expiring: markLootExpiring }[job.name]
   if (!transition) throw new Error(`Unknown lifecycle job: ${job.name}`)
   const changed = await transition(job.data.lootId)
@@ -54,8 +61,15 @@ export async function runLifecycleJob(job, { realtime }) {
  * @param {{ lootCounters: Function }} deps.realtime
  * @param {import('pino').Logger} deps.logger
  * @param {number} [deps.sweepEveryMs]
+ * @param {number} [deps.trendingEveryMs]
  */
-export function createLifecycleJobs({ redisUrl, realtime, logger, sweepEveryMs = SWEEP_EVERY_MS }) {
+export function createLifecycleJobs({
+  redisUrl,
+  realtime,
+  logger,
+  sweepEveryMs = SWEEP_EVERY_MS,
+  trendingEveryMs = TRENDING_EVERY_MS,
+}) {
   const connection = new Redis(redisUrl, { maxRetriesPerRequest: null })
   connection.on('error', (err) => logger.error({ err }, 'BullMQ Redis error'))
   const queue = new Queue(LIFECYCLE_QUEUE, {
@@ -83,6 +97,7 @@ export function createLifecycleJobs({ redisUrl, realtime, logger, sweepEveryMs =
       worker.on('failed', (job, err) => logger.warn({ err, jobId: job?.id }, 'Lifecycle job failed'))
       worker.on('error', (err) => logger.error({ err }, 'Lifecycle worker error'))
       await queue.upsertJobScheduler('sweep', { every: sweepEveryMs }, { name: 'sweep' })
+      await queue.upsertJobScheduler('trending', { every: trendingEveryMs }, { name: 'trending' })
       // Catch up right away on anything that expired while the API was down.
       await queue.add('sweep', {})
       logger.info('Loot lifecycle jobs started')

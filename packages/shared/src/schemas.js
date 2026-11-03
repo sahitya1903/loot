@@ -176,6 +176,23 @@ export const NearbyFeedQuery = z.object({
   limit: limit(30, 10),
 })
 
+/** Same area as Nearby; only loot with a trending score shows. */
+export const TrendingFeedQuery = NearbyFeedQuery
+
+/** Loot from followed businesses, anywhere. Pass both coordinates to get `distanceKm`. */
+export const FollowingFeedQuery = z
+  .object({
+    latitude: latitude.optional(),
+    longitude: longitude.optional(),
+    category: z.enum(LOOT_CATEGORIES).optional(),
+    cursor: z.string().max(200).optional(),
+    limit: limit(30, 10),
+  })
+  .refine((q) => (q.latitude === undefined) === (q.longitude === undefined), {
+    message: 'Pass latitude and longitude together',
+    path: ['longitude'],
+  })
+
 export const BusinessLootQuery = PageQuery.extend({
   status: z.enum(['all_active', 'draft', 'expired', 'archived', 'all']).default('all_active'),
 })

@@ -10,6 +10,17 @@ import { useTrendingFeed } from '@/hooks/use-trending-feed'
 import { useFreshFeed } from '@/hooks/use-fresh-feed'
 import { useAuthStore } from '@/stores/auth'
 
+const EMPTY_COPY = {
+  following: {
+    title: 'Follow some businesses',
+    body: "You'll see new loot from businesses you follow here.",
+  },
+  trending: {
+    title: 'Nothing trending nearby yet',
+    body: 'Loot shows up here as people save, claim and share it. Check Nearby for everything live.',
+  },
+}
+
 export default function FeedPage() {
   const [tab, setTab] = useState('nearby')
   const { coords, status, refresh } = useGeo()
@@ -79,10 +90,8 @@ export default function FeedPage() {
           if (tab === 'nearby') nearby.fetchNextPage()
           else if (tab === 'following') following.fetchNextPage()
         }}
-        emptyTitle={tab === 'following' ? 'Follow some businesses' : undefined}
-        emptyBody={
-          tab === 'following' ? "You'll see new loot from businesses you follow here." : undefined
-        }
+        emptyTitle={EMPTY_COPY[tab]?.title}
+        emptyBody={EMPTY_COPY[tab]?.body}
       />
     </div>
   )

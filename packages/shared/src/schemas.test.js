@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { CreateLootBody, NearbyFeedQuery, RedeemBody, UpdateLootBody } from './schemas.js'
+import { CreateLootBody, FollowingFeedQuery, NearbyFeedQuery, RedeemBody, UpdateLootBody } from './schemas.js'
 import { scoreLoot } from './ranking/score.js'
+import { TRENDING_HALF_LIFE_HOURS, decayTrendingScore } from './ranking/trending.js'
 
 const HOUR = 3600_000
 const branchId = '64b7f0c2a1b2c3d4e5f60718'
@@ -69,6 +70,20 @@ describe('NearbyFeedQuery', () => {
   })
 })
 
+describe('FollowingFeedQuery', () => {
+  it('works without a location', () => {
+    expect(FollowingFeedQuery.parse({})).toEqual({ limit: 10 })
+  })
+
+  it('takes latitude and longitude only together', () => {
+    expect(FollowingFeedQuery.parse({ latitude: '12.97', longitude: '77.59' })).toMatchObject({
+      latitude: 12.97,
+      longitude: 77.59,
+    })
+    expect(FollowingFeedQuery.safeParse({ latitude: '12.97' }).success).toBe(false)
+  })
+})
+
 describe('RedeemBody', () => {
   it('normalizes the code', () => {
     expect(RedeemBody.parse({ code: ' loot-7q3 xab ' }).code).toBe('LOOT-7Q3XAB')
@@ -102,5 +117,14 @@ describe('scoreLoot', () => {
   it('stays between 0 and 1.3', () => {
     const huge = { ...base, distanceKm: 0, saveCount: 1e6, claimCount: 1e6, trendingScore: 1e6 }
     expect(scoreLoot(huge, now)).toBeLessThanOrEqual(1)
+  })
+})
+
+describe('decayTrendingScore', () => {
+  it('halves every half-life and drops dust to 0', () => {
+    expect(decayTrendingScore(8, TRENDING_HALF_LIFE_HOURS * HOUR)).toBeCloseTo(4)
+    expect(decayTrendingScore(8, 0)).toBe(8)
+    expect(decayTrendingScore(0.015, TRENDING_HALF_LIFE_HOURS * HOUR)).toBe(0)
+    expect(decayTrendingScore(-3, HOUR)).toBe(0)
   })
 })

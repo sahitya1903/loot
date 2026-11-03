@@ -1,4 +1,4 @@
-import { PageQuery, RedeemBody } from '@loot/shared'
+import { PageQuery, RedeemBody, TRENDING_POINTS } from '@loot/shared'
 import { Router } from 'express'
 import { decodeCursor, paginate } from '../../lib/cursor.js'
 import { badRequest, conflict, gone, notFound } from '../../lib/errors.js'
@@ -75,7 +75,11 @@ export function createEngagementRouter({ guards, redis, realtime }) {
     let current = await Loot.findById(lootId)
     if (inserted) {
       ;[current] = await Promise.all([
-        Loot.findByIdAndUpdate(lootId, { $inc: { saveCount: 1 } }, { returnDocument: 'after' }),
+        Loot.findByIdAndUpdate(
+          lootId,
+          { $inc: { saveCount: 1, trendingScore: TRENDING_POINTS.save } },
+          { returnDocument: 'after' },
+        ),
         User.updateOne({ _id: userId }, { $inc: { savesCount: 1 } }),
       ])
       realtime.lootCounters(current)
@@ -92,7 +96,12 @@ export function createEngagementRouter({ guards, redis, realtime }) {
     if (!current) throw lootNotFound()
     if (deletedCount) {
       ;[current] = await Promise.all([
-        Loot.findByIdAndUpdate(lootId, { $inc: { saveCount: -1 } }, { returnDocument: 'after' }),
+        Loot.findByIdAndUpdate(
+          lootId,
+          // Take the point back, so save/unsave toggling can't pump trending.
+          { $inc: { saveCount: -1, trendingScore: -TRENDING_POINTS.save } },
+          { returnDocument: 'after' },
+        ),
         User.updateOne({ _id: userId }, { $inc: { savesCount: -1 } }),
       ])
       realtime.lootCounters(current)
@@ -128,12 +137,13 @@ export function createEngagementRouter({ guards, redis, realtime }) {
           ...liveLootFilter(now),
           $or: [{ totalQuantity: null }, { $expr: { $lt: ['$claimCount', '$totalQuantity'] } }],
         },
-        { $inc: { claimCount: 1 } },
+        { $inc: { claimCount: 1, trendingScore: TRENDING_POINTS.claim } },
         { returnDocument: 'after' },
       )
       if (!loot) throw unavailable(await Loot.findById(lootId))
 
-      const release = () => Loot.updateOne({ _id: lootId }, { $inc: { claimCount: -1 } })
+      const release = () =>
+        Loot.updateOne({ _id: lootId }, { $inc: { claimCount: -1, trendingScore: -TRENDING_POINTS.claim } })
       const expiresAt = new Date(Math.max(loot.expiryAt.getTime(), now.getTime() + MIN_REDEMPTION_WINDOW_MS))
 
       let claim

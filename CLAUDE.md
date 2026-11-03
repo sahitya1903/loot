@@ -97,8 +97,9 @@ run everything and the current project status. The roadmap lives in `.claude/tas
 
 In use:
 - MongoDB — primary database (Atlas, Mumbai region in production); `2dsphere` indexes for geo
-- Redis — rate limits, the BullMQ queue and the Socket.io adapter (trending sorted sets are planned)
-- BullMQ — loot lifecycle jobs: delayed ending-soon and expiry jobs plus a one-minute sweeper (trending decay is planned)
+- Redis — rate limits, the BullMQ queue and the Socket.io adapter
+- BullMQ — loot lifecycle jobs: delayed ending-soon and expiry jobs, a one-minute sweeper, and a five-minute
+  trending job that decays `trendingScore` and moves loot between `active` and `trending`
 - Socket.io — live loot counters, new-loot-nearby announcements and redemption updates; the event contract is in `@loot/shared` (`realtime.js`)
 - WhatsApp Cloud API — phone OTP delivery (the API issues its own JWT sessions)
 

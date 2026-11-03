@@ -5,6 +5,8 @@ import { getTrendingFeed } from '@loot/shared/api'
 import { queryKeys } from '@loot/shared/api'
 import { geoCellId as cellIdFor } from '@loot/shared/geo'
 
+// One page of what's hot nearby. Trending scores move every few minutes, so this list is
+// refetched rather than paged.
 export function useTrendingFeed(coords, category) {
   const cellId = coords ? cellIdFor(coords.lat, coords.lng) : null
   return useQuery({
@@ -12,7 +14,6 @@ export function useTrendingFeed(coords, category) {
     enabled: !!coords,
     queryFn: () =>
       getTrendingFeed({
-        geoCellId: cellId ?? undefined,
         latitude: coords.lat,
         longitude: coords.lng,
         category,

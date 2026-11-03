@@ -23,10 +23,10 @@ Built for the Android MVP (see `.claude/tasks/android-mvp/` in git history). Rem
 - [ ] Media upload URLs (Cloudflare Stream / R2) + ready webhooks + Rekognition
 - [x] Nearby feed ($geoNear + scoring + cursor pagination)
 - [x] Fresh feed
-- [ ] Following / Trending feeds
+- [x] Following / Trending feeds
 - [x] Save / claim / redemption codes (stock-safe, one-time redeem)
 - [x] BullMQ: expiry, ending-soon, sweeper
-- [ ] BullMQ: trending decay (Redis sorted sets → trendingScore)
+- [x] BullMQ: trending decay (points on the loot → trendingScore, active ⇄ trending)
 - [ ] Push tokens + loot alerts (GET /v1/me/alerts, mark read)
 - [x] Socket.io rooms (loot, geohash cell, user) + Redis adapter
 
