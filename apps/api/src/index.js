@@ -6,6 +6,8 @@ import { connectMongo } from './lib/db.js'
 import { createLogger } from './lib/logger.js'
 import { createRedis } from './lib/redis.js'
 import { createLoggingOtpSender, createWhatsAppOtpSender } from './modules/auth/otpSender.js'
+import { createAlertJobs } from './modules/alerts/alerts.jobs.js'
+import { createExpoPushSender } from './modules/alerts/expoPush.js'
 import { createTokenService } from './modules/auth/tokens.js'
 import { createLifecycleJobs } from './modules/loot/lifecycle.jobs.js'
 import { createSocketRealtime } from './realtime/socket.js'
@@ -34,13 +36,16 @@ const otpSender =
 
 const tokens = createTokenService(env)
 const realtime = createSocketRealtime({ env, tokens, logger, redis })
-const lifecycle = createLifecycleJobs({ redisUrl: env.REDIS_URL, realtime, logger })
+const push = createExpoPushSender({ accessToken: env.EXPO_ACCESS_TOKEN, logger })
+const alerts = createAlertJobs({ redisUrl: env.REDIS_URL, redis, push, logger })
+const lifecycle = createLifecycleJobs({ redisUrl: env.REDIS_URL, realtime, alerts, logger })
 
-const app = createApp({ env, logger, redis, otpSender, realtime, lifecycle, tokens })
+const app = createApp({ env, logger, redis, otpSender, realtime, lifecycle, alerts, tokens })
 // Express handles plain HTTP; Socket.io takes /socket.io/ on the same port.
 const server = createServer(app)
 realtime.io.attach(server)
 await lifecycle.start()
+await alerts.start()
 
 server.listen(env.PORT, () => {
   logger.info(`Loot API listening on http://localhost:${env.PORT}`)
@@ -49,7 +54,7 @@ server.listen(env.PORT, () => {
 async function shutdown(signal) {
   logger.info({ signal }, 'Shutting down')
   // Closing Socket.io also closes the HTTP server.
-  await Promise.allSettled([realtime.close(), lifecycle.close()])
+  await Promise.allSettled([realtime.close(), lifecycle.close(), alerts.close()])
   await Promise.allSettled([mongoose.disconnect(), redis.quit()])
   process.exit(0)
 }

@@ -77,9 +77,10 @@ export async function visibleLoot(req) {
  * @param {import('ioredis').Redis} deps.redis
  * @param {{ scheduleLoot: (loot: object) => unknown }} deps.lifecycle
  * @param {{ lootCounters: Function, lootPublished: Function }} deps.realtime Socket.io publisher
+ * @param {{ lootPublished: (loot: object) => unknown }} deps.alerts follower alert fan-out
  * @param {import('pino').Logger} deps.logger
  */
-export function createLootRouter({ guards, redis, lifecycle, realtime, logger }) {
+export function createLootRouter({ guards, redis, lifecycle, realtime, alerts, logger }) {
   const router = Router()
 
   function schedule(loot) {
@@ -93,6 +94,7 @@ export function createLootRouter({ guards, redis, lifecycle, realtime, logger })
   function published(loot, business) {
     schedule(loot)
     realtime.lootPublished(loot, business)
+    alerts.lootPublished(loot)
   }
 
   router.post('/', guards.business, validateBody(CreateLootBody), async (req, res) => {

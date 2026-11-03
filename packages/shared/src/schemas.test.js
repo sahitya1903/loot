@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { CreateLootBody, FollowingFeedQuery, NearbyFeedQuery, RedeemBody, UpdateLootBody } from './schemas.js'
+import {
+  CreateLootBody,
+  FollowingFeedQuery,
+  NearbyFeedQuery,
+  PushTokenBody,
+  RedeemBody,
+  UpdateLootBody,
+} from './schemas.js'
 import { scoreLoot } from './ranking/score.js'
 import { TRENDING_HALF_LIFE_HOURS, decayTrendingScore } from './ranking/trending.js'
 
@@ -89,6 +96,21 @@ describe('RedeemBody', () => {
     expect(RedeemBody.parse({ code: ' loot-7q3 xab ' }).code).toBe('LOOT-7Q3XAB')
     expect(RedeemBody.parse({ code: '7Q3XAB' }).code).toBe('LOOT-7Q3XAB')
     expect(RedeemBody.safeParse({ code: 'LOOT-12' }).success).toBe(false)
+  })
+})
+
+describe('PushTokenBody', () => {
+  it('accepts Expo push tokens from both token formats', () => {
+    expect(PushTokenBody.parse({ token: ' ExponentPushToken[abc-123] ', platform: 'android' })).toEqual({
+      token: 'ExponentPushToken[abc-123]',
+      platform: 'android',
+    })
+    expect(PushTokenBody.safeParse({ token: 'ExpoPushToken[abc]', platform: 'ios' }).success).toBe(true)
+  })
+
+  it('rejects raw FCM tokens and unknown platforms', () => {
+    expect(PushTokenBody.safeParse({ token: 'fcm-device-token', platform: 'android' }).success).toBe(false)
+    expect(PushTokenBody.safeParse({ token: 'ExponentPushToken[abc]', platform: 'web' }).success).toBe(false)
   })
 })
 

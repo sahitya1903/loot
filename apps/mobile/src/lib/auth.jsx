@@ -19,6 +19,7 @@ import {
   useState,
 } from 'react';
 import { onSessionExpired } from './api';
+import { unregisterForPush } from './push';
 
 const AuthContext = createContext(null);
 
@@ -73,6 +74,8 @@ export function AuthProvider({ children }) {
         return { user, isNewUser };
       },
       async signOut() {
+        // While the session is still valid, so the API knows whose token it is.
+        await unregisterForPush();
         await logout();
         signedOut();
       },

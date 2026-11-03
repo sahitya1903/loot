@@ -48,6 +48,9 @@ export const LOOT_ALERT_TYPES = [
   'redemption_reminder',
 ]
 
+/** Devices that can register for push notifications. */
+export const PUSH_PLATFORMS = ['android', 'ios']
+
 /** Boost multipliers are capped so paid reach never dominates ranking. */
 export const MAX_BOOST_MULTIPLIER = 1.3
 
@@ -227,11 +230,16 @@ export const ENDING_SOON_MS = 2 * 3600_000
  * @property {string} type one of LOOT_ALERT_TYPES
  * @property {string} title
  * @property {string} body
- * @property {string} [lootId]
- * @property {string} [businessId]
- * @property {string} [imageUrl]
+ * @property {string | null} lootId
+ * @property {string | null} businessId
+ * @property {string | null} imageUrl
  * @property {string} createdAt
- * @property {string} [readAt]
+ * @property {string | null} readAt
+ */
+
+/**
+ * GET /v1/me/alerts: a page of the inbox, newest first.
+ * @typedef {Page<LootAlert> & { unreadCount: number }} LootAlertPage
  */
 
 /**

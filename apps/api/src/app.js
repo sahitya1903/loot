@@ -6,6 +6,8 @@ import { pinoHttp } from 'pino-http'
 import { isMongoReady } from './lib/db.js'
 import { optionalAuth, requireAccountType, requireAuth, requireBusiness } from './middleware/auth.js'
 import { createErrorHandler, notFoundHandler } from './middleware/errorHandler.js'
+import { noopAlerts } from './modules/alerts/alerts.jobs.js'
+import { createAlertsRouter } from './modules/alerts/alerts.routes.js'
 import { createAuthRouter } from './modules/auth/auth.routes.js'
 import { createAuthService } from './modules/auth/auth.service.js'
 import { createTokenService } from './modules/auth/tokens.js'
@@ -22,6 +24,7 @@ import { noopRealtime } from './realtime/noop.js'
  * @param {{ lootCounters: Function, lootPublished: Function, redemptionUpdated: Function }} [deps.realtime]
  *   Socket.io publisher (src/realtime/socket.js)
  * @param {{ scheduleLoot: Function }} [deps.lifecycle] BullMQ scheduler for expiry jobs
+ * @param {{ lootPublished: Function }} [deps.alerts] BullMQ alert fan-out
  * @param {ReturnType<typeof createTokenService>} [deps.tokens] shared with Socket.io auth
  */
 export function createApp({
@@ -31,6 +34,7 @@ export function createApp({
   otpSender,
   realtime = noopRealtime,
   lifecycle = noopLifecycleScheduler,
+  alerts = noopAlerts,
   tokens = createTokenService(env),
 }) {
   const auth = createAuthService({ env, logger, otpSender, tokens })
@@ -86,10 +90,11 @@ export function createApp({
   const v1 = express.Router()
   v1.use('/auth', createAuthRouter(auth, redis))
   v1.use('/', createUsersRouter(authenticated))
+  v1.use('/', createAlertsRouter(guards))
   v1.use('/', createEngagementRouter({ guards, redis, realtime }))
   v1.use('/businesses', createBusinessLootRouter({ guards }))
   v1.use('/businesses', createBusinessesRouter(guards))
-  v1.use('/loot', createLootRouter({ guards, redis, lifecycle, realtime, logger }))
+  v1.use('/loot', createLootRouter({ guards, redis, lifecycle, realtime, alerts, logger }))
   v1.use('/feed', createFeedRouter({ guards }))
   app.use('/v1', v1)
 

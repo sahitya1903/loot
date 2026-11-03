@@ -1,5 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Tabs } from 'expo-router';
+import { AlertsBell } from '@/components/AlertsBell';
 import { isBusiness, useAuth } from '@/lib/auth';
 import { colors, headerOptions } from '@/theme';
 
@@ -30,7 +31,12 @@ export default function TabsLayout() {
     >
       <Tabs.Screen
         name="index"
-        options={{ title: 'Feed', tabBarIcon: icon('flash') }}
+        options={{
+          title: 'Feed',
+          tabBarIcon: icon('flash'),
+          // Alerts are about follows, saves and claims, which only hunters have.
+          headerRight: pro ? undefined : AlertsBell,
+        }}
       />
       <Tabs.Screen
         name="saved"

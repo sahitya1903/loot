@@ -24,11 +24,15 @@ positioning, forbidden vocabulary, and the account model before working here.
   Feed/Saved/Claims/Profile, business accounts Feed/My loot/Redeem/Profile (`href: null` hides the rest).
   The Feed tab (`index.jsx`) switches between Nearby, Trending and Following (Following is hidden for
   business accounts, which can't follow). Hunters follow a business from the loot screen.
+  `alerts.jsx` is the alerts inbox, opened from the bell (`components/AlertsBell.jsx`) in the Feed header.
   The root `_layout.jsx` gates signed-in screens with `Stack.Protected` and holds the splash until the
   session and location are loaded.
 - `src/lib/` — `api.js` (client config, SecureStore tokens, API URL), `auth.jsx` (session), `location.jsx`
   (GPS or a chosen area, persisted), `realtime.jsx` (Socket.io: watched loot, live counters with REST
-  polling fallback, new-loot-nearby, redemption updates), `paging.js` (cursor lists), `errors.js` (API error copy).
+  polling fallback, new-loot-nearby, redemption updates), `paging.js` (cursor lists), `errors.js` (API error copy), `push.jsx` (expo-notifications: registers
+  the push token after sign-in, removes it on sign-out, opens the loot when a push is tapped).
+- Push needs a development or EAS build with `google-services.json` (see `app.config.js` and DEPLOY.md);
+  Expo Go can't receive remote pushes on Android. Without it, registration is skipped quietly.
 - `src/components/` — shared UI (`ui.jsx`, `LootCard`, `Countdown`, `RedemptionCard`, `LootList`); theme tokens in `src/theme.js`.
 - Validate forms with the zod schemas from `@loot/shared` (the API parses with the same ones).
 - `EXPO_PUBLIC_API_URL` overrides the API URL (see `.env.example`); `app.config.js` derives cleartext and ABIs from it.

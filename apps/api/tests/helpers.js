@@ -50,6 +50,40 @@ export function createCapturingRealtime() {
   }
 }
 
+/** Records alert hook calls instead of queueing fan-out jobs. */
+export function createCapturingAlerts() {
+  const calls = []
+  return {
+    calls,
+    lootPublished(loot) {
+      calls.push({ type: 'published', lootId: loot._id.toString() })
+    },
+    lootEndingSoon(loot) {
+      calls.push({ type: 'endingSoon', lootId: loot._id.toString() })
+    },
+  }
+}
+
+/** Records pushes instead of sending them; tokens added to `deadTokens` come back as unregistered. */
+export function createCapturingPushSender() {
+  const sender = {
+    sent: [],
+    deadTokens: new Set(),
+    async send(messages) {
+      sender.sent.push(...messages)
+      const live = messages.filter((m) => !sender.deadTokens.has(m.to))
+      return {
+        deadTokens: messages.map((m) => m.to).filter((t) => sender.deadTokens.has(t)),
+        tickets: live.map((m, i) => ({ id: `ticket-${sender.sent.length}-${i}`, token: m.to })),
+      }
+    },
+    async checkReceipts() {
+      return { deadTokens: [] }
+    },
+  }
+  return sender
+}
+
 /**
  * @param {object} [options]
  * @param {boolean} [options.socket] serve over a real HTTP port with Socket.io attached
@@ -68,7 +102,8 @@ export async function startTestServer({ socket = false } = {}) {
   const realtime = socket ? createSocketRealtime({ env: testEnv, tokens, logger }) : createCapturingRealtime()
   const scheduled = []
   const lifecycle = { scheduleLoot: (loot) => scheduled.push(loot._id.toString()) }
-  const app = createApp({ env: testEnv, logger, redis, otpSender, realtime, lifecycle, tokens })
+  const alerts = createCapturingAlerts()
+  const app = createApp({ env: testEnv, logger, redis, otpSender, realtime, lifecycle, alerts, tokens })
 
   let url
   if (socket) {
@@ -85,11 +120,13 @@ export async function startTestServer({ socket = false } = {}) {
     otpSender,
     realtime,
     scheduled,
+    alerts,
     async reset() {
       await redis.flushall()
       otpSender.codes.clear()
       if (realtime.events) realtime.events.length = 0
       scheduled.length = 0
+      alerts.calls.length = 0
       otpSender.fail = false
       await Promise.all(Object.values(mongoose.connection.collections).map((c) => c.deleteMany({})))
     },

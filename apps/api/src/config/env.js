@@ -34,6 +34,9 @@ const EnvSchema = z
     WHATSAPP_PHONE_NUMBER_ID: optionalString,
     WHATSAPP_ACCESS_TOKEN: optionalString,
     WHATSAPP_OTP_TEMPLATE: z.string().default('send_otp'),
+
+    // Only needed if "enhanced push security" is turned on for the Expo project.
+    EXPO_ACCESS_TOKEN: optionalString,
   })
   .superRefine((env, ctx) => {
     if (env.NODE_ENV === 'production' && (!env.WHATSAPP_PHONE_NUMBER_ID || !env.WHATSAPP_ACCESS_TOKEN)) {

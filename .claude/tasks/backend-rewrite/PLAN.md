@@ -18,7 +18,7 @@ API. Since then: the API is plain JavaScript (the whole repo dropped TypeScript)
 | Auth | WhatsApp Cloud API OTP → JWT access token (15 min, `jose`) + rotating refresh tokens with reuse detection |
 | Media | Cloudflare Stream (video, HLS) + R2/Images (images), direct upload from clients |
 | Moderation | AWS Rekognition |
-| Push | `expo-notifications` in the app; server-side sender not decided (Expo push service or FCM/APNs directly) |
+| Push | `expo-notifications` in the app; the API sends through Expo's push service (FCM/APNs behind it) |
 | Payments | Razorpay (orders, subscriptions, verified webhooks) |
 | Hosting | Railway/Render to start → AWS ap-south-1 later |
 | Tests | Vitest + Supertest + mongodb-memory-server + ioredis-mock |

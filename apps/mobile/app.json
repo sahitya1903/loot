@@ -32,6 +32,13 @@
         {
           "locationWhenInUsePermission": "Loot uses your location to show loot near you."
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/android-icon-monochrome.png",
+          "color": "#ff4d6d"
+        }
       ]
     ],
     "scheme": "loot",

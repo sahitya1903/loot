@@ -8,7 +8,7 @@ nearby find them in an urgency-driven feed. Product rules live in [CLAUDE.md](CL
 | Phase | What | State |
 | --- | --- | --- |
 | 0 — Foundations | `apps/api` scaffold, phone OTP → JWT auth, shared REST client, web sign-in | ✅ Done |
-| 1 — Core API | Profiles, businesses + branches, loot CRUD, Nearby, Fresh, Following and Trending feeds, save/claim/redemption, lifecycle and trending jobs, real-time | ✅ Mostly done |
+| 1 — Core API | Profiles, businesses + branches, loot CRUD, Nearby, Fresh, Following and Trending feeds, save/claim/redemption, lifecycle and trending jobs, real-time, alerts + push | ✅ Mostly done |
 | 2 — Clients | Android MVP on the API; web is wired to the client | ✅ Android MVP done |
 | 3 — Business & money | Razorpay boosts + pro subscriptions, analytics, moderation | Not started |
 | 4 — Launch | CI, deploy | CI added; deploy guide in [DEPLOY.md](DEPLOY.md), nothing deployed yet |
@@ -21,9 +21,12 @@ onboard with a branch, create and publish loot, and redeem customers' codes at t
 The Android feed switches between **Nearby**, **Trending** and **Following**; hunters follow a business
 from any loot page (business accounts see Nearby and Trending).
 
-**Not built yet:** media upload (loot photos are pasted https links), push notifications, map view, video, analytics, payments. On the web, businesses are pointed to the
-Android app (its business pages explain how to set up there) and Notifications says "coming soon" until
-the API serves alerts. The checklist is in
+**Alerts:** hunters get a push and an entry under the bell on the Feed when a business they follow
+drops loot, when loot they saved is about to end, and when a code they claimed is about to expire.
+Tapping a push opens the loot. The website lists the same alerts under Notifications.
+
+**Not built yet:** media upload (loot photos are pasted https links), "new loot near you" pushes, map view, video, analytics, payments. On the web, businesses are pointed to the
+Android app (its business pages explain how to set up there). The checklist is in
 [.claude/tasks/backend-rewrite/TODO.md](.claude/tasks/backend-rewrite/TODO.md).
 
 ## Repo
@@ -160,7 +163,7 @@ pretends the production integration exists.
 | --- | --- |
 | WhatsApp Cloud API sends the OTP | Without `WHATSAPP_*` credentials the API logs each OTP (`DEV OTP` line) instead; production refuses to start without them |
 | Cloudflare R2 / Stream media upload | Loot media are https image links typed into the form; the seed uses placeholder photos |
-| Push notifications | Not built; live updates arrive over Socket.io while the app is open |
+| Push notifications | Expo's push service works locally too, but Android needs a build with `google-services.json` (not Expo Go, see [DEPLOY.md](DEPLOY.md) step 6). Without it the app skips push and the Alerts screen still lists everything |
 | Scanning the QR code at the counter | The business types the code shown under the QR |
 
 ## Known limitations

@@ -1,63 +1,57 @@
 'use client'
 
 import Link from 'next/link'
-import { useQuery } from '@tanstack/react-query'
-import { ApiError } from '@loot/shared'
-import { listLootAlerts, queryKeys } from '@loot/shared/api'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { listLootAlerts, markAlertRead, markAllAlertsRead, queryKeys } from '@loot/shared/api'
 import { useAuthStore } from '@/stores/auth'
 import { Bell } from 'lucide-react'
 
-// The API doesn't serve alerts yet (404). Treat that as "coming soon" and stop polling;
-// the page works unchanged once GET /v1/me/alerts exists.
-const notBuiltYet = (error) => error instanceof ApiError && error.status === 404
-
 export default function NotificationsPage() {
   const profile = useAuthStore((s) => s.profile)
+  const queryClient = useQueryClient()
   const { data, error, refetch } = useQuery({
     queryKey: queryKeys.alerts(),
     enabled: !!profile,
     queryFn: () => listLootAlerts({ limit: 50 }),
-    retry: (count, err) => !notBuiltYet(err) && count < 2,
-    // Poll while the page is open; push notifications cover the rest.
+    // Poll while the page is open; the phone app gets pushes.
     refetchInterval: (query) => (query.state.error ? false : 30_000),
   })
   const alerts = data?.items ?? null
+  const unreadCount = data?.unreadCount ?? 0
+
+  const refresh = () => queryClient.invalidateQueries({ queryKey: queryKeys.alerts() })
+  const readAll = useMutation({ mutationFn: markAllAlertsRead, onSuccess: refresh })
+  const open = (alert) => {
+    if (!alert.readAt) markAlertRead(alert.alertId).then(refresh, () => {})
+  }
 
   return (
     <div className="space-y-4">
-      <header>
+      <header className="flex items-center justify-between gap-4">
         <h1 className="text-2xl font-bold text-white">Notifications</h1>
+        {unreadCount > 0 ? (
+          <button
+            type="button"
+            disabled={readAll.isPending}
+            onClick={() => readAll.mutate()}
+            className="rounded-full bg-white/10 px-4 py-1.5 text-sm font-semibold text-white disabled:opacity-50"
+          >
+            Mark all read
+          </button>
+        ) : null}
       </header>
 
       {error ? (
         <div className="flex min-h-[40vh] flex-col items-center justify-center px-6 text-center text-white/55">
           <Bell className="mb-2 h-8 w-8" aria-hidden />
-          {notBuiltYet(error) ? (
-            <>
-              <p className="text-sm font-semibold text-white">Notifications are coming soon</p>
-              <p className="mt-1 max-w-sm text-sm">
-                Soon we&apos;ll ping you when loot drops nearby or is about to end. Until then,
-                check Nearby and Trending for what&apos;s live.
-              </p>
-              <Link
-                href="/feed"
-                className="mt-4 rounded-full bg-[var(--accent,_#ff4d6d)] px-5 py-2 text-sm font-semibold text-black"
-              >
-                Browse the feed
-              </Link>
-            </>
-          ) : (
-            <>
-              <p className="text-sm">Couldn&apos;t load notifications.</p>
-              <button
-                type="button"
-                onClick={() => refetch()}
-                className="mt-4 rounded-full bg-white/10 px-5 py-2 text-sm font-semibold text-white"
-              >
-                Try again
-              </button>
-            </>
-          )}
+          <p className="text-sm">Couldn&apos;t load notifications.</p>
+          <button
+            type="button"
+            onClick={() => refetch()}
+            className="mt-4 rounded-full bg-white/10 px-5 py-2 text-sm font-semibold text-white"
+          >
+            Try again
+          </button>
         </div>
       ) : alerts === null ? (
         <div className="space-y-2">
@@ -68,13 +62,24 @@ export default function NotificationsPage() {
       ) : alerts.length === 0 ? (
         <div className="flex min-h-[40vh] flex-col items-center justify-center px-6 text-center text-white/55">
           <Bell className="mb-2 h-8 w-8" aria-hidden />
-          <p className="text-sm">All quiet. We&apos;ll ping you when loot drops nearby.</p>
+          <p className="text-sm font-semibold text-white">All quiet</p>
+          <p className="mt-1 max-w-sm text-sm">
+            We&apos;ll ping you when businesses you follow drop loot, or loot you saved is about to
+            end.
+          </p>
+          <Link
+            href="/feed"
+            className="mt-4 rounded-full bg-[var(--accent,_#ff4d6d)] px-5 py-2 text-sm font-semibold text-black"
+          >
+            Browse the feed
+          </Link>
         </div>
       ) : (
         <ul className="space-y-2">
           {alerts.map((a) => (
             <li key={a.alertId}>
               <Link
+                onClick={() => open(a)}
                 href={
                   a.lootId ? `/loot/${a.lootId}` : a.businessId ? `/business/${a.businessId}` : '#'
                 }

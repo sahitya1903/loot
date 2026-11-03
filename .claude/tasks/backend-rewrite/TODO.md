@@ -27,7 +27,8 @@ Built for the Android MVP (see `.claude/tasks/android-mvp/` in git history). Rem
 - [x] Save / claim / redemption codes (stock-safe, one-time redeem)
 - [x] BullMQ: expiry, ending-soon, sweeper
 - [x] BullMQ: trending decay (points on the loot → trendingScore, active ⇄ trending)
-- [ ] Push tokens + loot alerts (GET /v1/me/alerts, mark read)
+- [x] Push tokens + loot alerts (GET /v1/me/alerts, mark read; follow drops, ending soon, redemption reminders)
+- [ ] Nearby/trending push alerts (needs a stored user location)
 - [x] Socket.io rooms (loot, geohash cell, user) + Redis adapter
 
 ## Phase 2 — Clients

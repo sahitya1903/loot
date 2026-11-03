@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider, useAuth } from '@/lib/auth';
 import { LocationProvider, useFeedLocation } from '@/lib/location';
+import { PushController } from '@/lib/push';
 import { RealtimeProvider } from '@/lib/realtime';
 import { colors, headerOptions } from '@/theme';
 
@@ -35,10 +36,12 @@ function RootNavigator() {
   const signedIn = status === 'signedIn';
   return (
     <RealtimeProvider enabled={signedIn}>
+      <PushController enabled={signedIn} />
       <Stack screenOptions={headerOptions}>
         <Stack.Protected guard={signedIn}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="loot/[id]" options={{ title: '' }} />
+          <Stack.Screen name="alerts" options={{ title: 'Alerts' }} />
           <Stack.Screen
             name="location"
             options={{ title: 'Where to look', presentation: 'modal' }}

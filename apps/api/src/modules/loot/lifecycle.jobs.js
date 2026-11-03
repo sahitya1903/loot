@@ -9,6 +9,7 @@
 import { ENDING_SOON_MS } from '@loot/shared'
 import { Queue, Worker } from 'bullmq'
 import { Redis } from 'ioredis'
+import { noopAlerts } from '../alerts/alerts.jobs.js'
 import { expireLoot, markLootExpiring, refreshTrending, sweepLootLifecycle } from './lifecycle.js'
 
 export const LIFECYCLE_QUEUE = 'loot-lifecycle'
@@ -36,11 +37,16 @@ export function lifecycleJobsFor(loot, now = Date.now()) {
   return jobs
 }
 
-/** Processes one job and pushes changed counters to watchers. */
-export async function runLifecycleJob(job, { realtime }) {
+/**
+ * Processes one job, pushes changed counters to watchers and queues ending-soon alerts.
+ * @param {{ name: string, data: object }} job
+ * @param {{ realtime: { lootCounters: Function }, alerts?: { lootEndingSoon: Function } }} deps
+ */
+export async function runLifecycleJob(job, { realtime, alerts = noopAlerts }) {
   if (job.name === 'sweep') {
     const { expired, expiring } = await sweepLootLifecycle()
     for (const loot of [...expired, ...expiring]) realtime.lootCounters(loot)
+    for (const loot of expiring) alerts.lootEndingSoon(loot)
     return { expired: expired.length, expiring: expiring.length }
   }
   if (job.name === 'trending') {
@@ -52,6 +58,7 @@ export async function runLifecycleJob(job, { realtime }) {
   if (!transition) throw new Error(`Unknown lifecycle job: ${job.name}`)
   const changed = await transition(job.data.lootId)
   if (changed) realtime.lootCounters(changed)
+  if (changed && job.name === 'expiring') alerts.lootEndingSoon(changed)
   return { changed: Boolean(changed) }
 }
 
@@ -59,6 +66,7 @@ export async function runLifecycleJob(job, { realtime }) {
  * @param {object} deps
  * @param {string} deps.redisUrl BullMQ needs its own connection (blocking commands, no retry limit)
  * @param {{ lootCounters: Function }} deps.realtime
+ * @param {{ lootEndingSoon: Function }} [deps.alerts]
  * @param {import('pino').Logger} deps.logger
  * @param {number} [deps.sweepEveryMs]
  * @param {number} [deps.trendingEveryMs]
@@ -66,6 +74,7 @@ export async function runLifecycleJob(job, { realtime }) {
 export function createLifecycleJobs({
   redisUrl,
   realtime,
+  alerts = noopAlerts,
   logger,
   sweepEveryMs = SWEEP_EVERY_MS,
   trendingEveryMs = TRENDING_EVERY_MS,
@@ -93,7 +102,10 @@ export function createLifecycleJobs({
 
     /** Starts processing in this process and registers the sweeper (idempotent across instances). */
     async start() {
-      worker = new Worker(LIFECYCLE_QUEUE, (job) => runLifecycleJob(job, { realtime }), { connection, concurrency: 10 })
+      worker = new Worker(LIFECYCLE_QUEUE, (job) => runLifecycleJob(job, { realtime, alerts }), {
+        connection,
+        concurrency: 10,
+      })
       worker.on('failed', (job, err) => logger.warn({ err, jobId: job?.id }, 'Lifecycle job failed'))
       worker.on('error', (err) => logger.error({ err }, 'Lifecycle worker error'))
       await queue.upsertJobScheduler('sweep', { every: sweepEveryMs }, { name: 'sweep' })

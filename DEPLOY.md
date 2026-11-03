@@ -124,6 +124,7 @@ docker build -f apps/api/Dockerfile -t loot-api .
 | `CORS_ORIGINS` | `https://<your-domain>,https://www.<your-domain>` (the website, step 5) |
 | `PORT` | leave unset where the host sets it; the image defaults to `4000` |
 | `LOG_LEVEL` | optional, default `info` |
+| `EXPO_ACCESS_TOKEN` | optional; only if you turn on *enhanced push security* for the Expo project |
 
 The API checks these on start and exits with a clear message if one is missing or invalid.
 
@@ -235,6 +236,24 @@ The app is already linked to its Expo project (`extra.eas.projectId` in
 
    Or add it on expo.dev → the project → *Environment variables*. With an `https://` URL, the build
    blocks plain-http traffic and includes every phone CPU type (see [apps/mobile/app.config.js](apps/mobile/app.config.js)).
+3. **Turn on push notifications.** The API sends pushes through Expo's push service, which hands
+   Android pushes to Google's Firebase Cloud Messaging (FCM). FCM is only the delivery pipe; Loot
+   has no Firebase backend. Without these steps the app works, but it gets no push alerts (the
+   in-app Alerts list still fills).
+   1. In the [Firebase console](https://console.firebase.google.com) create a project, then add an
+      **Android app** with package name **`app.loot.mobile`**. Download its `google-services.json`.
+   2. Give it to EAS builds as a file variable (it's gitignored, so it stays out of the repo):
+
+      ```bash
+      npx eas-cli@latest env:create --name GOOGLE_SERVICES_JSON --type file --value ./google-services.json --environment production --environment preview --visibility secret
+      ```
+
+      For local builds (`npx expo run:android`), put the same file at `apps/mobile/google-services.json`.
+   3. Firebase console → *Project settings* → *Service accounts* → **Generate new private key**.
+      Upload that JSON to Expo: `npx eas-cli@latest credentials` → Android → *production* →
+      *Google Service Account* → *Push Notifications (FCM V1)*. Or use expo.dev → the project →
+      *Credentials*.
+   4. Build again (below). Push tokens come only from builds made after this step.
 
 ### Closed beta: an APK you share by link
 
@@ -277,6 +296,8 @@ key is set up.
 - [ ] On Android: sign in, *Profile → Set up a business account*, add a branch, publish loot.
 - [ ] On a second phone: the loot appears under Nearby; claim it; the business redeems the code;
       the hunter's screen flips to *Redeemed* live.
+- [ ] On the second phone, follow the business and allow notifications. Publish another loot from
+      the first: a push arrives, and tapping it opens the loot.
 - [ ] Add an uptime monitor (e.g. UptimeRobot) on `/ready`, and Atlas alerts for disk and connections.
 - [ ] Note where every secret lives: MongoDB, Redis, JWT, OTP, WhatsApp token, Expo account.
 
@@ -287,5 +308,6 @@ key is set up.
   submission.
 - **Privacy policy and terms pages** on the website.
 - **Media upload:** businesses paste image links (Cloudflare R2/Stream is planned).
-- **Push notifications:** live updates only reach open apps for now.
+- **Nearby push alerts:** pushes cover follows, saves and claims. "New loot near you" pushes need
+  each user's location stored on the server, which isn't built.
 - **Backups:** the Atlas free tier has none. Move to a paid tier before real users rely on it.

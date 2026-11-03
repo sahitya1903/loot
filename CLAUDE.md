@@ -103,6 +103,8 @@ In use:
 - Redis — rate limits, the BullMQ queue and the Socket.io adapter
 - BullMQ — loot lifecycle jobs: delayed ending-soon and expiry jobs, a one-minute sweeper, and a five-minute
   trending job that decays `trendingScore` and moves loot between `active` and `trending`
+- BullMQ `loot-alerts` queue — alert fan-out: follow drops, ending-soon and redemption reminders, written to an
+  inbox (`GET /v1/me/alerts`) and pushed through Expo's push service (Android delivery via FCM credentials held by EAS)
 - Socket.io — live loot counters, new-loot-nearby announcements and redemption updates; the event contract is in `@loot/shared` (`realtime.js`)
 - WhatsApp Cloud API — phone OTP delivery (the API issues its own JWT sessions)
 

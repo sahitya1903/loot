@@ -1,14 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ApiError } from '@loot/shared'
 
 vi.mock('@loot/shared/api', async (importOriginal) => ({
   ...(await importOriginal()),
   listLootAlerts: vi.fn(),
+  markAlertRead: vi.fn(),
+  markAllAlertsRead: vi.fn(),
 }))
 
-import { listLootAlerts } from '@loot/shared/api'
+import { listLootAlerts, markAlertRead, markAllAlertsRead } from '@loot/shared/api'
 import { useAuthStore } from '@/stores/auth'
 import NotificationsPage from './page'
 
@@ -27,11 +30,11 @@ beforeEach(() => {
 })
 
 describe('NotificationsPage', () => {
-  it('says "coming soon" when the API has no alerts endpoint yet, without retrying', async () => {
-    listLootAlerts.mockRejectedValue(new ApiError(404, 'not_found', 'Not found'))
+  it('shows an empty state', async () => {
+    listLootAlerts.mockResolvedValue({ items: [], cursor: null, unreadCount: 0 })
     renderPage()
-    expect(await screen.findByText('Notifications are coming soon')).toBeInTheDocument()
-    expect(listLootAlerts).toHaveBeenCalledTimes(1)
+    expect(await screen.findByText('All quiet')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Mark all read' })).not.toBeInTheDocument()
   })
 
   it('offers a retry on other errors', async () => {
@@ -40,12 +43,35 @@ describe('NotificationsPage', () => {
     expect(await screen.findByRole('button', { name: 'Try again' })).toBeInTheDocument()
   })
 
-  it('lists alerts', async () => {
+  it('lists alerts and marks one read when opened', async () => {
     listLootAlerts.mockResolvedValue({
-      items: [{ alertId: 'a1', title: 'Cold brew ending soon', body: '20 min left', lootId: 'l1' }],
+      items: [
+        {
+          alertId: 'a1',
+          title: 'Cold brew ending soon',
+          body: '20 min left',
+          lootId: 'l1',
+          readAt: null,
+        },
+      ],
       cursor: null,
+      unreadCount: 1,
     })
+    markAlertRead.mockResolvedValue({})
     renderPage()
-    expect(await screen.findByText('Cold brew ending soon')).toBeInTheDocument()
+    await userEvent.click(await screen.findByText('Cold brew ending soon'))
+    expect(markAlertRead).toHaveBeenCalledWith('a1')
+  })
+
+  it('marks everything read', async () => {
+    listLootAlerts.mockResolvedValue({
+      items: [{ alertId: 'a1', title: 'Drop', body: 'New loot', lootId: 'l1', readAt: null }],
+      cursor: null,
+      unreadCount: 1,
+    })
+    markAllAlertsRead.mockResolvedValue({ updated: 1 })
+    renderPage()
+    await userEvent.click(await screen.findByRole('button', { name: 'Mark all read' }))
+    await waitFor(() => expect(markAllAlertsRead).toHaveBeenCalled())
   })
 })

@@ -9,6 +9,7 @@ import {
   FEED_SOURCES,
   LOOT_CATEGORIES,
   LOOT_TYPES,
+  PUSH_PLATFORMS,
   REDEMPTION_TYPES,
   SHARE_CHANNELS,
 } from './models.js'
@@ -218,3 +219,15 @@ export const redemptionCode = z
   .transform((value) => `LOOT-${value}`)
 
 export const RedeemBody = z.object({ code: redemptionCode })
+
+// ---------------------------------------------------------------- alerts & push
+
+/** An Expo push token, e.g. "ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]". */
+export const expoPushToken = z
+  .string()
+  .trim()
+  .regex(/^Expo(nent)?PushToken\[[\w-]{1,200}\]$/, 'Must be an Expo push token')
+
+export const PushTokenBody = z.object({ token: expoPushToken, platform: z.enum(PUSH_PLATFORMS) })
+
+export const RemovePushTokenBody = z.object({ token: expoPushToken })
