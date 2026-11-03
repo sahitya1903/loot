@@ -11,7 +11,7 @@ nearby find them in an urgency-driven feed. Product rules live in [CLAUDE.md](CL
 | 1 — Core API | Profiles, businesses + branches, loot CRUD, Nearby + Fresh feeds, save/claim/redemption, lifecycle jobs, real-time | ✅ Mostly done |
 | 2 — Clients | Android MVP on the API; web is wired to the client | ✅ Android MVP done |
 | 3 — Business & money | Razorpay boosts + pro subscriptions, analytics, moderation | Not started |
-| 4 — Launch | CI, deploy | Not started |
+| 4 — Launch | CI, deploy | CI added; deploy not started |
 
 **What works today (Android MVP):** sign in with a phone OTP; see live loot near you (GPS or a chosen
 area) ranked by distance, freshness, urgency and engagement; save and claim loot and get a one-time
@@ -166,4 +166,6 @@ npm test         # API (Vitest + in-memory MongoDB + Socket.io), web, shared
 `TEST_REDIS_URL=redis://localhost:6379/15 npm test --workspace=apps/api` also runs the BullMQ test
 against a real Redis (database 15 is wiped by that test).
 
-A pre-commit hook runs ESLint and Prettier on staged files.
+A pre-commit hook runs ESLint and Prettier on staged files. GitHub Actions ([ci.yml](.github/workflows/ci.yml))
+runs lint and every test on Node 22 and 26 for each push to `main` and each pull request, with a Redis
+service so the BullMQ test runs too.
