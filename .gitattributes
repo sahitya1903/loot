@@ -1,3 +1,7 @@
+# Text files use LF everywhere, including Windows checkouts. Prettier writes LF, so this
+# overrides core.autocrlf, which would otherwise flag every formatted file as changed.
+* text=auto eol=lf
+
 # Binary files: never convert line endings.
 *.pdf binary
 *.png binary
