@@ -21,7 +21,9 @@ positioning, forbidden vocabulary, and the account model before working here.
 ## Structure
 
 - `src/app/` — Expo Router routes only. `(tabs)/` holds the tab screens; personal accounts see
-  Nearby/Saved/Claims/Profile, business accounts Nearby/My loot/Redeem/Profile (`href: null` hides the rest).
+  Feed/Saved/Claims/Profile, business accounts Feed/My loot/Redeem/Profile (`href: null` hides the rest).
+  The Feed tab (`index.jsx`) switches between Nearby, Trending and Following (Following is hidden for
+  business accounts, which can't follow). Hunters follow a business from the loot screen.
   The root `_layout.jsx` gates signed-in screens with `Stack.Protected` and holds the splash until the
   session and location are loaded.
 - `src/lib/` — `api.js` (client config, SecureStore tokens, API URL), `auth.jsx` (session), `location.jsx`

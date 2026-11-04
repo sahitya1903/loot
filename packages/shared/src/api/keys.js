@@ -11,8 +11,23 @@ export const queryKeys = {
       radius,
       category ?? null,
     ],
-    following: (userId) => ['feed', 'following', userId],
-    trending: (geoCellId, category) => ['feed', 'trending', geoCellId, category ?? null],
+    // Coordinates only set distanceKm here; pass them when you send them.
+    following: (userId, category, lat, lng) => [
+      'feed',
+      'following',
+      userId,
+      category ?? null,
+      lat?.toFixed(3) ?? null,
+      lng?.toFixed(3) ?? null,
+    ],
+    trending: (lat, lng, radius, category) => [
+      'feed',
+      'trending',
+      lat.toFixed(3),
+      lng.toFixed(3),
+      radius ?? null,
+      category ?? null,
+    ],
     fresh: (lat, lng, radius, category) => ['feed', 'fresh', lat.toFixed(3), lng.toFixed(3), radius, category ?? null],
   },
   loot: {

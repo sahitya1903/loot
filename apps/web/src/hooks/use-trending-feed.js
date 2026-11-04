@@ -3,14 +3,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { getTrendingFeed } from '@loot/shared/api'
 import { queryKeys } from '@loot/shared/api'
-import { geoCellId as cellIdFor } from '@loot/shared/geo'
 
 // One page of what's hot nearby. Trending scores move every few minutes, so this list is
 // refetched rather than paged.
 export function useTrendingFeed(coords, category) {
-  const cellId = coords ? cellIdFor(coords.lat, coords.lng) : null
   return useQuery({
-    queryKey: queryKeys.feed.trending(cellId, category),
+    queryKey: queryKeys.feed.trending(coords?.lat ?? 0, coords?.lng ?? 0, null, category),
     enabled: !!coords,
     queryFn: () =>
       getTrendingFeed({

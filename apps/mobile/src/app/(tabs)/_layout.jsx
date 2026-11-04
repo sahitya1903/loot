@@ -30,7 +30,7 @@ export default function TabsLayout() {
     >
       <Tabs.Screen
         name="index"
-        options={{ title: 'Nearby', tabBarIcon: icon('flash') }}
+        options={{ title: 'Feed', tabBarIcon: icon('flash') }}
       />
       <Tabs.Screen
         name="saved"

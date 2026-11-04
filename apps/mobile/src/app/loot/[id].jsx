@@ -1,12 +1,15 @@
 import {
   claimLoot,
+  followBusiness,
   formatDistance,
+  getBusiness,
   getLoot,
   getRedemptionByLoot,
   haversineKm,
   queryKeys,
   saveLoot,
   trackLootView,
+  unfollowBusiness,
   unsaveLoot,
 } from '@loot/shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -14,6 +17,7 @@ import { Image } from 'expo-image';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect } from 'react';
 import {
+  Pressable,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -168,11 +172,14 @@ export default function LootDetails() {
 
         <View style={styles.body}>
           <Text style={font.title}>{item.title}</Text>
-          <Text style={[font.body, styles.muted]}>
-            {item.business.businessName}
-            {item.business.verified ? ' ✓' : ''} ·{' '}
-            {categoryLabel(item.category)}
-          </Text>
+          <View style={styles.businessRow}>
+            <Text style={[font.body, styles.muted, styles.grow]}>
+              {item.business.businessName}
+              {item.business.verified ? ' ✓' : ''} ·{' '}
+              {categoryLabel(item.category)}
+            </Text>
+            {hunter ? <FollowButton businessId={item.businessId} /> : null}
+          </View>
 
           <View style={styles.priceRow}>
             {price ? <Text style={styles.price}>{price}</Text> : null}
@@ -262,6 +269,50 @@ export default function LootDetails() {
   );
 }
 
+/** Follow a business so its new loot shows up in the Following feed. */
+function FollowButton({ businessId }) {
+  const queryClient = useQueryClient();
+  const business = useQuery({
+    queryKey: queryKeys.business.detail(businessId),
+    queryFn: () => getBusiness({ businessId }),
+  });
+  const toggle = useMutation({
+    mutationFn: (following) =>
+      following
+        ? unfollowBusiness({ businessId })
+        : followBusiness({ businessId }),
+    onSuccess: ({ isFollowing }) => {
+      queryClient.setQueryData(queryKeys.business.detail(businessId), (prev) =>
+        prev ? { ...prev, isFollowing } : prev,
+      );
+      queryClient.invalidateQueries({ queryKey: ['feed', 'following'] });
+    },
+  });
+
+  if (!business.data) return null;
+  const following = business.data.isFollowing;
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ selected: following, busy: toggle.isPending }}
+      accessibilityHint={
+        toggle.isError ? 'That didn’t work. Tap to try again.' : undefined
+      }
+      disabled={toggle.isPending}
+      onPress={() => toggle.mutate(following)}
+      style={[
+        styles.follow,
+        following && styles.following,
+        toggle.isPending && styles.followBusy,
+      ]}
+    >
+      <Text style={[styles.followText, following && styles.followingText]}>
+        {toggle.isError ? 'Retry' : following ? 'Following ✓' : 'Follow'}
+      </Text>
+    </Pressable>
+  );
+}
+
 function Stat({ label, value, danger }) {
   return (
     <View style={styles.stat}>
@@ -288,6 +339,22 @@ const styles = StyleSheet.create({
   offerText: { color: colors.accentText, fontWeight: '900', fontSize: 22 },
   body: { padding: space.lg, gap: space.md },
   muted: { color: colors.textMuted },
+  businessRow: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
+  grow: { flex: 1 },
+  follow: {
+    backgroundColor: colors.accent,
+    borderRadius: radius.pill,
+    paddingHorizontal: space.md,
+    paddingVertical: 6,
+  },
+  following: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  followBusy: { opacity: 0.6 },
+  followText: { color: colors.accentText, fontWeight: '800', fontSize: 13 },
+  followingText: { color: colors.text },
   priceRow: { flexDirection: 'row', alignItems: 'baseline', gap: space.sm },
   price: { color: colors.text, fontSize: 26, fontWeight: '900' },
   original: {

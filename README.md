@@ -18,7 +18,8 @@ area) ranked by distance, freshness, urgency and engagement; save and claim loot
 redemption code (QR + text); watch claim counts, stock and "redeemed" update live. Businesses
 onboard with a branch, create and publish loot, and redeem customers' codes at the counter.
 
-**API only so far:** Following and Trending feeds (the web app uses them; the Android app shows Nearby only).
+The Android feed switches between **Nearby**, **Trending** and **Following**; hunters follow a business
+from any loot page (business accounts see Nearby and Trending).
 
 **Not built yet:** media upload (loot photos are pasted https links), push notifications, map view, video, analytics, payments. On the web, businesses are pointed to the
 Android app (its business pages explain how to set up there) and Notifications says "coming soon" until
@@ -139,8 +140,9 @@ With the API running and `npm run seed` done:
    to *Redeemed* live; redeeming the same code again is refused.
 4. **Business:** *My loot* → *+ New loot* → fill in an offer, pick *Ends in 1 hour* → *Publish now*.
    It goes live in hunters' feeds straight away (an open Nearby feed shows a "new loot nearby" pill).
-5. **Following and Trending:** the hunter follows Brew Lab Cafe and Thread & Loom, so the web
-   app's Following tab lists their loot; a few seeded loot have trending scores for the Trending tab.
+5. **Following and Trending:** the hunter follows Brew Lab Cafe and Thread & Loom, so the feed's
+   *Following* switch lists their loot; a few seeded loot have trending scores for *Trending*. Open
+   loot from another business and tap *Follow* to add it to Following.
 6. **No GPS needed:** deny location or pick any preset area; the choice is remembered.
 
 ## Development stand-ins
@@ -158,8 +160,9 @@ pretends the production integration exists.
 ## Known limitations
 
 - **Media:** no uploads or video yet (P1). The QR code encodes `loot:redeem:<code>`; there's no scanner in the business app yet.
-- **Feeds:** the Android app shows Nearby only and has no follow button yet. Trending pages are
-  best-effort: scores move every 5 minutes, so a later page can occasionally repeat or skip an item.
+- **Feeds:** Trending pages are best-effort: scores move every 5 minutes, so a later page can
+  occasionally repeat or skip an item. There's no business profile screen in the Android app yet, so
+  following happens from a loot page.
 - **Trending:** saves, claims and shares add points to `trendingScore` (a user's shares of one loot
   count once a day); a job every 5 minutes halves points every 3 hours and moves loot between `active`
   and `trending`. Views don't count.
